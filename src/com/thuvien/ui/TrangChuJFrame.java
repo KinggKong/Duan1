@@ -18,6 +18,8 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
 import com.thuvien.utils.ShareHelper;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class TrangChuJFrame extends JFrame {
 
@@ -118,6 +120,26 @@ public class TrangChuJFrame extends JFrame {
 		mniNhanVien.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/person.24.png")));
 		mnuQuanLy.add(mniNhanVien);
 
+		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Vị Trí");
+		mntmNewMenuItem_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new ViTriJPanel();
+				changePanel(jpanel);
+			}
+		});
+		mntmNewMenuItem_3.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Open door.png")));
+		mnuQuanLy.add(mntmNewMenuItem_3);
+
+		JMenuItem mntmNewMenuItem_4 = new JMenuItem("Thể Loại");
+		mntmNewMenuItem_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new TheLoaiJPanel();
+				changePanel(jpanel);
+			}
+		});
+		mntmNewMenuItem_4.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Clipboard.png")));
+		mnuQuanLy.add(mntmNewMenuItem_4);
+
 		JMenu mnuThongKe = new JMenu("Thống Kê");
 		menuBar.add(mnuThongKe);
 
@@ -156,9 +178,10 @@ public class TrangChuJFrame extends JFrame {
 
 			}
 		});
-		
+
 		JButton btnNewButton = new JButton("Quyển Sách");
-		btnNewButton.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Google-Noto-Emoji-Objects-62863-books.24.png")));
+		btnNewButton.setIcon(
+				new ImageIcon(TrangChuJFrame.class.getResource("/icon/Google-Noto-Emoji-Objects-62863-books.24.png")));
 		toolBar.add(btnNewButton);
 		toolBar.add(btnThanhVien);
 
