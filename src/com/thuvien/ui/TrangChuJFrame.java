@@ -140,6 +140,16 @@ public class TrangChuJFrame extends JFrame {
 		mntmNewMenuItem_4.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Clipboard.png")));
 		mnuQuanLy.add(mntmNewMenuItem_4);
 
+		JMenuItem mntmNewMenuItem_5 = new JMenuItem("Nhà Xuất Bản");
+		mntmNewMenuItem_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new NhaXuatBanJPanel();
+				changePanel(jpanel);
+			}
+		});
+		mntmNewMenuItem_5.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Brick house.png")));
+		mnuQuanLy.add(mntmNewMenuItem_5);
+
 		JMenu mnuThongKe = new JMenu("Thống Kê");
 		menuBar.add(mnuThongKe);
 
@@ -156,12 +166,6 @@ public class TrangChuJFrame extends JFrame {
 
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Giới Thiệu");
 		mnuTroGiup.add(mntmNewMenuItem_1);
-
-		JMenu mnNewMenu_5 = new JMenu("New menu");
-		menuBar.add(mnNewMenu_5);
-
-		JMenu mnNewMenu_6 = new JMenu("New menu");
-		menuBar.add(mnNewMenu_6);
 
 		JToolBar toolBar = new JToolBar();
 		toolBar.setBounds(0, 33, 1071, 34);

@@ -35,8 +35,8 @@ import java.awt.event.FocusEvent;
 public class TheLoaiJPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField txtMaTG;
-	private JTextField txtHoTen;
+	private JTextField txtMaTheLoai;
+	private JTextField txtTenTheLoai;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField txtTimKiem;
 	private JTable table;
@@ -74,21 +74,21 @@ public class TheLoaiJPanel extends JPanel {
 		lblMaTG.setBounds(10, 16, 104, 19);
 		pnlThongTinTG.add(lblMaTG);
 
-		txtMaTG = new JTextField();
-		txtMaTG.setColumns(10);
-		txtMaTG.setBounds(10, 38, 296, 19);
-		pnlThongTinTG.add(txtMaTG);
+		txtMaTheLoai = new JTextField();
+		txtMaTheLoai.setColumns(10);
+		txtMaTheLoai.setBounds(10, 38, 296, 19);
+		pnlThongTinTG.add(txtMaTheLoai);
 
-		JLabel lblTenTG = new JLabel("Tên Thể Loại");
-		lblTenTG.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblTenTG.setBounds(10, 92, 104, 19);
-		pnlThongTinTG.add(lblTenTG);
+		JLabel lblTenTheLoai = new JLabel("Tên Thể Loại");
+		lblTenTheLoai.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblTenTheLoai.setBounds(10, 92, 104, 19);
+		pnlThongTinTG.add(lblTenTheLoai);
 
-		txtHoTen = new JTextField();
+		txtTenTheLoai = new JTextField();
 
-		txtHoTen.setColumns(10);
-		txtHoTen.setBounds(10, 113, 296, 19);
-		pnlThongTinTG.add(txtHoTen);
+		txtTenTheLoai.setColumns(10);
+		txtTenTheLoai.setBounds(10, 113, 296, 19);
+		pnlThongTinTG.add(txtTenTheLoai);
 
 		JPanel pnlDanhSach = new JPanel();
 		pnlDanhSach.setLayout(null);
@@ -296,7 +296,7 @@ public class TheLoaiJPanel extends JPanel {
 	}
 
 	void setStatus(boolean insertable) {
-		txtMaTG.setEditable(insertable);
+		txtMaTheLoai.setEditable(insertable);
 		btnInsert.setEnabled(insertable);
 		btnUpdate.setEnabled(!insertable);
 		btnDelete.setEnabled(!insertable);
