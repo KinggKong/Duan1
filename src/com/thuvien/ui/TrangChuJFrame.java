@@ -191,7 +191,8 @@ public class TrangChuJFrame extends JFrame {
 		btnThanhVien.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/User group.png")));
 		btnThanhVien.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				jpanel = new ThanhVienJPanel();
+				changePanel(jpanel);
 			}
 		});
 
