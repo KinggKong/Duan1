@@ -113,6 +113,12 @@ public class TrangChuJFrame extends JFrame {
 		mnuQuanLy.add(mniTacGia);
 
 		JMenuItem mniHangThanhVien = new JMenuItem("Hạng Thành Viên");
+		mniHangThanhVien.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new HangThanhVienJPanel();
+				changePanel(jpanel);
+			}
+		});
 		mniHangThanhVien.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Certificate.png")));
 		mnuQuanLy.add(mniHangThanhVien);
 
