@@ -26,21 +26,22 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.thuvien.dao.TacGiaDao;
-import com.thuvien.entity.NhanVien;
 import com.thuvien.entity.TacGia;
 import com.thuvien.utils.DialogHelper;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
-public class NhanVienJPanel extends JPanel {
+public class HangThanhVienJPanel extends JPanel {
 
-	private JTextField txtMaNV;
+	private static final long serialVersionUID = 1L;
+	private JTextField txtMaTG;
 	private JTextField txtHoTen;
-	private JTextField txtSDT;
+	private JTextField txtQuocTich;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField txtTimKiem;
 	private JTable table;
 	DefaultTableModel model;
+	TacGiaDao tgd = new TacGiaDao();
 	private JButton btnInsert;
 	private JButton btnDelete;
 	private JButton btnUpdate;
@@ -49,20 +50,17 @@ public class NhanVienJPanel extends JPanel {
 	private JButton btnNextList;
 	int indexTrang = 1;
 	int index = 0;
-	private JRadioButton rdoNhanVien;
-	private JRadioButton rdoAdmin;
+	private JRadioButton rdoNam;
+	private JRadioButton rdoNu;
 	private JButton btnFirst;
 	private JButton btnPrevEdit;
 	private JButton btnNextEdit;
 	private JButton btnLast;
 	private JLabel lblIndexTrang;
-	private JTextField txtUsername;
-	private JTextField txtPassword;
-	private final ButtonGroup buttonGroup_1 = new ButtonGroup();
 
-	public NhanVienJPanel() {
+	public HangThanhVienJPanel() {
 		setLayout(null);
-		JLabel lblTitle = new JLabel("Quản Lý Nhân Viên");
+		JLabel lblTitle = new JLabel("Quản Lý Tác Giả");
 		lblTitle.setForeground(Color.BLUE);
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblTitle.setBounds(406, 10, 327, 37);
@@ -70,24 +68,40 @@ public class NhanVienJPanel extends JPanel {
 
 		JPanel pnlThongTinTG = new JPanel();
 		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		pnlThongTinTG.setBounds(26, 81, 429, 338);
+		pnlThongTinTG.setBounds(25, 81, 429, 317);
 		add(pnlThongTinTG);
 		pnlThongTinTG.setLayout(null);
 
-		JLabel lblMaNV = new JLabel("Mã Nhân Viên");
-		lblMaNV.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblMaNV.setBounds(10, 16, 138, 19);
-		pnlThongTinTG.add(lblMaNV);
+		JLabel lblMaTG = new JLabel("Mã Tác Giả");
+		lblMaTG.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblMaTG.setBounds(10, 16, 104, 19);
+		pnlThongTinTG.add(lblMaTG);
 
-		txtMaNV = new JTextField();
-		txtMaNV.setColumns(10);
-		txtMaNV.setBounds(10, 38, 296, 19);
-		pnlThongTinTG.add(txtMaNV);
+		txtMaTG = new JTextField();
+		txtMaTG.setText("VD:TG001...");
+		txtMaTG.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (txtMaTG.getText().equals("VD:TG001...")) {
+					txtMaTG.setText("");
+				}
+			}
 
-		JLabel lblTenNV = new JLabel("Họ Và Tên");
-		lblTenNV.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblTenNV.setBounds(10, 65, 104, 19);
-		pnlThongTinTG.add(lblTenNV);
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (txtMaTG.getText().isEmpty()) {
+					txtMaTG.setText("VD:TG001...");
+				}
+			}
+		});
+		txtMaTG.setColumns(10);
+		txtMaTG.setBounds(10, 38, 296, 19);
+		pnlThongTinTG.add(txtMaTG);
+
+		JLabel lblTenTG = new JLabel("Họ Và Tên");
+		lblTenTG.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblTenTG.setBounds(10, 92, 104, 19);
+		pnlThongTinTG.add(lblTenTG);
 
 		txtHoTen = new JTextField();
 		txtHoTen.addFocusListener(new FocusAdapter() {
@@ -106,78 +120,58 @@ public class NhanVienJPanel extends JPanel {
 			}
 		});
 		txtHoTen.setColumns(10);
-		txtHoTen.setBounds(10, 86, 296, 19);
+		txtHoTen.setBounds(10, 113, 296, 19);
 		txtHoTen.setText("VD: Nguyễn Văn A...");
 		pnlThongTinTG.add(txtHoTen);
 
-		JLabel lblSDT = new JLabel("Số Điện Thoại");
-		lblSDT.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblSDT.setBounds(10, 115, 186, 19);
-		pnlThongTinTG.add(lblSDT);
+		JLabel lblQuocTich = new JLabel("Quốc Tịch");
+		lblQuocTich.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblQuocTich.setBounds(10, 168, 104, 19);
+		pnlThongTinTG.add(lblQuocTich);
 
-		txtSDT = new JTextField();
-		txtSDT.setColumns(10);
-		txtSDT.setBounds(10, 138, 296, 19);
-		pnlThongTinTG.add(txtSDT);
+		txtQuocTich = new JTextField();
+		txtQuocTich.setText("VD: Việt Nam...");
+		txtQuocTich.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (txtQuocTich.getText().equals("VD: Việt Nam...")) {
+					txtQuocTich.setText("");
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (txtQuocTich.getText().isEmpty()) {
+					txtQuocTich.setText("VD: Việt Nam...");
+				}
+			}
+		});
+		txtQuocTich.setColumns(10);
+		txtQuocTich.setBounds(10, 189, 296, 19);
+		pnlThongTinTG.add(txtQuocTich);
 
 		JLabel lblGioiTinh = new JLabel("Giới Tính");
 		lblGioiTinh.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblGioiTinh.setBounds(10, 286, 104, 19);
+		lblGioiTinh.setBounds(10, 243, 104, 19);
 		pnlThongTinTG.add(lblGioiTinh);
 
-		rdoNhanVien = new JRadioButton("Nhân Viên");
-		buttonGroup.add(rdoNhanVien);
-		rdoNhanVien.setSelected(true);
-		rdoNhanVien.setBounds(10, 311, 104, 21);
-		pnlThongTinTG.add(rdoNhanVien);
+		rdoNam = new JRadioButton("Nam");
+		buttonGroup.add(rdoNam);
+		rdoNam.setSelected(true);
+		rdoNam.setBounds(10, 268, 81, 21);
+		pnlThongTinTG.add(rdoNam);
 
-		rdoAdmin = new JRadioButton("Admin");
-		buttonGroup.add(rdoAdmin);
-		rdoAdmin.setBounds(115, 311, 81, 21);
-		pnlThongTinTG.add(rdoAdmin);
-
-		JLabel lblUsername = new JLabel("Username");
-		lblUsername.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblUsername.setBounds(10, 162, 186, 19);
-		pnlThongTinTG.add(lblUsername);
-
-		txtUsername = new JTextField();
-		txtUsername.setColumns(10);
-		txtUsername.setBounds(10, 191, 296, 19);
-		pnlThongTinTG.add(txtUsername);
-
-		JLabel lblPassword = new JLabel("Password");
-		lblPassword.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblPassword.setBounds(10, 220, 186, 19);
-		pnlThongTinTG.add(lblPassword);
-
-		txtPassword = new JTextField();
-		txtPassword.setColumns(10);
-		txtPassword.setBounds(10, 249, 296, 19);
-		pnlThongTinTG.add(txtPassword);
-
-		JLabel lblHoatDong = new JLabel("Hoạt Động");
-		lblHoatDong.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblHoatDong.setBounds(233, 286, 104, 19);
-		pnlThongTinTG.add(lblHoatDong);
-
-		JRadioButton rdoCon = new JRadioButton("Còn");
-		buttonGroup_1.add(rdoCon);
-		rdoCon.setSelected(true);
-		rdoCon.setBounds(233, 311, 65, 21);
-		pnlThongTinTG.add(rdoCon);
-
-		JRadioButton rdoKhong = new JRadioButton("Không");
-		buttonGroup_1.add(rdoKhong);
-		rdoKhong.setBounds(304, 311, 103, 21);
-		pnlThongTinTG.add(rdoKhong);
+		rdoNu = new JRadioButton("Nữ");
+		buttonGroup.add(rdoNu);
+		rdoNu.setBounds(93, 268, 103, 21);
+		pnlThongTinTG.add(rdoNu);
 
 		JPanel pnlDanhSach = new JPanel();
 		pnlDanhSach.setLayout(null);
 		pnlDanhSach.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
 				"Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		pnlDanhSach.setBounds(501, 81, 526, 378);
+		pnlDanhSach.setBounds(527, 81, 491, 378);
 		add(pnlDanhSach);
 
 		JLabel lblTimKiem = new JLabel("Tìm Kiếm");
@@ -185,7 +179,7 @@ public class NhanVienJPanel extends JPanel {
 		pnlDanhSach.add(lblTimKiem);
 
 		txtTimKiem = new JTextField();
-		txtTimKiem.setText("Nhập vào mã hoặc tên của nhân viên");
+		txtTimKiem.setText("Nhập vào mã hoặc tên của tác giả");
 		txtTimKiem.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -215,7 +209,7 @@ public class NhanVienJPanel extends JPanel {
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 71, 506, 297);
+		scrollPane.setBounds(10, 61, 471, 307);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -230,7 +224,7 @@ public class NhanVienJPanel extends JPanel {
 			}
 		});
 		scrollPane.setViewportView(table);
-		String[] columns = { "Mã NV", "Họ Tên", "SDT", "Username", "Password", "Vai Trò", "Trạng Thái" };
+		String[] columns = { "Mã Tác Giả", "Tên", "Quốc Tịch", "Giới Tính" };
 		Object[][] rows = {
 
 		};
@@ -238,7 +232,7 @@ public class NhanVienJPanel extends JPanel {
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(67, 488, 350, 30);
+		pnlButton2.setBounds(67, 475, 350, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -283,7 +277,7 @@ public class NhanVienJPanel extends JPanel {
 		pnlButton2.add(btnLast);
 
 		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(67, 448, 350, 30);
+		pnlButton1.setBounds(67, 418, 350, 30);
 		add(pnlButton1);
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -336,6 +330,20 @@ public class NhanVienJPanel extends JPanel {
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
+		btnNextList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				indexTrang++;
+
+				if (indexTrang > (Math.ceil(tgd.selectAll().size() * 1.0 / 5))) {
+					DialogHelper.alert(null, "Đây là trang cuối cùng !");
+					indexTrang--;
+				} else {
+
+					load(indexTrang);
+					lblIndexTrang.setText(indexTrang + "");
+				}
+			}
+		});
 		btnNextList.setBounds(849, 487, 85, 21);
 		add(btnNextList);
 
@@ -361,40 +369,150 @@ public class NhanVienJPanel extends JPanel {
 		worker.execute();
 	}
 
-	void load(int soTrang) {
+//	void load(int soTrang) {
+//		SwingUtilities.invokeLater(() -> {
+//			List<TacGia> list = tgd.loadTrang((soTrang - 1) * 5, 5);
+//			model.setRowCount(0);
+//			for (TacGia tg : list) {
+//				Object[] row = { tg.getMaTG(), tg.getHoTen(), tg.getQuocTich(), tg.isGioiTinh() ? "Nam" : "Nữ" };
+//				model.addRow(row);
+//			}
+//		});
+//	}
 
+	void load(int soTrang) {
+		// Thực hiện truy vấn cơ sở dữ liệu trong một SwingWorker
+		SwingWorker<List<TacGia>, Void> worker = new SwingWorker<List<TacGia>, Void>() {
+			@Override
+			protected List<TacGia> doInBackground() throws Exception {
+				return tgd.loadTrang((soTrang - 1) * 5, 5);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<TacGia> list = get();
+					model.setRowCount(0);
+					for (TacGia tg : list) {
+						Object[] row = { tg.getMaTG(), tg.getHoTen(), tg.getQuocTich(),
+								tg.isGioiTinh() ? "Nam" : "Nữ" };
+						model.addRow(row);
+					}
+				} catch (Exception e) {
+					DialogHelper.alert(HangThanhVienJPanel.this, "Lỗi truy vấn dữ liệu!");
+				}
+			}
+		};
+
+		worker.execute();
 	}
 
 	void insert() {
+		try {
+			TacGia tg = getForm();
+			if (tg != null) {
+				tgd.insert(tg);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Insert Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Insert Failed");
+		}
 
 	}
 
 	void delete() {
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
+				TacGia tg = getForm();
+				tgd.delete(tg.getMaTG());
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Delete Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Delete Failed");
+		}
 
 	}
 
 	void update() {
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
+				TacGia tg = getForm();
+				tgd.update(tg);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Update Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Update Failed");
+		}
 
 	}
 
 	void clear() {
-
+		txtHoTen.setText("");
+		txtMaTG.setText("");
+		txtQuocTich.setText("");
+		rdoNam.setSelected(true);
 	}
 
 	void setForm(TacGia tg) {
-
+		txtMaTG.setText(tg.getMaTG());
+		txtHoTen.setText(tg.getHoTen());
+		txtQuocTich.setText(tg.getQuocTich());
+		if (tg.isGioiTinh()) {
+			rdoNam.setSelected(true);
+		} else {
+			rdoNu.setSelected(true);
+		}
 	}
 
-	NhanVien getForm() {
-		return null;
+	TacGia getForm() {
+		TacGia tg = new TacGia();
+		if (txtMaTG.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống mã tác giả");
+			return tg = null;
+		} else {
+			tg.setMaTG(txtMaTG.getText());
+		}
+
+		if (txtHoTen.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống họ tên tác giả");
+			return null;
+		} else {
+			tg.setHoTen(txtHoTen.getText());
+		}
+
+		if (txtQuocTich.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống quốc tịch");
+			return null;
+		} else {
+			tg.setQuocTich(txtQuocTich.getText());
+		}
+
+		tg.setGioiTinh(rdoNam.isSelected());
+		return tg;
 	}
 
 	void edit() {
+		try {
+			String maTG = (String) table.getValueAt(this.index, 0);
+			TacGia tg = tgd.selectById(maTG);
+			if (tg != null) {
+				setForm(tg);
+				setStatus(false);
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
+		}
 
 	}
 
 	void setStatus(boolean insertable) {
-		txtMaNV.setEditable(insertable);
+		txtMaTG.setEditable(insertable);
 		btnInsert.setEnabled(insertable);
 		btnUpdate.setEnabled(!insertable);
 		btnDelete.setEnabled(!insertable);
@@ -406,7 +524,49 @@ public class NhanVienJPanel extends JPanel {
 		btnLast.setEnabled(!insertable && last);
 	}
 
-	void search() {
+//	void search() {
+//		model.setRowCount(0);
+//		try {
+//			List<TacGia> list = tgd.selectByKeyword(txtTimKiem.getText());
+//			for (TacGia tg : list) {
+//				Object[] row = { tg.getMaTG(), tg.getHoTen(), tg.getQuocTich(), tg.isGioiTinh() ? "Nam" : "Nữ" };
+//				model.addRow(row);
+//			}
+//		} catch (Exception e) {
+//			DialogHelper.alert(this, "Lỗi truy vấn dữ liệu !");
+//		}
+//	}
 
+	void search() {
+		String keyword = txtTimKiem.getText().trim();
+		// Thực hiện tìm kiếm trong một SwingWorker
+		SwingWorker<List<TacGia>, Void> worker = new SwingWorker<List<TacGia>, Void>() {
+			@Override
+			protected List<TacGia> doInBackground() throws Exception {
+				return tgd.selectByKeyword(keyword);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<TacGia> list = get();
+					if (list.size() == 0) {
+						DialogHelper.alert(null, "Không tồn tại ");
+					} else {
+						model.setRowCount(0);
+						for (TacGia tg : list) {
+							Object[] row = { tg.getMaTG(), tg.getHoTen(), tg.getQuocTich(),
+									tg.isGioiTinh() ? "Nam" : "Nữ" };
+							model.addRow(row);
+						}
+					}
+
+				} catch (Exception e) {
+					DialogHelper.alert(HangThanhVienJPanel.this, "Lỗi truy vấn dữ liệu!");
+				}
+			}
+		};
+
+		worker.execute();
 	}
 }
