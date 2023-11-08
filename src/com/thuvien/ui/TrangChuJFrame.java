@@ -117,6 +117,12 @@ public class TrangChuJFrame extends JFrame {
 		mnuQuanLy.add(mniHangThanhVien);
 
 		JMenuItem mniNhanVien = new JMenuItem("Nhân Viên");
+		mniNhanVien.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new NhanVienJPanel();
+				changePanel(jpanel);
+			}
+		});
 		mniNhanVien.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/person.24.png")));
 		mnuQuanLy.add(mniNhanVien);
 
@@ -172,6 +178,12 @@ public class TrangChuJFrame extends JFrame {
 		contentPane.add(toolBar);
 
 		JButton btnSach = new JButton("Sách");
+		btnSach.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new SachJPanel();
+				changePanel(jpanel);
+			}
+		});
 		btnSach.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Book.png")));
 		toolBar.add(btnSach);
 
