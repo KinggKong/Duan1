@@ -50,15 +50,31 @@ public class TrangChuJFrame extends JFrame {
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setLocationRelativeTo(null);
 
+<<<<<<< HEAD
         setContentPane(contentPane);
         contentPane.setLayout(null);
+=======
+	public TrangChuJFrame() {
+		init();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1150, 665);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setLocationRelativeTo(null);
+>>>>>>> upstream/main
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.setBounds(0, 0, 1071, 34);
         contentPane.add(menuBar);
 
+<<<<<<< HEAD
         JMenu mnuHeThong = new JMenu("Hệ Thống");
         menuBar.add(mnuHeThong);
+=======
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.setBounds(0, 0, 1136, 34);
+		contentPane.add(menuBar);
+>>>>>>> upstream/main
 
         JMenuItem mniDangNhap = new JMenuItem("Đăng Nhập");
         mniDangNhap.addActionListener(new ActionListener() {
@@ -115,6 +131,7 @@ public class TrangChuJFrame extends JFrame {
         mniHangThanhVien.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Certificate.png")));
         mnuQuanLy.add(mniHangThanhVien);
 
+<<<<<<< HEAD
         JMenuItem mniNhanVien = new JMenuItem("Nhân Viên");
         mniNhanVien.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -124,6 +141,17 @@ public class TrangChuJFrame extends JFrame {
         });
         mniNhanVien.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/person.24.png")));
         mnuQuanLy.add(mniNhanVien);
+=======
+		JMenuItem mniHangThanhVien = new JMenuItem("Hạng Thành Viên");
+		mniHangThanhVien.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new HangThanhVienJPanel();
+				changePanel(jpanel);
+			}
+		});
+		mniHangThanhVien.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Certificate.png")));
+		mnuQuanLy.add(mniHangThanhVien);
+>>>>>>> upstream/main
 
         JMenuItem mntmNewMenuItem_3 = new JMenuItem("Vị Trí");
         mntmNewMenuItem_3.addActionListener(new ActionListener() {
@@ -176,6 +204,7 @@ public class TrangChuJFrame extends JFrame {
         toolBar.setBounds(0, 33, 1071, 34);
         contentPane.add(toolBar);
 
+<<<<<<< HEAD
         JButton btnSach = new JButton("Sách");
         btnSach.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -185,6 +214,11 @@ public class TrangChuJFrame extends JFrame {
         });
         btnSach.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Book.png")));
         toolBar.add(btnSach);
+=======
+		JToolBar toolBar = new JToolBar();
+		toolBar.setBounds(0, 33, 1136, 34);
+		contentPane.add(toolBar);
+>>>>>>> upstream/main
 
         JButton btnThanhVien = new JButton("Thành Viên");
         btnThanhVien.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/User group.png")));
@@ -200,20 +234,45 @@ public class TrangChuJFrame extends JFrame {
         toolBar.add(btnNewButton);
         toolBar.add(btnThanhVien);
 
+<<<<<<< HEAD
         JButton btnPhieuMuon = new JButton("Phiếu Mượn");
         btnPhieuMuon.setIcon(
                 new ImageIcon(TrangChuJFrame.class.getResource("/icon/Fatcow-Farm-Fresh-Application-form-add.24.png")));
         toolBar.add(btnPhieuMuon);
+=======
+		JButton btnNewButton_1 = new JButton("Thẻ Thành Viên");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new TheThanhVienJPanel();
+				changePanel(jpanel);
+			}
+		});
+		btnNewButton_1
+				.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Inipagi-Job-Seeker-Id-card.24.png")));
+		toolBar.add(btnNewButton_1);
+
+		JButton btnPhieuMuon = new JButton("Phiếu Mượn");
+		btnPhieuMuon.setIcon(
+				new ImageIcon(TrangChuJFrame.class.getResource("/icon/Fatcow-Farm-Fresh-Application-form-add.24.png")));
+		toolBar.add(btnPhieuMuon);
+>>>>>>> upstream/main
 
         JButton btnPhieuTra = new JButton("Phiếu Trả");
         btnPhieuTra.setIcon(new ImageIcon(
                 TrangChuJFrame.class.getResource("/icon/Fatcow-Farm-Fresh-Application-form-delete.24.png")));
         toolBar.add(btnPhieuTra);
 
+<<<<<<< HEAD
         pnlContain = new JPanel();
         pnlContain.setBounds(10, 78, 1050, 540);
         contentPane.add(pnlContain);
         pnlContain.setLayout(new BorderLayout(0, 0));
+=======
+		pnlContain = new JPanel();
+		pnlContain.setBounds(10, 78, 1126, 540);
+		contentPane.add(pnlContain);
+		pnlContain.setLayout(new BorderLayout(0, 0));
+>>>>>>> upstream/main
 
         JLabel lblNewLabel = new JLabel("");
         lblNewLabel.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/logo.png")));

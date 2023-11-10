@@ -31,6 +31,7 @@ import com.thuvien.utils.DialogHelper;
 
 public class NhaXuatBanJPanel extends JPanel {
 
+<<<<<<< HEAD
     private static final long serialVersionUID = 1L;
     private JTextField txtTenNXB;
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -51,6 +52,28 @@ public class NhaXuatBanJPanel extends JPanel {
     private JButton btnNextEdit;
     private JButton btnLast;
     private JLabel lblIndexTrang;
+=======
+	private static final long serialVersionUID = 1L;
+	private JTextField txtTenNXB;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JTextField txtTimKiem;
+	private JTable table;
+	DefaultTableModel model;
+	private JButton btnInsert;
+	private JButton btnDelete;
+	private JButton btnUpdate;
+	private JButton btnClear;
+	private JButton btnPrevList;
+	private JButton btnNextList;
+	int indexTrang = 1;
+	int index = 0;
+	private JButton btnFirst;
+	private JButton btnPrevEdit;
+	private JButton btnNextEdit;
+	private JButton btnLast;
+	private JLabel lblIndexTrang;
+	private JTextField txtIDNhaXuatBan;
+>>>>>>> upstream/main
 
     public NhaXuatBanJPanel() {
         setLayout(null);
@@ -60,6 +83,7 @@ public class NhaXuatBanJPanel extends JPanel {
         lblTitle.setBounds(328, 10, 400, 37);
         add(lblTitle);
 
+<<<<<<< HEAD
         JPanel pnlThongTinTG = new JPanel();
         pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
         pnlThongTinTG.setBounds(27, 140, 429, 91);
@@ -75,6 +99,35 @@ public class NhaXuatBanJPanel extends JPanel {
         txtTenNXB.setColumns(10);
         txtTenNXB.setBounds(67, 39, 296, 19);
         pnlThongTinTG.add(txtTenNXB);
+=======
+		JPanel pnlThongTinTG = new JPanel();
+		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		pnlThongTinTG.setBounds(27, 96, 429, 135);
+		add(pnlThongTinTG);
+		pnlThongTinTG.setLayout(null);
+
+		JLabel lblTenNXB = new JLabel("Tên Nhà Xuất Bản");
+		lblTenNXB.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblTenNXB.setBounds(131, 77, 206, 19);
+		pnlThongTinTG.add(lblTenNXB);
+
+		txtTenNXB = new JTextField();
+		txtTenNXB.setColumns(10);
+		txtTenNXB.setBounds(73, 106, 296, 19);
+		pnlThongTinTG.add(txtTenNXB);
+		
+		txtIDNhaXuatBan = new JTextField();
+		txtIDNhaXuatBan.setEditable(false);
+		txtIDNhaXuatBan.setEnabled(false);
+		txtIDNhaXuatBan.setColumns(10);
+		txtIDNhaXuatBan.setBounds(73, 48, 296, 19);
+		pnlThongTinTG.add(txtIDNhaXuatBan);
+		
+		JLabel lblIdNhXutt = new JLabel("ID Nhà Xuátt Bản");
+		lblIdNhXutt.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblIdNhXutt.setBounds(131, 19, 206, 19);
+		pnlThongTinTG.add(lblIdNhXutt);
+>>>>>>> upstream/main
 
         JPanel pnlDanhSach = new JPanel();
         pnlDanhSach.setLayout(null);
