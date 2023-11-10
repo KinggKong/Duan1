@@ -128,12 +128,12 @@ public class NhanVienJPanel extends JPanel {
 		rdoNhanVien = new JRadioButton("Nhân Viên");
 		buttonGroup.add(rdoNhanVien);
 		rdoNhanVien.setSelected(true);
-		rdoNhanVien.setBounds(10, 311, 104, 21);
+		rdoNhanVien.setBounds(10, 311, 81, 21);
 		pnlThongTinTG.add(rdoNhanVien);
 
 		rdoAdmin = new JRadioButton("Admin");
 		buttonGroup.add(rdoAdmin);
-		rdoAdmin.setBounds(115, 311, 81, 21);
+		rdoAdmin.setBounds(93, 311, 103, 21);
 		pnlThongTinTG.add(rdoAdmin);
 
 		JLabel lblUsername = new JLabel("Username");
