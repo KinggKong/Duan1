@@ -46,7 +46,7 @@ public class TrangChuJFrame extends JFrame {
 	public TrangChuJFrame() {
 		init();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1085, 665);
+		setBounds(100, 100, 1150, 665);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLocationRelativeTo(null);
@@ -55,7 +55,7 @@ public class TrangChuJFrame extends JFrame {
 		contentPane.setLayout(null);
 
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 1071, 34);
+		menuBar.setBounds(0, 0, 1136, 34);
 		contentPane.add(menuBar);
 
 		JMenu mnuHeThong = new JMenu("Hệ Thống");
@@ -180,7 +180,7 @@ public class TrangChuJFrame extends JFrame {
 		mnuTroGiup.add(mntmNewMenuItem_1);
 
 		JToolBar toolBar = new JToolBar();
-		toolBar.setBounds(0, 33, 1071, 34);
+		toolBar.setBounds(0, 33, 1136, 34);
 		contentPane.add(toolBar);
 
 		JButton btnSach = new JButton("Sách");
@@ -208,6 +208,17 @@ public class TrangChuJFrame extends JFrame {
 		toolBar.add(btnNewButton);
 		toolBar.add(btnThanhVien);
 
+		JButton btnNewButton_1 = new JButton("Thẻ Thành Viên");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new TheThanhVienJPanel();
+				changePanel(jpanel);
+			}
+		});
+		btnNewButton_1
+				.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Inipagi-Job-Seeker-Id-card.24.png")));
+		toolBar.add(btnNewButton_1);
+
 		JButton btnPhieuMuon = new JButton("Phiếu Mượn");
 		btnPhieuMuon.setIcon(
 				new ImageIcon(TrangChuJFrame.class.getResource("/icon/Fatcow-Farm-Fresh-Application-form-add.24.png")));
@@ -219,7 +230,7 @@ public class TrangChuJFrame extends JFrame {
 		toolBar.add(btnPhieuTra);
 
 		pnlContain = new JPanel();
-		pnlContain.setBounds(10, 78, 1050, 540);
+		pnlContain.setBounds(10, 78, 1126, 540);
 		contentPane.add(pnlContain);
 		pnlContain.setLayout(new BorderLayout(0, 0));
 

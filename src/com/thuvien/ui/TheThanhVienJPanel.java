@@ -5,12 +5,15 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -23,15 +26,17 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.thuvien.dao.TacGiaDao;
-import com.thuvien.entity.NXB;
+import com.thuvien.dao.TheThanhVienDao;
 import com.thuvien.entity.TacGia;
+import com.thuvien.entity.ThanhVien;
+import com.thuvien.entity.TheThanhVien;
 import com.thuvien.utils.DialogHelper;
 
-public class NhaXuatBanJPanel extends JPanel {
+public class TheThanhVienJPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField txtTenNXB;
+	private JTextField txtTheThanhVien;
+	private JTextField txtThanhVien;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField txtTimKiem;
 	private JTable table;
@@ -49,50 +54,108 @@ public class NhaXuatBanJPanel extends JPanel {
 	private JButton btnNextEdit;
 	private JButton btnLast;
 	private JLabel lblIndexTrang;
-	private JTextField txtIDNhaXuatBan;
+	private JTextField txtNgayHieuLuc;
+	private JTextField txtNgayCap;
+	private JTextField txtOldID;
+	TheThanhVienDao ttvd = new TheThanhVienDao();
 
-	public NhaXuatBanJPanel() {
+	public TheThanhVienJPanel() {
 		setLayout(null);
-		JLabel lblTitle = new JLabel("Quản Lý Nhà Xuất Bản");
+		JLabel lblTitle = new JLabel("Quản Lý  Thẻ Thành Viên");
 		lblTitle.setForeground(Color.BLUE);
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblTitle.setBounds(328, 10, 400, 37);
+		lblTitle.setBounds(348, 10, 400, 37);
 		add(lblTitle);
 
 		JPanel pnlThongTinTG = new JPanel();
 		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		pnlThongTinTG.setBounds(27, 96, 429, 135);
+		pnlThongTinTG.setBounds(10, 102, 459, 248);
 		add(pnlThongTinTG);
 		pnlThongTinTG.setLayout(null);
 
-		JLabel lblTenNXB = new JLabel("Tên Nhà Xuất Bản");
-		lblTenNXB.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblTenNXB.setBounds(131, 77, 206, 19);
-		pnlThongTinTG.add(lblTenNXB);
+		JLabel lblMaThanhVien = new JLabel("Mã Thẻ");
+		lblMaThanhVien.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblMaThanhVien.setBounds(10, 16, 157, 19);
+		pnlThongTinTG.add(lblMaThanhVien);
 
-		txtTenNXB = new JTextField();
-		txtTenNXB.setColumns(10);
-		txtTenNXB.setBounds(73, 106, 296, 19);
-		pnlThongTinTG.add(txtTenNXB);
-		
-		txtIDNhaXuatBan = new JTextField();
-		txtIDNhaXuatBan.setEditable(false);
-		txtIDNhaXuatBan.setEnabled(false);
-		txtIDNhaXuatBan.setColumns(10);
-		txtIDNhaXuatBan.setBounds(73, 48, 296, 19);
-		pnlThongTinTG.add(txtIDNhaXuatBan);
-		
-		JLabel lblIdNhXutt = new JLabel("ID Nhà Xuátt Bản");
-		lblIdNhXutt.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblIdNhXutt.setBounds(131, 19, 206, 19);
-		pnlThongTinTG.add(lblIdNhXutt);
+		txtTheThanhVien = new JTextField();
+		txtTheThanhVien.setColumns(10);
+		txtTheThanhVien.setBounds(10, 38, 198, 19);
+		pnlThongTinTG.add(txtTheThanhVien);
+
+		JLabel lblHangThanhVien = new JLabel("Hạng Thành Viên");
+		lblHangThanhVien.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblHangThanhVien.setBounds(10, 67, 139, 19);
+		pnlThongTinTG.add(lblHangThanhVien);
+
+		JLabel lblThanhVien = new JLabel("Thành Viên");
+		lblThanhVien.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblThanhVien.setBounds(10, 118, 104, 19);
+		pnlThongTinTG.add(lblThanhVien);
+
+		txtThanhVien = new JTextField();
+		txtThanhVien.setColumns(10);
+		txtThanhVien.setBounds(10, 139, 198, 19);
+		pnlThongTinTG.add(txtThanhVien);
+
+		JLabel lblThoiGianHieuLuc = new JLabel("Thời Gian Hiệu Lực");
+		lblThoiGianHieuLuc.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblThoiGianHieuLuc.setBounds(252, 118, 162, 19);
+		pnlThongTinTG.add(lblThoiGianHieuLuc);
+
+		JLabel lblNgayHieuLuc = new JLabel("Ngày Hiệu Lực");
+		lblNgayHieuLuc.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblNgayHieuLuc.setBounds(252, 67, 139, 19);
+		pnlThongTinTG.add(lblNgayHieuLuc);
+
+		txtNgayHieuLuc = new JTextField();
+		txtNgayHieuLuc.setColumns(10);
+		txtNgayHieuLuc.setBounds(252, 89, 193, 19);
+		pnlThongTinTG.add(txtNgayHieuLuc);
+
+		JLabel lblNgayCap = new JLabel("Ngày Cấp");
+		lblNgayCap.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblNgayCap.setBounds(252, 16, 139, 19);
+		pnlThongTinTG.add(lblNgayCap);
+
+		txtNgayCap = new JTextField();
+		txtNgayCap.setColumns(10);
+		txtNgayCap.setBounds(252, 38, 193, 19);
+		pnlThongTinTG.add(txtNgayCap);
+
+		JLabel lblOldID = new JLabel("Old ID");
+		lblOldID.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblOldID.setBounds(13, 164, 104, 19);
+		pnlThongTinTG.add(lblOldID);
+
+		txtOldID = new JTextField();
+		txtOldID.setColumns(10);
+		txtOldID.setBounds(10, 191, 198, 19);
+		pnlThongTinTG.add(txtOldID);
+
+		JComboBox cbxHangThanhVien = new JComboBox();
+		cbxHangThanhVien.setBounds(10, 88, 198, 21);
+		pnlThongTinTG.add(cbxHangThanhVien);
+
+		JComboBox cbxThoiGianHieuLuc = new JComboBox();
+		cbxThoiGianHieuLuc.setBounds(252, 138, 198, 21);
+		pnlThongTinTG.add(cbxThoiGianHieuLuc);
+
+		JLabel lblTrangThai = new JLabel("Trạng Thái");
+		lblTrangThai.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblTrangThai.setBounds(252, 164, 104, 19);
+		pnlThongTinTG.add(lblTrangThai);
+
+		JComboBox cbxTrangThai = new JComboBox();
+		cbxTrangThai.setBounds(252, 190, 198, 21);
+		pnlThongTinTG.add(cbxTrangThai);
 
 		JPanel pnlDanhSach = new JPanel();
 		pnlDanhSach.setLayout(null);
 		pnlDanhSach.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
 				"Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		pnlDanhSach.setBounds(527, 81, 491, 378);
+		pnlDanhSach.setBounds(496, 83, 619, 378);
 		add(pnlDanhSach);
 
 		JLabel lblTimKiem = new JLabel("Tìm Kiếm");
@@ -100,6 +163,22 @@ public class NhaXuatBanJPanel extends JPanel {
 		pnlDanhSach.add(lblTimKiem);
 
 		txtTimKiem = new JTextField();
+		txtTimKiem.setText("Nhập vào mã hoặc tên của thành viên");
+		txtTimKiem.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (txtTimKiem.getText().equals("Nhập vào mã hoặc tên của thành viên")) {
+					txtTimKiem.setText("");
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (txtTimKiem.getText().isEmpty()) {
+					txtTimKiem.setText("Nhập vào mã hoặc tên của thành viên");
+				}
+			}
+		});
 		txtTimKiem.setBounds(85, 17, 266, 19);
 		pnlDanhSach.add(txtTimKiem);
 		txtTimKiem.setColumns(10);
@@ -114,7 +193,7 @@ public class NhaXuatBanJPanel extends JPanel {
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 61, 471, 307);
+		scrollPane.setBounds(10, 61, 599, 307);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -129,7 +208,8 @@ public class NhaXuatBanJPanel extends JPanel {
 			}
 		});
 		scrollPane.setViewportView(table);
-		String[] columns = { "ID", "Tên Nhà Xuất Bản" };
+		String[] columns = { "Mã Thẻ", "Hạng Thẻ", "Ngày Cấp", "Ngày Hiệu Lực", "Thời Gian Hiệu Lực", "Thành Viên",
+				"OLD ID", "Trạng Thái" };
 		Object[][] rows = {
 
 		};
@@ -137,7 +217,7 @@ public class NhaXuatBanJPanel extends JPanel {
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(67, 335, 350, 30);
+		pnlButton2.setBounds(67, 434, 350, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -182,7 +262,7 @@ public class NhaXuatBanJPanel extends JPanel {
 		pnlButton2.add(btnLast);
 
 		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(67, 264, 350, 30);
+		pnlButton1.setBounds(67, 379, 350, 30);
 		add(pnlButton1);
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -235,6 +315,11 @@ public class NhaXuatBanJPanel extends JPanel {
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
+		btnNextList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		});
 		btnNextList.setBounds(849, 487, 85, 21);
 		add(btnNextList);
 
@@ -261,7 +346,30 @@ public class NhaXuatBanJPanel extends JPanel {
 	}
 
 	void load(int soTrang) {
+		SwingWorker<List<TheThanhVien>, Void> worker = new SwingWorker<List<TheThanhVien>, Void>() {
+			@Override
+			protected List<TheThanhVien> doInBackground() throws Exception {
+				return ttvd.loadTrang((soTrang - 1) * 5, 5);
+			}
 
+			@Override
+			protected void done() {
+				try {
+					List<TheThanhVien> list = get();
+					model.setRowCount(0);
+					for (TheThanhVien ttv : list) {
+						Object[] row = { ttv.getMaTTV(), ttv.getIdHangTV(), ttv.getNgayCap(), ttv.getNgayHieuLuc(),
+								ttv.getTgHieuLuc(), ttv.getIdThanhVien(), ttv.getOldID(),
+								ttv.isTrangThai() ? "Còn Hiệu Lực" : "Hết Hiệu Lực" };
+						model.addRow(row);
+					}
+				} catch (Exception e) {
+					DialogHelper.alert(TheThanhVienJPanel.this, "Lỗi truy vấn dữ liệu!");
+				}
+			}
+		};
+
+		worker.execute();
 	}
 
 	void insert() {
@@ -284,15 +392,17 @@ public class NhaXuatBanJPanel extends JPanel {
 
 	}
 
-	NXB getForm() {
-
+	ThanhVien getForm() {
+		
 		return null;
 	}
 
 	void edit() {
+
 	}
 
 	void setStatus(boolean insertable) {
+		txtTheThanhVien.setEditable(insertable);
 		btnInsert.setEnabled(insertable);
 		btnUpdate.setEnabled(!insertable);
 		btnDelete.setEnabled(!insertable);
@@ -305,6 +415,5 @@ public class NhaXuatBanJPanel extends JPanel {
 	}
 
 	void search() {
-
 	}
 }
