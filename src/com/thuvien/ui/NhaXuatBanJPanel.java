@@ -1,5 +1,6 @@
 package com.thuvien.ui;
 
+import com.thuvien.dao.NXBDao;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -27,7 +28,7 @@ import com.thuvien.dao.TacGiaDao;
 import com.thuvien.entity.NXB;
 import com.thuvien.entity.TacGia;
 import com.thuvien.utils.DialogHelper;
-import javaapplication23.NXBDao;
+
 
 public class NhaXuatBanJPanel extends JPanel {
 

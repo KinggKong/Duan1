@@ -1,4 +1,4 @@
-package javaapplication23;
+package com.thuvien.dao;
 
 import com.thuvien.dao.QLTVDao;
 import java.util.List;
