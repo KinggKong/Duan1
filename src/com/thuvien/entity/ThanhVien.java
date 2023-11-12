@@ -87,8 +87,7 @@ public class ThanhVien {
 
 	@Override
 	public String toString() {
-		return "ThanhVien [maTV=" + maTV + ", tenTV=" + tenTV + ", SDT=" + SDT + ", diaChi=" + diaChi + ", email="
-				+ email + ", CCCD=" + CCCD + ", ngaySinh=" + ngaySinh + ", ngayDK=" + ngayDK + "]";
+		return tenTV;
 	}
 
 }

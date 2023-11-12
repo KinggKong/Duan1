@@ -3,11 +3,33 @@ package com.thuvien.entity;
 import java.sql.Date;
 
 public class TheThanhVien {
+	private int id;
 	private String maTTV;
 	private int idHangTV;
 	private Date ngayCap, ngayHieuLuc;
 	private int tgHieuLuc, idThanhVien, oldID;
 	private boolean trangThai;
+
+	public TheThanhVien(int id, String maTTV, int idHangTV, Date ngayCap, Date ngayHieuLuc, int tgHieuLuc,
+			int idThanhVien, int oldID, boolean trangThai) {
+		this.id = id;
+		this.maTTV = maTTV;
+		this.idHangTV = idHangTV;
+		this.ngayCap = ngayCap;
+		this.ngayHieuLuc = ngayHieuLuc;
+		this.tgHieuLuc = tgHieuLuc;
+		this.idThanhVien = idThanhVien;
+		this.oldID = oldID;
+		this.trangThai = trangThai;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public TheThanhVien(String maTTV, int idHangTV, Date ngayCap, Date ngayHieuLuc, int tgHieuLuc, int idThanhVien,
 			int oldID, boolean trangThai) {

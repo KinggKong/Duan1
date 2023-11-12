@@ -3,6 +3,7 @@ package Application;
 import com.thuvien.ui.TrangChuJFrame;
 
 public class Main {
-	TrangChuJFrame frame = new TrangChuJFrame();
-	
+	public static void main(String[] args) {
+		new TrangChuJFrame().setVisible(true);
+	}
 }

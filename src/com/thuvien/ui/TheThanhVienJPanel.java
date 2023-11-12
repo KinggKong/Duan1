@@ -26,16 +26,19 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.thuvien.dao.HangTheThanhVienDao;
 import com.thuvien.dao.TheThanhVienDao;
+import com.thuvien.entity.HangThanhVien;
 import com.thuvien.entity.TacGia;
 import com.thuvien.entity.ThanhVien;
 import com.thuvien.entity.TheThanhVien;
 import com.thuvien.utils.DialogHelper;
+import javax.swing.DefaultComboBoxModel;
 
 public class TheThanhVienJPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField txtTheThanhVien;
+	private JTextField txtMaTheThanhVien;
 	private JTextField txtThanhVien;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField txtTimKiem;
@@ -58,6 +61,12 @@ public class TheThanhVienJPanel extends JPanel {
 	private JTextField txtNgayCap;
 	private JTextField txtOldID;
 	TheThanhVienDao ttvd = new TheThanhVienDao();
+	private JComboBox cbxHangThanhVien;
+	private JComboBox cbxTrangThai;
+	DefaultComboBoxModel cbxModel = new DefaultComboBoxModel<>();
+	HangTheThanhVienDao htvd = new HangTheThanhVienDao();
+	private JTextField txtID;
+	private JComboBox cbxThoiGianHieuLuc;
 
 	public TheThanhVienJPanel() {
 		setLayout(null);
@@ -69,7 +78,7 @@ public class TheThanhVienJPanel extends JPanel {
 
 		JPanel pnlThongTinTG = new JPanel();
 		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		pnlThongTinTG.setBounds(10, 102, 459, 248);
+		pnlThongTinTG.setBounds(10, 103, 459, 281);
 		add(pnlThongTinTG);
 		pnlThongTinTG.setLayout(null);
 
@@ -78,10 +87,10 @@ public class TheThanhVienJPanel extends JPanel {
 		lblMaThanhVien.setBounds(10, 16, 157, 19);
 		pnlThongTinTG.add(lblMaThanhVien);
 
-		txtTheThanhVien = new JTextField();
-		txtTheThanhVien.setColumns(10);
-		txtTheThanhVien.setBounds(10, 38, 198, 19);
-		pnlThongTinTG.add(txtTheThanhVien);
+		txtMaTheThanhVien = new JTextField();
+		txtMaTheThanhVien.setColumns(10);
+		txtMaTheThanhVien.setBounds(10, 38, 198, 19);
+		pnlThongTinTG.add(txtMaTheThanhVien);
 
 		JLabel lblHangThanhVien = new JLabel("Hạng Thành Viên");
 		lblHangThanhVien.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -133,11 +142,13 @@ public class TheThanhVienJPanel extends JPanel {
 		txtOldID.setBounds(10, 191, 198, 19);
 		pnlThongTinTG.add(txtOldID);
 
-		JComboBox cbxHangThanhVien = new JComboBox();
+		cbxHangThanhVien = new JComboBox();
 		cbxHangThanhVien.setBounds(10, 88, 198, 21);
+
 		pnlThongTinTG.add(cbxHangThanhVien);
 
-		JComboBox cbxThoiGianHieuLuc = new JComboBox();
+		cbxThoiGianHieuLuc = new JComboBox();
+		cbxThoiGianHieuLuc.setModel(new DefaultComboBoxModel(new String[] { "3", "6", "9", "12", "24" }));
 		cbxThoiGianHieuLuc.setBounds(252, 138, 198, 21);
 		pnlThongTinTG.add(cbxThoiGianHieuLuc);
 
@@ -146,9 +157,22 @@ public class TheThanhVienJPanel extends JPanel {
 		lblTrangThai.setBounds(252, 164, 104, 19);
 		pnlThongTinTG.add(lblTrangThai);
 
-		JComboBox cbxTrangThai = new JComboBox();
+		cbxTrangThai = new JComboBox();
+		cbxTrangThai.setModel(new DefaultComboBoxModel(new String[] { "Hoạt Động", "Ngừng Hoạt Động" }));
 		cbxTrangThai.setBounds(252, 190, 198, 21);
 		pnlThongTinTG.add(cbxTrangThai);
+
+		JLabel lblID = new JLabel("ID");
+		lblID.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblID.setBounds(13, 220, 104, 19);
+		pnlThongTinTG.add(lblID);
+
+		txtID = new JTextField();
+		txtID.setEditable(false);
+		txtID.setEnabled(false);
+		txtID.setColumns(10);
+		txtID.setBounds(10, 249, 198, 19);
+		pnlThongTinTG.add(txtID);
 
 		JPanel pnlDanhSach = new JPanel();
 		pnlDanhSach.setLayout(null);
@@ -208,8 +232,8 @@ public class TheThanhVienJPanel extends JPanel {
 			}
 		});
 		scrollPane.setViewportView(table);
-		String[] columns = { "Mã Thẻ", "Hạng Thẻ", "Ngày Cấp", "Ngày Hiệu Lực", "Thời Gian Hiệu Lực", "Thành Viên",
-				"OLD ID", "Trạng Thái" };
+		String[] columns = { "ID", "Mã Thẻ", "Hạng Thẻ", "Ngày Cấp", "Ngày Hiệu Lực", "Thời Gian Hiệu Lực",
+				"Thành Viên", "OLD ID", "Trạng Thái" };
 		Object[][] rows = {
 
 		};
@@ -217,7 +241,7 @@ public class TheThanhVienJPanel extends JPanel {
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(67, 434, 350, 30);
+		pnlButton2.setBounds(67, 452, 350, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -262,7 +286,7 @@ public class TheThanhVienJPanel extends JPanel {
 		pnlButton2.add(btnLast);
 
 		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(67, 379, 350, 30);
+		pnlButton1.setBounds(67, 412, 350, 30);
 		add(pnlButton1);
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -324,7 +348,7 @@ public class TheThanhVienJPanel extends JPanel {
 		add(btnNextList);
 
 		setStatus(true);
-
+		fillCbxHang();
 		lblIndexTrang = new JLabel("1");
 		lblIndexTrang.setBounds(785, 491, 39, 13);
 		add(lblIndexTrang);
@@ -338,7 +362,6 @@ public class TheThanhVienJPanel extends JPanel {
 			@Override
 			protected void done() {
 				super.done();
-				// Tự động thực hiện khi load xong
 			}
 		};
 
@@ -358,8 +381,8 @@ public class TheThanhVienJPanel extends JPanel {
 					List<TheThanhVien> list = get();
 					model.setRowCount(0);
 					for (TheThanhVien ttv : list) {
-						Object[] row = { ttv.getMaTTV(), ttv.getIdHangTV(), ttv.getNgayCap(), ttv.getNgayHieuLuc(),
-								ttv.getTgHieuLuc(), ttv.getIdThanhVien(), ttv.getOldID(),
+						Object[] row = { ttv.getId(), ttv.getMaTTV(), ttv.getIdHangTV(), ttv.getNgayCap(),
+								ttv.getNgayHieuLuc(), ttv.getTgHieuLuc(), ttv.getIdThanhVien(), ttv.getOldID(),
 								ttv.isTrangThai() ? "Còn Hiệu Lực" : "Hết Hiệu Lực" };
 						model.addRow(row);
 					}
@@ -388,21 +411,49 @@ public class TheThanhVienJPanel extends JPanel {
 
 	}
 
-	void setForm(TacGia tg) {
+	void setForm(TheThanhVien ttv) {
+		txtID.setText(ttv.getId() + "");
+		txtMaTheThanhVien.setText(ttv.getMaTTV());
+		for (int i = 0; i < cbxModel.getSize(); i++) {
+			HangThanhVien htv = (HangThanhVien) cbxModel.getElementAt(i);
+			if (ttv.getIdHangTV() == htv.getId()) {
+				cbxHangThanhVien.setSelectedIndex(i);
+				break;
+			}
+		}
+		txtNgayCap.setText(ttv.getNgayCap() + "");
+		txtNgayHieuLuc.setText(ttv.getNgayHieuLuc() + "");
+		cbxThoiGianHieuLuc.setSelectedItem(ttv.getTgHieuLuc());
+		txtOldID.setText(ttv.getOldID() + "");
+		if (ttv.isTrangThai()) {
+			cbxTrangThai.setSelectedIndex(0);
+		} else {
+			cbxTrangThai.setSelectedIndex(1);
+		}
 
 	}
 
 	ThanhVien getForm() {
-		
+
 		return null;
 	}
 
 	void edit() {
+		try {
+			int id = (int) table.getValueAt(this.index, 0);
+			TheThanhVien ttv = ttvd.selectById(id);
+			if (ttv != null) {
+				setForm(ttv);
+				setStatus(false);
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
+		}
 
 	}
 
 	void setStatus(boolean insertable) {
-		txtTheThanhVien.setEditable(insertable);
+		txtMaTheThanhVien.setEditable(insertable);
 		btnInsert.setEnabled(insertable);
 		btnUpdate.setEnabled(!insertable);
 		btnDelete.setEnabled(!insertable);
@@ -415,5 +466,15 @@ public class TheThanhVienJPanel extends JPanel {
 	}
 
 	void search() {
+	}
+
+	public void fillCbxHang() {
+		cbxHangThanhVien.removeAllItems();
+		List<HangThanhVien> hangList = htvd.selectAll();
+		for (HangThanhVien htv : hangList) {
+			cbxModel.addElement(htv);
+		}
+		;
+		cbxHangThanhVien.setModel(cbxModel);
 	}
 }

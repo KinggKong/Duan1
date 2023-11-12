@@ -8,7 +8,7 @@ import java.util.List;
 import com.thuvien.entity.TheThanhVien;
 import com.thuvien.utils.JDBCHelper;
 
-public class TheThanhVienDao extends QLTVDao<TheThanhVien, String> {
+public class TheThanhVienDao extends QLTVDao<TheThanhVien, Integer> {
 
 	@Override
 	public void insert(TheThanhVien entity) {
@@ -21,7 +21,7 @@ public class TheThanhVienDao extends QLTVDao<TheThanhVien, String> {
 
 	@Override
 	public void update(TheThanhVien entity) {
-		String sql = " update  TheThanhVien  set IDHangTV=?,NgayCap=?,NgayHieuLuc=?,TgHieuLuc=?,IDThanhVien=?,OldID=?,TrangThai=? where MaTheTV =?";
+		String sql = " update  TheThanhVien  set IDHangTV=?,NgayCap=?,NgayHieuLuc=?,TgHieuLuc=?,IDThanhVien=?,OldID=?,TrangThai=? where id = ?";
 		JDBCHelper.executeUpdate(sql, entity.getIdHangTV(), entity.getNgayCap(), entity.getNgayHieuLuc(),
 				entity.getTgHieuLuc(), entity.getIdThanhVien(), entity.getOldID(), entity.isTrangThai(),
 				entity.getMaTTV());
@@ -29,8 +29,8 @@ public class TheThanhVienDao extends QLTVDao<TheThanhVien, String> {
 	}
 
 	@Override
-	public void delete(String key) {
-		String sql = "delete from TheThanhVien where MaTheTV =?";
+	public void delete(Integer key) {
+		String sql = "delete from TheThanhVien where id =?";
 		JDBCHelper.executeUpdate(sql, key);
 	}
 
@@ -41,8 +41,8 @@ public class TheThanhVienDao extends QLTVDao<TheThanhVien, String> {
 	}
 
 	@Override
-	public TheThanhVien selectById(String key) {
-		String sql = "select MaTheTV,IDHangTV,NgayCap,NgayHieuLuc,TgHieuLuc,IDThanhVien,OldID,TrangThai where MaTheTV =?";
+	public TheThanhVien selectById(Integer key) {
+		String sql = "select * from TheThanhVien where id = ?";
 		TheThanhVien ttv = null;
 		try {
 			ResultSet rs = null;
@@ -62,21 +62,22 @@ public class TheThanhVienDao extends QLTVDao<TheThanhVien, String> {
 	}
 
 	public List<TheThanhVien> loadTrang(int indexTrang, int limit) {
-		String sql = " select MaTheTV,IDHangTV,NgayCap,NgayHieuLuc,TgHieuLuc,IDThanhVien,OldID,TrangThai from TheThanhVien order by MaTheTV offset ? rows fetch next ? rows only ";
+		String sql = " select * from TheThanhVien order by id offset ? rows fetch next ? rows only ";
 		List<TheThanhVien> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 	}
 
 	private TheThanhVien readFromResultSet(ResultSet rs) throws SQLException {
 		TheThanhVien model = new TheThanhVien();
-		model.setMaTTV(rs.getString(1));
-		model.setIdHangTV(rs.getInt(2));
-		model.setNgayCap(rs.getDate(3));
-		model.setNgayHieuLuc(rs.getDate(4));
-		model.setTgHieuLuc(rs.getInt(5));
-		model.setIdThanhVien(rs.getInt(6));
-		model.setOldID(rs.getInt(7));
-		model.setTrangThai(rs.getBoolean(8));
+		model.setId(rs.getInt(1));
+		model.setMaTTV(rs.getString(2));
+		model.setIdHangTV(rs.getInt(3));
+		model.setNgayCap(rs.getDate(4));
+		model.setNgayHieuLuc(rs.getDate(5));
+		model.setTgHieuLuc(rs.getInt(6));
+		model.setIdThanhVien(rs.getInt(7));
+		model.setOldID(rs.getInt(8));
+		model.setTrangThai(rs.getBoolean(9));
 		return model;
 	}
 
