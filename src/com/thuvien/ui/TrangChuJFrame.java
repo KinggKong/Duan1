@@ -44,7 +44,6 @@ public class TrangChuJFrame extends JFrame {
 	}
 
 	public TrangChuJFrame() {
-            System.out.println("ccccc");
 		init();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1150, 665);

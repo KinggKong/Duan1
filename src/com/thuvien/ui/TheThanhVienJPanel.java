@@ -341,7 +341,16 @@ public class TheThanhVienJPanel extends JPanel {
 		btnNextList = new JButton("Next");
 		btnNextList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				indexTrang++;
 
+				if (indexTrang > (Math.ceil(ttvd.selectAll().size() * 1.0 / 5))) {
+					DialogHelper.alert(null, "Đây là trang cuối cùng !");
+					indexTrang--;
+				} else {
+
+					load(indexTrang);
+					lblIndexTrang.setText(indexTrang + "");
+				}
 			}
 		});
 		btnNextList.setBounds(849, 487, 85, 21);
