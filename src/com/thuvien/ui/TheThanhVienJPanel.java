@@ -9,6 +9,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.*;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -33,13 +34,14 @@ import com.thuvien.entity.TacGia;
 import com.thuvien.entity.ThanhVien;
 import com.thuvien.entity.TheThanhVien;
 import com.thuvien.utils.DialogHelper;
+import com.thuvien.utils.XDate;
+
 import javax.swing.DefaultComboBoxModel;
 
 public class TheThanhVienJPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTextField txtMaTheThanhVien;
-	private JTextField txtThanhVien;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField txtTimKiem;
 	private JTable table;
@@ -67,6 +69,8 @@ public class TheThanhVienJPanel extends JPanel {
 	HangTheThanhVienDao htvd = new HangTheThanhVienDao();
 	private JTextField txtID;
 	private JComboBox cbxThoiGianHieuLuc;
+	private JComboBox cbxThanhVien;
+	DefaultComboBoxModel cbxModelThanhVien = new DefaultComboBoxModel<>();
 
 	public TheThanhVienJPanel() {
 		setLayout(null);
@@ -101,11 +105,6 @@ public class TheThanhVienJPanel extends JPanel {
 		lblThanhVien.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblThanhVien.setBounds(10, 118, 104, 19);
 		pnlThongTinTG.add(lblThanhVien);
-
-		txtThanhVien = new JTextField();
-		txtThanhVien.setColumns(10);
-		txtThanhVien.setBounds(10, 139, 198, 19);
-		pnlThongTinTG.add(txtThanhVien);
 
 		JLabel lblThoiGianHieuLuc = new JLabel("Thời Gian Hiệu Lực");
 		lblThoiGianHieuLuc.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -173,6 +172,11 @@ public class TheThanhVienJPanel extends JPanel {
 		txtID.setColumns(10);
 		txtID.setBounds(10, 249, 198, 19);
 		pnlThongTinTG.add(txtID);
+
+		cbxThanhVien = new JComboBox();
+		cbxThanhVien.setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4" }));
+		cbxThanhVien.setBounds(10, 138, 198, 21);
+		pnlThongTinTG.add(cbxThanhVien);
 
 		JPanel pnlDanhSach = new JPanel();
 		pnlDanhSach.setLayout(null);
@@ -390,9 +394,9 @@ public class TheThanhVienJPanel extends JPanel {
 					List<TheThanhVien> list = get();
 					model.setRowCount(0);
 					for (TheThanhVien ttv : list) {
-						Object[] row = { ttv.getId(), ttv.getMaTTV(), ttv.getIdHangTV(), ttv.getNgayCap(),
-								ttv.getNgayHieuLuc(), ttv.getTgHieuLuc(), ttv.getIdThanhVien(), ttv.getOldID(),
-								ttv.isTrangThai() ? "Còn Hiệu Lực" : "Hết Hiệu Lực" };
+						Object[] row = { ttv.getId(), ttv.getMaTTV(), htvd.selectById(ttv.getIdHangTV()),
+								ttv.getNgayCap(), ttv.getNgayHieuLuc(), ttv.getTgHieuLuc(), ttv.getIdThanhVien(),
+								ttv.getOldID(), ttv.isTrangThai() ? "Còn Hiệu Lực" : "Hết Hiệu Lực" };
 						model.addRow(row);
 					}
 				} catch (Exception e) {
@@ -405,18 +409,59 @@ public class TheThanhVienJPanel extends JPanel {
 	}
 
 	void insert() {
-
+		try {
+			TheThanhVien tg = getForm();
+			if (tg != null) {
+				ttvd.insert(tg);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Insert Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Insert Failed");
+		}
 	}
 
 	void delete() {
-
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
+				TheThanhVien tg = getForm();
+				ttvd.delete(tg.getId());
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Delete Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Delete Failed");
+		}
 	}
 
 	void update() {
-
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
+				TheThanhVien tg = getForm();
+				ttvd.update(tg);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Update Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Update Failed");
+			e.printStackTrace();
+		}
 	}
 
 	void clear() {
+		txtID.setText("");
+		txtMaTheThanhVien.setText("");
+		txtOldID.setText("");
+		txtNgayCap.setText("");
+		txtNgayHieuLuc.setText("");
+		cbxHangThanhVien.setSelectedIndex(0);
+		cbxThanhVien.setSelectedIndex(0);
+		cbxThoiGianHieuLuc.setSelectedIndex(0);
+		cbxTrangThai.setSelectedIndex(0);
+		btnInsert.setEnabled(true);
 
 	}
 
@@ -442,9 +487,50 @@ public class TheThanhVienJPanel extends JPanel {
 
 	}
 
-	ThanhVien getForm() {
+	TheThanhVien getForm() {
+		TheThanhVien ttv = new TheThanhVien();
 
-		return null;
+		if (txtID.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống id");
+			return null;
+		} else {
+			ttv.setId(Integer.valueOf(txtID.getText()));
+		}
+
+		if (txtMaTheThanhVien.getText().isEmpty()) {
+			DialogHelper.alert(this, "Khong de trong ma the");
+			return null;
+		} else {
+			ttv.setMaTTV(txtMaTheThanhVien.getText());
+		}
+
+		if (txtNgayCap.getText().isEmpty()) {
+			DialogHelper.alert(this, "Khong de trong ngay cap");
+			return null;
+		} else {
+			Date nc = XDate.toDate(txtNgayCap.getText(), "yyyy-MM-dd");
+			ttv.setNgayCap(nc);
+		}
+
+		if (txtNgayHieuLuc.getText().isEmpty()) {
+
+		} else {
+			ttv.setNgayHieuLuc(XDate.toDate(txtNgayHieuLuc.getText(), "yyyy-MM-dd"));
+		}
+
+		if (txtOldID.getText().isEmpty()) {
+			ttv.setOldID(0);
+		} else {
+			ttv.setOldID(Integer.valueOf(txtOldID.getText()));
+		}
+
+		HangThanhVien htv = (HangThanhVien) cbxHangThanhVien.getSelectedItem();
+		ttv.setIdHangTV(htv.getId());
+		Integer tg = Integer.valueOf((String) cbxThoiGianHieuLuc.getSelectedItem());
+		ttv.setTgHieuLuc(tg);
+		ttv.setIdThanhVien(Integer.valueOf((String) cbxThanhVien.getSelectedItem()));
+		ttv.setTrangThai(cbxTrangThai.getSelectedItem() == "Hoạt Động" ? true : false);
+		return ttv;
 	}
 
 	void edit() {
@@ -485,5 +571,10 @@ public class TheThanhVienJPanel extends JPanel {
 		}
 		;
 		cbxHangThanhVien.setModel(cbxModel);
+	}
+
+	public void fillCbxThanhVien() {
+		cbxThanhVien.removeAllItems();
+		List<ThanhVien> listThanhVien;
 	}
 }

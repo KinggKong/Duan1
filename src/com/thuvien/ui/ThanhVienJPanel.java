@@ -59,6 +59,7 @@ public class ThanhVienJPanel extends JPanel {
 	private JTextField txtNgaySinh;
 	private JTextField txtNgayDangKy;
 	private JTextField txtCCCD;
+	private JTextArea txtDiaChi;
 
 	public ThanhVienJPanel() {
 		setLayout(null);
@@ -155,7 +156,7 @@ public class ThanhVienJPanel extends JPanel {
 		scrollPane_1.setBounds(10, 245, 454, 62);
 		pnlThongTinTG.add(scrollPane_1);
 
-		JTextArea txtDiaChi = new JTextArea();
+		txtDiaChi = new JTextArea();
 		txtDiaChi.setLineWrap(true);
 		scrollPane_1.setViewportView(txtDiaChi);
 

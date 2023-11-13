@@ -24,7 +24,7 @@ public class TheThanhVienDao extends QLTVDao<TheThanhVien, Integer> {
 		String sql = " update  TheThanhVien  set IDHangTV=?,NgayCap=?,NgayHieuLuc=?,TgHieuLuc=?,IDThanhVien=?,OldID=?,TrangThai=? where id = ?";
 		JDBCHelper.executeUpdate(sql, entity.getIdHangTV(), entity.getNgayCap(), entity.getNgayHieuLuc(),
 				entity.getTgHieuLuc(), entity.getIdThanhVien(), entity.getOldID(), entity.isTrangThai(),
-				entity.getMaTTV());
+				entity.getId());
 
 	}
 

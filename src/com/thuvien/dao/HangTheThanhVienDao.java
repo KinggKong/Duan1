@@ -54,7 +54,6 @@ public class HangTheThanhVienDao extends QLTVDao<HangThanhVien, Integer> {
 		} catch (SQLException ex) {
 			throw new RuntimeException(ex);
 		}
-		System.out.println(tg);
 		return tg;
 
 	}
