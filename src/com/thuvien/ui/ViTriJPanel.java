@@ -54,13 +54,13 @@ public class ViTriJPanel extends JPanel {
 	public ViTriJPanel() {
 		setLayout(null);
 		JLabel lblTitle = new JLabel("Quản Lý Vị Trí");
-		lblTitle.setBounds(406, 10, 327, 37);
+		lblTitle.setBounds(535, 10, 327, 37);
 		lblTitle.setForeground(Color.BLUE);
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
 		add(lblTitle);
 
 		JPanel pnlThongTinTG = new JPanel();
-		pnlThongTinTG.setBounds(32, 104, 429, 105);
+		pnlThongTinTG.setBounds(57, 174, 429, 105);
 		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		add(pnlThongTinTG);
 		pnlThongTinTG.setLayout(null);
@@ -92,7 +92,7 @@ public class ViTriJPanel extends JPanel {
 		pnlThongTinTG.add(txtDay);
 
 		JPanel pnlDanhSach = new JPanel();
-		pnlDanhSach.setBounds(527, 81, 491, 345);
+		pnlDanhSach.setBounds(605, 94, 662, 345);
 		pnlDanhSach.setLayout(null);
 		pnlDanhSach.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
@@ -100,7 +100,7 @@ public class ViTriJPanel extends JPanel {
 		add(pnlDanhSach);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 28, 471, 307);
+		scrollPane.setBounds(10, 28, 630, 307);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -123,7 +123,7 @@ public class ViTriJPanel extends JPanel {
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(67, 324, 350, 30);
+		pnlButton2.setBounds(100, 381, 350, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -168,7 +168,7 @@ public class ViTriJPanel extends JPanel {
 		pnlButton2.add(btnLast);
 
 		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(67, 260, 350, 30);
+		pnlButton1.setBounds(100, 321, 350, 30);
 		add(pnlButton1);
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -205,7 +205,7 @@ public class ViTriJPanel extends JPanel {
 		pnlButton1.add(btnClear);
 
 		btnPrevList = new JButton("Prev");
-		btnPrevList.setBounds(645, 487, 85, 21);
+		btnPrevList.setBounds(777, 487, 85, 21);
 		btnPrevList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang--;
@@ -221,7 +221,7 @@ public class ViTriJPanel extends JPanel {
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
-		btnNextList.setBounds(849, 487, 85, 21);
+		btnNextList.setBounds(1049, 487, 85, 21);
 		btnNextList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -232,7 +232,7 @@ public class ViTriJPanel extends JPanel {
 		setStatus(true);
 
 		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(785, 491, 39, 13);
+		lblIndexTrang.setBounds(950, 491, 56, 13);
 		add(lblIndexTrang);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override

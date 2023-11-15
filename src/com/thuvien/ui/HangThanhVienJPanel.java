@@ -9,6 +9,8 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -24,8 +26,8 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.thuvien.dao.HangTheThanhVienDao;
 import com.thuvien.entity.HangThanhVien;
-import com.thuvien.entity.TacGia;
 import com.thuvien.utils.DialogHelper;
 
 public class HangThanhVienJPanel extends JPanel {
@@ -54,18 +56,20 @@ public class HangThanhVienJPanel extends JPanel {
 	private JTextField txtThoiGianHieuLuc;
 	private JTextField txtTuoiMin;
 	private JTextField txtTuoiMax;
+	HangTheThanhVienDao htvd = new HangTheThanhVienDao();
+	private JTextField textField;
 
 	public HangThanhVienJPanel() {
 		setLayout(null);
 		JLabel lblTitle = new JLabel("Quản Lý Hạng Thành Viên");
 		lblTitle.setForeground(Color.BLUE);
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblTitle.setBounds(314, 10, 434, 37);
+		lblTitle.setBounds(457, 10, 434, 37);
 		add(lblTitle);
 
 		JPanel pnlThongTinTG = new JPanel();
 		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		pnlThongTinTG.setBounds(26, 81, 470, 317);
+		pnlThongTinTG.setBounds(87, 91, 470, 317);
 		add(pnlThongTinTG);
 		pnlThongTinTG.setLayout(null);
 
@@ -189,11 +193,11 @@ public class HangThanhVienJPanel extends JPanel {
 		pnlDanhSach.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
 				"Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		pnlDanhSach.setBounds(527, 81, 513, 378);
+		pnlDanhSach.setBounds(658, 81, 643, 378);
 		add(pnlDanhSach);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 61, 493, 307);
+		scrollPane.setBounds(10, 61, 623, 307);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -208,15 +212,29 @@ public class HangThanhVienJPanel extends JPanel {
 			}
 		});
 		scrollPane.setViewportView(table);
-		String[] columns = { "Mã Hạng", "Tên", "Đơn Giá", "Phí Thuê", "Tháng Hiệu Lực", "Tuổi Min", "Tuổi Max" };
+		String[] columns = { "ID", "Mã Hạng", "Tên", "Đơn Giá", "Phí Thuê", "Tháng Hiệu Lực", "Tuổi Min", "Tuổi Max" };
 		Object[][] rows = {
 
 		};
 		model = new DefaultTableModel(rows, columns);
 		table.setModel(model);
+		
+		textField = new JTextField();
+		textField.setBounds(129, 24, 379, 19);
+		pnlDanhSach.add(textField);
+		textField.setColumns(10);
+		
+		JButton btnNewButton = new JButton("Search");
+		btnNewButton.setBounds(530, 23, 85, 21);
+		pnlDanhSach.add(btnNewButton);
+		
+		JLabel lblTmKim = new JLabel("Tìm Kiếm");
+		lblTmKim.setBounds(15, 22, 104, 19);
+		pnlDanhSach.add(lblTmKim);
+		lblTmKim.setFont(new Font("Tahoma", Font.BOLD, 15));
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(67, 475, 350, 30);
+		pnlButton2.setBounds(141, 482, 350, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -261,7 +279,7 @@ public class HangThanhVienJPanel extends JPanel {
 		pnlButton2.add(btnLast);
 
 		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(67, 418, 350, 30);
+		pnlButton1.setBounds(141, 429, 350, 30);
 		add(pnlButton1);
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -310,22 +328,30 @@ public class HangThanhVienJPanel extends JPanel {
 				}
 			}
 		});
-		btnPrevList.setBounds(645, 487, 85, 21);
+		btnPrevList.setBounds(827, 491, 85, 21);
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
 		btnNextList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				indexTrang++;
+				if (indexTrang > (Math.ceil(htvd.selectAll().size() * 1.0 / 5))) {
+					DialogHelper.alert(null, "Đây là trang cuối cùng !");
+					indexTrang--;
+				} else {
 
+					load(indexTrang);
+					lblIndexTrang.setText(indexTrang + "");
+				}
 			}
 		});
-		btnNextList.setBounds(849, 487, 85, 21);
+		btnNextList.setBounds(1098, 491, 85, 21);
 		add(btnNextList);
 
 		setStatus(true);
 
 		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(785, 491, 39, 13);
+		lblIndexTrang.setBounds(1002, 495, 39, 13);
 		add(lblIndexTrang);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
@@ -344,46 +370,170 @@ public class HangThanhVienJPanel extends JPanel {
 		worker.execute();
 	}
 
-//	void load(int soTrang) {
-//		SwingUtilities.invokeLater(() -> {
-//			List<TacGia> list = tgd.loadTrang((soTrang - 1) * 5, 5);
-//			model.setRowCount(0);
-//			for (TacGia tg : list) {
-//				Object[] row = { tg.getMaTG(), tg.getHoTen(), tg.getQuocTich(), tg.isGioiTinh() ? "Nam" : "Nữ" };
-//				model.addRow(row);
-//			}
-//		});
-//	}
-
 	void load(int soTrang) {
+		SwingWorker<List<HangThanhVien>, Void> worker = new SwingWorker<List<HangThanhVien>, Void>() {
 
+			@Override
+			protected List<HangThanhVien> doInBackground() throws Exception {
+				return htvd.loadTrang((soTrang - 1) * 5, 5);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<HangThanhVien> list = get();
+					model.setRowCount(0);
+					for (HangThanhVien htv : list) {
+						Object[] rows = { htv.getId(), htv.getMaHTV(), htv.getTenHang(), htv.getDonGia(),
+								htv.getPhiThueSach(), htv.getSoThangHieuLuc(), htv.getTuoiMin(), htv.getTuoiMax() };
+						model.addRow(rows);
+					}
+
+				} catch (InterruptedException e) {
+					DialogHelper.alert(null, "Lỗi truy vấn dữ liệu!");
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					DialogHelper.alert(null, "Lỗi truy vấn dữ liệu!");
+					e.printStackTrace();
+				}
+
+			}
+
+		};
+		worker.execute();
 	}
 
 	void insert() {
-
+		try {
+			HangThanhVien htv = getForm();
+			if (htv != null) {
+				htvd.insert(htv);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Insert Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Insert Failed");
+		}
 	}
 
 	void delete() {
-
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
+				int id = (int) table.getValueAt(index, 0);
+				htvd.delete(id);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Delete Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Delete Failed");
+		}
 	}
 
 	void update() {
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
+				HangThanhVien htv = getForm();
+				htvd.update(htv);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Update Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Update Failed");
+		}
 
 	}
 
 	void clear() {
-
+		txtMaHTV.setText("");
+		txtTenHang.setText("");
+		txtDonGia.setText("");
+		txtPhiThueSach.setText("");
+		txtThoiGianHieuLuc.setText("");
+		txtTuoiMin.setText("");
+		txtTuoiMax.setText("");
+		setStatus(true);
 	}
 
-	void setForm(TacGia tg) {
-
+	void setForm(HangThanhVien htv) {
+		txtMaHTV.setText(htv.getMaHTV());
+		txtTenHang.setText(htv.getTenHang());
+		txtDonGia.setText(htv.getDonGia() + "");
+		txtPhiThueSach.setText(htv.getPhiThueSach() + "");
+		txtThoiGianHieuLuc.setText(htv.getSoThangHieuLuc() + "");
+		txtTuoiMin.setText(htv.getTuoiMin() + "");
+		txtTuoiMax.setText(htv.getTuoiMax() + "");
 	}
 
 	HangThanhVien getForm() {
-		return null;
+		HangThanhVien htv = new HangThanhVien();
+		if (txtMaHTV.getText().isEmpty()) {
+
+		} else {
+			htv.setMaHTV(txtMaHTV.getText());
+		}
+
+		if (txtTenHang.getText().isEmpty()) {
+
+		} else {
+			htv.setTenHang(txtTenHang.getText());
+		}
+
+		if (txtDonGia.getText().isEmpty()) {
+
+		} else {
+			try {
+				float donGia = Float.valueOf(txtDonGia.getText());
+				htv.setDonGia(donGia);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+
+		if (txtPhiThueSach.getText().isEmpty()) {
+
+		} else {
+			float donGia2 = Float.valueOf(txtPhiThueSach.getText());
+			htv.setPhiThueSach(donGia2);
+		}
+
+		if (txtThoiGianHieuLuc.getText().isEmpty()) {
+
+		} else {
+			int tg = Integer.valueOf(txtThoiGianHieuLuc.getText());
+			htv.setSoThangHieuLuc(tg);
+		}
+
+		if (txtTuoiMin.getText().isEmpty()) {
+
+		} else {
+			int tuoiMin = Integer.valueOf(txtTuoiMin.getText());
+			htv.setTuoiMin(tuoiMin);
+		}
+
+		if (txtTuoiMax.getText().isEmpty()) {
+
+		} else {
+			int tuoiMax = Integer.valueOf(txtTuoiMax.getText());
+			htv.setTuoiMax(tuoiMax);
+		}
+		return htv;
 	}
 
 	void edit() {
+		try {
+			int id = (int) table.getValueAt(index, 0);
+			HangThanhVien htv = htvd.selectById(id);
+			if (htv != null) {
+				setForm(htv);
+				setStatus(false);
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
+			e.printStackTrace();
+		}
 
 	}
 

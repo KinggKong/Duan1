@@ -14,20 +14,22 @@ public class HangTheThanhVienDao extends QLTVDao<HangThanhVien, Integer> {
 
 	@Override
 	public void insert(HangThanhVien entity) {
-		// TODO Auto-generated method stub
-
+		String sql = "insert into HangThanhVien(MaHTV,TenHang,DonGia,PhiThueSach,SoThangHieuLuc,TuoiMin,TuoiMax) values(?,?,?,?,?,?,?)";
+		JDBCHelper.executeUpdate(sql, entity.getMaHTV(), entity.getTenHang(), entity.getDonGia(),
+				entity.getPhiThueSach(), entity.getSoThangHieuLuc(), entity.getTuoiMin(), entity.getTuoiMax());
 	}
 
 	@Override
 	public void update(HangThanhVien entity) {
-		// TODO Auto-generated method stub
-
+		String sql = "update HangThanhVien set TenHang = ?, DonGia =?,PhiThueSach =?, SoThangHieuLuc =?, TuoiMin =?, TuoiMax =? where MaHTV = ?";
+		JDBCHelper.executeUpdate(sql, entity.getTenHang(), entity.getDonGia(), entity.getPhiThueSach(),
+				entity.getSoThangHieuLuc(), entity.getTuoiMin(), entity.getTuoiMax(), entity.getMaHTV());
 	}
 
 	@Override
 	public void delete(Integer key) {
-		// TODO Auto-generated method stub
-
+		String sql = "delete from HangThanhVien where id=?";
+		JDBCHelper.executeUpdate(sql, key);
 	}
 
 	@Override
@@ -97,7 +99,7 @@ public class HangTheThanhVienDao extends QLTVDao<HangThanhVien, Integer> {
 	}
 
 	public List<HangThanhVien> selectByKeyword(String keyword) {
-		String sql = "SELECT * FROM TacGia WHERE MaTG LIKE ? or TenTG LIKE ?";
+		String sql = "SELECT * FROM HangThanhVien WHERE MaTG LIKE ? or TenTG LIKE ?";
 		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
 	}
 

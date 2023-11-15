@@ -62,34 +62,34 @@ public class TheLoaiJPanel extends JPanel {
         JLabel lblTitle = new JLabel("Quản Lý Thể Loại");
         lblTitle.setForeground(Color.BLUE);
         lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
-        lblTitle.setBounds(406, 10, 327, 37);
+        lblTitle.setBounds(525, 10, 327, 37);
         add(lblTitle);
 
         JPanel pnlThongTinTG = new JPanel();
         pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-        pnlThongTinTG.setBounds(30, 125, 429, 163);
+        pnlThongTinTG.setBounds(98, 130, 429, 163);
         add(pnlThongTinTG);
         pnlThongTinTG.setLayout(null);
 
         JLabel lblMaTG = new JLabel("Mã Thể Loại");
         lblMaTG.setFont(new Font("Tahoma", Font.BOLD, 15));
-        lblMaTG.setBounds(10, 16, 104, 19);
+        lblMaTG.setBounds(147, 17, 104, 19);
         pnlThongTinTG.add(lblMaTG);
 
         txtMaTheLoai = new JTextField();
         txtMaTheLoai.setColumns(10);
-        txtMaTheLoai.setBounds(10, 38, 296, 19);
+        txtMaTheLoai.setBounds(65, 46, 296, 19);
         pnlThongTinTG.add(txtMaTheLoai);
 
         JLabel lblTenTheLoai = new JLabel("Tên Thể Loại");
         lblTenTheLoai.setFont(new Font("Tahoma", Font.BOLD, 15));
-        lblTenTheLoai.setBounds(10, 92, 104, 19);
+        lblTenTheLoai.setBounds(147, 92, 104, 19);
         pnlThongTinTG.add(lblTenTheLoai);
 
         txtTenTheLoai = new JTextField();
 
         txtTenTheLoai.setColumns(10);
-        txtTenTheLoai.setBounds(10, 113, 296, 19);
+        txtTenTheLoai.setBounds(65, 121, 296, 19);
         pnlThongTinTG.add(txtTenTheLoai);
 
         JPanel pnlDanhSach = new JPanel();
@@ -97,7 +97,7 @@ public class TheLoaiJPanel extends JPanel {
         pnlDanhSach.setBorder(new TitledBorder(
                 new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
                 "Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-        pnlDanhSach.setBounds(527, 81, 491, 378);
+        pnlDanhSach.setBounds(654, 87, 590, 378);
         add(pnlDanhSach);
 
         JLabel lblTimKiem = new JLabel("Tìm Kiếm");
@@ -119,7 +119,7 @@ public class TheLoaiJPanel extends JPanel {
         pnlDanhSach.add(btnTimKiem);
 
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(10, 61, 471, 307);
+        scrollPane.setBounds(10, 61, 570, 307);
         pnlDanhSach.add(scrollPane);
 
         table = new JTable();
@@ -140,7 +140,7 @@ public class TheLoaiJPanel extends JPanel {
         table.setModel(model);
 
         JPanel pnlButton2 = new JPanel();
-        pnlButton2.setBounds(67, 415, 350, 30);
+        pnlButton2.setBounds(135, 395, 350, 30);
         add(pnlButton2);
         pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -185,7 +185,7 @@ public class TheLoaiJPanel extends JPanel {
         pnlButton2.add(btnLast);
 
         JPanel pnlButton1 = new JPanel();
-        pnlButton1.setBounds(67, 344, 350, 30);
+        pnlButton1.setBounds(135, 339, 350, 30);
         add(pnlButton1);
         pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -234,11 +234,11 @@ public class TheLoaiJPanel extends JPanel {
                 }
             }
         });
-        btnPrevList.setBounds(645, 487, 85, 21);
+        btnPrevList.setBounds(807, 491, 85, 21);
         add(btnPrevList);
 
         btnNextList = new JButton("Next");
-        btnNextList.setBounds(849, 487, 85, 21);
+        btnNextList.setBounds(1033, 491, 85, 21);
         btnNextList.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 indexTrang++;
@@ -258,7 +258,7 @@ public class TheLoaiJPanel extends JPanel {
         setStatus(true);
 
         lblIndexTrang = new JLabel("1");
-        lblIndexTrang.setBounds(785, 491, 39, 13);
+        lblIndexTrang.setBounds(949, 495, 39, 13);
         add(lblIndexTrang);
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override

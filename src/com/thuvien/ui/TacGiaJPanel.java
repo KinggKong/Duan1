@@ -63,12 +63,12 @@ public class TacGiaJPanel extends JPanel {
 		JLabel lblTitle = new JLabel("Quản Lý Tác Giả");
 		lblTitle.setForeground(Color.BLUE);
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblTitle.setBounds(406, 10, 327, 37);
+		lblTitle.setBounds(503, 10, 327, 37);
 		add(lblTitle);
 
 		JPanel pnlThongTinTG = new JPanel();
 		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		pnlThongTinTG.setBounds(25, 81, 429, 317);
+		pnlThongTinTG.setBounds(66, 93, 429, 317);
 		add(pnlThongTinTG);
 		pnlThongTinTG.setLayout(null);
 
@@ -171,7 +171,7 @@ public class TacGiaJPanel extends JPanel {
 		pnlDanhSach.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
 				"Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		pnlDanhSach.setBounds(527, 81, 491, 378);
+		pnlDanhSach.setBounds(561, 84, 716, 378);
 		add(pnlDanhSach);
 
 		JLabel lblTimKiem = new JLabel("Tìm Kiếm");
@@ -195,7 +195,7 @@ public class TacGiaJPanel extends JPanel {
 				}
 			}
 		});
-		txtTimKiem.setBounds(85, 17, 266, 19);
+		txtTimKiem.setBounds(85, 17, 474, 19);
 		pnlDanhSach.add(txtTimKiem);
 		txtTimKiem.setColumns(10);
 
@@ -205,11 +205,11 @@ public class TacGiaJPanel extends JPanel {
 				search();
 			}
 		});
-		btnTimKiem.setBounds(361, 16, 97, 21);
+		btnTimKiem.setBounds(585, 16, 97, 21);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 61, 471, 307);
+		scrollPane.setBounds(10, 61, 696, 307);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -232,7 +232,7 @@ public class TacGiaJPanel extends JPanel {
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(67, 475, 350, 30);
+		pnlButton2.setBounds(104, 487, 350, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -277,7 +277,7 @@ public class TacGiaJPanel extends JPanel {
 		pnlButton2.add(btnLast);
 
 		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(67, 418, 350, 30);
+		pnlButton1.setBounds(104, 432, 350, 30);
 		add(pnlButton1);
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -326,7 +326,7 @@ public class TacGiaJPanel extends JPanel {
 				}
 			}
 		});
-		btnPrevList.setBounds(645, 487, 85, 21);
+		btnPrevList.setBounds(782, 487, 85, 21);
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
@@ -344,13 +344,13 @@ public class TacGiaJPanel extends JPanel {
 				}
 			}
 		});
-		btnNextList.setBounds(849, 487, 85, 21);
+		btnNextList.setBounds(1049, 484, 85, 21);
 		add(btnNextList);
 
 		setStatus(true);
 
 		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(785, 491, 39, 13);
+		lblIndexTrang.setBounds(955, 491, 39, 13);
 		add(lblIndexTrang);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
@@ -368,17 +368,6 @@ public class TacGiaJPanel extends JPanel {
 
 		worker.execute();
 	}
-
-//	void load(int soTrang) {
-//		SwingUtilities.invokeLater(() -> {
-//			List<TacGia> list = tgd.loadTrang((soTrang - 1) * 5, 5);
-//			model.setRowCount(0);
-//			for (TacGia tg : list) {
-//				Object[] row = { tg.getMaTG(), tg.getHoTen(), tg.getQuocTich(), tg.isGioiTinh() ? "Nam" : "Nữ" };
-//				model.addRow(row);
-//			}
-//		});
-//	}
 
 	void load(int soTrang) {
 		// Thực hiện truy vấn cơ sở dữ liệu trong một SwingWorker
@@ -523,19 +512,6 @@ public class TacGiaJPanel extends JPanel {
 		btnNextEdit.setEnabled(!insertable && last);
 		btnLast.setEnabled(!insertable && last);
 	}
-
-//	void search() {
-//		model.setRowCount(0);
-//		try {
-//			List<TacGia> list = tgd.selectByKeyword(txtTimKiem.getText());
-//			for (TacGia tg : list) {
-//				Object[] row = { tg.getMaTG(), tg.getHoTen(), tg.getQuocTich(), tg.isGioiTinh() ? "Nam" : "Nữ" };
-//				model.addRow(row);
-//			}
-//		} catch (Exception e) {
-//			DialogHelper.alert(this, "Lỗi truy vấn dữ liệu !");
-//		}
-//	}
 
 	void search() {
 		String keyword = txtTimKiem.getText().trim();

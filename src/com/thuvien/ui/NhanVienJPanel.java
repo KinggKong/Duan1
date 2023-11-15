@@ -71,12 +71,12 @@ public class NhanVienJPanel extends JPanel {
         JLabel lblTitle = new JLabel("Quản Lý Nhân Viên");
         lblTitle.setForeground(Color.BLUE);
         lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
-        lblTitle.setBounds(406, 10, 327, 37);
+        lblTitle.setBounds(534, 10, 327, 37);
         add(lblTitle);
         
         JPanel pnlThongTinTG = new JPanel();
         pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-        pnlThongTinTG.setBounds(26, 81, 429, 338);
+        pnlThongTinTG.setBounds(72, 81, 429, 338);
         add(pnlThongTinTG);
         pnlThongTinTG.setLayout(null);
         
@@ -183,7 +183,7 @@ public class NhanVienJPanel extends JPanel {
         pnlDanhSach.setBorder(new TitledBorder(
                 new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
                 "Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-        pnlDanhSach.setBounds(501, 81, 526, 378);
+        pnlDanhSach.setBounds(576, 81, 700, 378);
         add(pnlDanhSach);
         
         JLabel lblTimKiem = new JLabel("Tìm Kiếm");
@@ -207,7 +207,7 @@ public class NhanVienJPanel extends JPanel {
                 }
             }
         });
-        txtTimKiem.setBounds(85, 17, 266, 19);
+        txtTimKiem.setBounds(86, 17, 467, 19);
         pnlDanhSach.add(txtTimKiem);
         txtTimKiem.setColumns(10);
         
@@ -217,11 +217,11 @@ public class NhanVienJPanel extends JPanel {
                 search();
             }
         });
-        btnTimKiem.setBounds(361, 16, 97, 21);
+        btnTimKiem.setBounds(575, 16, 97, 21);
         pnlDanhSach.add(btnTimKiem);
         
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(10, 71, 506, 297);
+        scrollPane.setBounds(10, 71, 680, 297);
         pnlDanhSach.add(scrollPane);
         
         table = new JTable();
@@ -242,7 +242,7 @@ public class NhanVienJPanel extends JPanel {
         table.setModel(model);
         
         JPanel pnlButton2 = new JPanel();
-        pnlButton2.setBounds(67, 488, 350, 30);
+        pnlButton2.setBounds(110, 501, 350, 30);
         add(pnlButton2);
         pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
         
@@ -287,7 +287,7 @@ public class NhanVienJPanel extends JPanel {
         pnlButton2.add(btnLast);
         
         JPanel pnlButton1 = new JPanel();
-        pnlButton1.setBounds(67, 448, 350, 30);
+        pnlButton1.setBounds(110, 448, 350, 30);
         add(pnlButton1);
         pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
         
@@ -336,11 +336,11 @@ public class NhanVienJPanel extends JPanel {
                 }
             }
         });
-        btnPrevList.setBounds(645, 487, 85, 21);
+        btnPrevList.setBounds(761, 501, 85, 21);
         add(btnPrevList);
         
         btnNextList = new JButton("Next");
-        btnNextList.setBounds(849, 487, 85, 21);
+        btnNextList.setBounds(1047, 497, 85, 21);
         add(btnNextList);
          btnNextList.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -359,7 +359,7 @@ public class NhanVienJPanel extends JPanel {
         setStatus(true);
         
         lblIndexTrang = new JLabel("1");
-        lblIndexTrang.setBounds(785, 491, 39, 13);
+        lblIndexTrang.setBounds(951, 505, 39, 13);
         add(lblIndexTrang);
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override

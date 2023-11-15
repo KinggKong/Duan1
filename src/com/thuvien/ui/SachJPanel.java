@@ -36,7 +36,7 @@ public class SachJPanel extends JPanel {
 		setLayout(null);
 
 		JLabel lblTitle = new JLabel("Quản Lý Sách");
-		lblTitle.setBounds(403, 5, 244, 37);
+		lblTitle.setBounds(538, 10, 244, 37);
 		lblTitle.setForeground(Color.BLUE);
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
 		add(lblTitle);
@@ -160,7 +160,7 @@ public class SachJPanel extends JPanel {
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
 
 				"Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		pnlDanhSach.setBounds(538, 86, 491, 378);
+		pnlDanhSach.setBounds(538, 86, 758, 378);
 		add(pnlDanhSach);
 
 		JLabel lblTimKiem = new JLabel("Tìm Kiếm");
@@ -169,15 +169,15 @@ public class SachJPanel extends JPanel {
 
 		txtTimKiem = new JTextField();
 		txtTimKiem.setColumns(10);
-		txtTimKiem.setBounds(85, 17, 266, 19);
+		txtTimKiem.setBounds(85, 17, 525, 19);
 		pnlDanhSach.add(txtTimKiem);
 
 		JButton btnTimKiem = new JButton("Tìm Kiếm");
-		btnTimKiem.setBounds(361, 16, 97, 21);
+		btnTimKiem.setBounds(637, 16, 97, 21);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 61, 471, 307);
+		scrollPane.setBounds(10, 61, 724, 307);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -188,15 +188,15 @@ public class SachJPanel extends JPanel {
 		};
 
 		JButton btnPrevList = new JButton("Prev");
-		btnPrevList.setBounds(645, 489, 85, 21);
+		btnPrevList.setBounds(764, 489, 85, 21);
 		add(btnPrevList);
 
 		JButton btnNextList = new JButton("Next");
-		btnNextList.setBounds(854, 489, 85, 21);
+		btnNextList.setBounds(1056, 489, 85, 21);
 		add(btnNextList);
 
 		JLabel lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(787, 493, 39, 13);
+		lblIndexTrang.setBounds(954, 493, 39, 13);
 		add(lblIndexTrang);
 
 	}

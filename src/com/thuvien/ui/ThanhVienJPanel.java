@@ -66,12 +66,12 @@ public class ThanhVienJPanel extends JPanel {
 		JLabel lblTitle = new JLabel("Quản Lý Thành Viên");
 		lblTitle.setForeground(Color.BLUE);
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblTitle.setBounds(406, 10, 327, 37);
+		lblTitle.setBounds(495, 10, 327, 37);
 		add(lblTitle);
 
 		JPanel pnlThongTinTG = new JPanel();
 		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		pnlThongTinTG.setBounds(23, 81, 474, 317);
+		pnlThongTinTG.setBounds(34, 81, 474, 317);
 		add(pnlThongTinTG);
 		pnlThongTinTG.setLayout(null);
 
@@ -165,7 +165,7 @@ public class ThanhVienJPanel extends JPanel {
 		pnlDanhSach.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
 				"Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		pnlDanhSach.setBounds(527, 81, 513, 378);
+		pnlDanhSach.setBounds(554, 81, 747, 378);
 		add(pnlDanhSach);
 
 		JLabel lblTimKiem = new JLabel("Tìm Kiếm");
@@ -189,7 +189,7 @@ public class ThanhVienJPanel extends JPanel {
 				}
 			}
 		});
-		txtTimKiem.setBounds(85, 17, 266, 19);
+		txtTimKiem.setBounds(85, 17, 514, 19);
 		pnlDanhSach.add(txtTimKiem);
 		txtTimKiem.setColumns(10);
 
@@ -199,11 +199,11 @@ public class ThanhVienJPanel extends JPanel {
 				search();
 			}
 		});
-		btnTimKiem.setBounds(361, 16, 97, 21);
+		btnTimKiem.setBounds(609, 16, 97, 21);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 61, 493, 307);
+		scrollPane.setBounds(10, 61, 727, 307);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -226,7 +226,7 @@ public class ThanhVienJPanel extends JPanel {
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(67, 475, 350, 30);
+		pnlButton2.setBounds(95, 487, 350, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -271,7 +271,7 @@ public class ThanhVienJPanel extends JPanel {
 		pnlButton2.add(btnLast);
 
 		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(67, 418, 350, 30);
+		pnlButton1.setBounds(95, 429, 350, 30);
 		add(pnlButton1);
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -320,7 +320,7 @@ public class ThanhVienJPanel extends JPanel {
 				}
 			}
 		});
-		btnPrevList.setBounds(645, 487, 85, 21);
+		btnPrevList.setBounds(785, 487, 85, 21);
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
@@ -329,13 +329,13 @@ public class ThanhVienJPanel extends JPanel {
 
 			}
 		});
-		btnNextList.setBounds(849, 487, 85, 21);
+		btnNextList.setBounds(1048, 487, 85, 21);
 		add(btnNextList);
 
 		setStatus(true);
 
 		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(785, 491, 39, 13);
+		lblIndexTrang.setBounds(951, 492, 39, 13);
 		add(lblIndexTrang);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override

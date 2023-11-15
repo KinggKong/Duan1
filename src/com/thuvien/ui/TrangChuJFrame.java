@@ -28,7 +28,7 @@ public class TrangChuJFrame extends JFrame {
 	JPanel jpanel;
 
 // Lưu ý !!!
-// các panel con có kích thước chiều dài: 1050; chiều rộng: 540;
+// các panel con có kích thước chiều dài: 1325; chiều rộng: 575;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -46,7 +46,7 @@ public class TrangChuJFrame extends JFrame {
 	public TrangChuJFrame() {
 		init();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1150, 665);
+		setBounds(100, 100, 1350, 700);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLocationRelativeTo(null);
@@ -55,7 +55,7 @@ public class TrangChuJFrame extends JFrame {
 		contentPane.setLayout(null);
 
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 1136, 34);
+		menuBar.setBounds(0, 0, 1336, 34);
 		contentPane.add(menuBar);
 
 		JMenu mnuHeThong = new JMenu("Hệ Thống");
@@ -180,7 +180,7 @@ public class TrangChuJFrame extends JFrame {
 		mnuTroGiup.add(mntmNewMenuItem_1);
 
 		JToolBar toolBar = new JToolBar();
-		toolBar.setBounds(0, 33, 1136, 34);
+		toolBar.setBounds(0, 33, 1336, 34);
 		contentPane.add(toolBar);
 
 		JButton btnSach = new JButton("Sách");
@@ -203,6 +203,12 @@ public class TrangChuJFrame extends JFrame {
 		});
 
 		JButton btnNewButton = new JButton("Quyển Sách");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new QuyenSachJPanel();
+				changePanel(jpanel);
+			}
+		});
 		btnNewButton.setIcon(
 				new ImageIcon(TrangChuJFrame.class.getResource("/icon/Google-Noto-Emoji-Objects-62863-books.24.png")));
 		toolBar.add(btnNewButton);
@@ -230,7 +236,7 @@ public class TrangChuJFrame extends JFrame {
 		toolBar.add(btnPhieuTra);
 
 		pnlContain = new JPanel();
-		pnlContain.setBounds(10, 78, 1126, 540);
+		pnlContain.setBounds(10, 78, 1326, 575);
 		contentPane.add(pnlContain);
 		pnlContain.setLayout(new BorderLayout(0, 0));
 

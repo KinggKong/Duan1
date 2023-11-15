@@ -77,7 +77,7 @@ public class TheThanhVienJPanel extends JPanel {
 		JLabel lblTitle = new JLabel("Quản Lý  Thẻ Thành Viên");
 		lblTitle.setForeground(Color.BLUE);
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblTitle.setBounds(348, 10, 400, 37);
+		lblTitle.setBounds(475, 10, 400, 37);
 		add(lblTitle);
 
 		JPanel pnlThongTinTG = new JPanel();
@@ -88,22 +88,22 @@ public class TheThanhVienJPanel extends JPanel {
 
 		JLabel lblMaThanhVien = new JLabel("Mã Thẻ");
 		lblMaThanhVien.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblMaThanhVien.setBounds(10, 16, 157, 19);
+		lblMaThanhVien.setBounds(10, 67, 157, 19);
 		pnlThongTinTG.add(lblMaThanhVien);
 
 		txtMaTheThanhVien = new JTextField();
 		txtMaTheThanhVien.setColumns(10);
-		txtMaTheThanhVien.setBounds(10, 38, 198, 19);
+		txtMaTheThanhVien.setBounds(10, 89, 198, 19);
 		pnlThongTinTG.add(txtMaTheThanhVien);
 
 		JLabel lblHangThanhVien = new JLabel("Hạng Thành Viên");
 		lblHangThanhVien.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblHangThanhVien.setBounds(10, 67, 139, 19);
+		lblHangThanhVien.setBounds(10, 118, 139, 19);
 		pnlThongTinTG.add(lblHangThanhVien);
 
 		JLabel lblThanhVien = new JLabel("Thành Viên");
 		lblThanhVien.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblThanhVien.setBounds(10, 118, 104, 19);
+		lblThanhVien.setBounds(10, 164, 104, 19);
 		pnlThongTinTG.add(lblThanhVien);
 
 		JLabel lblThoiGianHieuLuc = new JLabel("Thời Gian Hiệu Lực");
@@ -133,16 +133,16 @@ public class TheThanhVienJPanel extends JPanel {
 
 		JLabel lblOldID = new JLabel("Old ID");
 		lblOldID.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblOldID.setBounds(13, 164, 104, 19);
+		lblOldID.setBounds(10, 223, 104, 19);
 		pnlThongTinTG.add(lblOldID);
 
 		txtOldID = new JTextField();
 		txtOldID.setColumns(10);
-		txtOldID.setBounds(10, 191, 198, 19);
+		txtOldID.setBounds(10, 241, 198, 19);
 		pnlThongTinTG.add(txtOldID);
 
 		cbxHangThanhVien = new JComboBox();
-		cbxHangThanhVien.setBounds(10, 88, 198, 21);
+		cbxHangThanhVien.setBounds(10, 138, 198, 21);
 
 		pnlThongTinTG.add(cbxHangThanhVien);
 
@@ -163,19 +163,19 @@ public class TheThanhVienJPanel extends JPanel {
 
 		JLabel lblID = new JLabel("ID");
 		lblID.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblID.setBounds(13, 220, 104, 19);
+		lblID.setBounds(10, 16, 104, 19);
 		pnlThongTinTG.add(lblID);
 
 		txtID = new JTextField();
 		txtID.setEditable(false);
 		txtID.setEnabled(false);
 		txtID.setColumns(10);
-		txtID.setBounds(10, 249, 198, 19);
+		txtID.setBounds(10, 38, 198, 19);
 		pnlThongTinTG.add(txtID);
 
 		cbxThanhVien = new JComboBox();
 		cbxThanhVien.setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4" }));
-		cbxThanhVien.setBounds(10, 138, 198, 21);
+		cbxThanhVien.setBounds(10, 190, 198, 21);
 		pnlThongTinTG.add(cbxThanhVien);
 
 		JPanel pnlDanhSach = new JPanel();
@@ -183,7 +183,7 @@ public class TheThanhVienJPanel extends JPanel {
 		pnlDanhSach.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
 				"Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		pnlDanhSach.setBounds(496, 83, 619, 378);
+		pnlDanhSach.setBounds(496, 83, 819, 378);
 		add(pnlDanhSach);
 
 		JLabel lblTimKiem = new JLabel("Tìm Kiếm");
@@ -207,7 +207,7 @@ public class TheThanhVienJPanel extends JPanel {
 				}
 			}
 		});
-		txtTimKiem.setBounds(85, 17, 266, 19);
+		txtTimKiem.setBounds(85, 17, 567, 19);
 		pnlDanhSach.add(txtTimKiem);
 		txtTimKiem.setColumns(10);
 
@@ -217,11 +217,11 @@ public class TheThanhVienJPanel extends JPanel {
 				search();
 			}
 		});
-		btnTimKiem.setBounds(361, 16, 97, 21);
+		btnTimKiem.setBounds(687, 16, 97, 21);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 61, 599, 307);
+		scrollPane.setBounds(10, 61, 788, 307);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -339,7 +339,7 @@ public class TheThanhVienJPanel extends JPanel {
 				}
 			}
 		});
-		btnPrevList.setBounds(645, 487, 85, 21);
+		btnPrevList.setBounds(731, 487, 85, 21);
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
@@ -357,13 +357,13 @@ public class TheThanhVienJPanel extends JPanel {
 				}
 			}
 		});
-		btnNextList.setBounds(849, 487, 85, 21);
+		btnNextList.setBounds(1021, 487, 85, 21);
 		add(btnNextList);
 
 		setStatus(true);
 		fillCbxHang();
 		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(785, 491, 39, 13);
+		lblIndexTrang.setBounds(915, 491, 36, 13);
 		add(lblIndexTrang);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override

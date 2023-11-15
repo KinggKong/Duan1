@@ -59,12 +59,12 @@ public class NhaXuatBanJPanel extends JPanel {
         JLabel lblTitle = new JLabel("Quản Lý Nhà Xuất Bản");
         lblTitle.setForeground(Color.BLUE);
         lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
-        lblTitle.setBounds(328, 10, 400, 37);
+        lblTitle.setBounds(457, 10, 400, 37);
         add(lblTitle);
 
         JPanel pnlThongTinTG = new JPanel();
         pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-        pnlThongTinTG.setBounds(27, 96, 429, 135);
+        pnlThongTinTG.setBounds(63, 187, 429, 135);
         add(pnlThongTinTG);
         pnlThongTinTG.setLayout(null);
 
@@ -95,7 +95,7 @@ public class NhaXuatBanJPanel extends JPanel {
         pnlDanhSach.setBorder(new TitledBorder(
                 new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
                 "Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-        pnlDanhSach.setBounds(527, 81, 491, 378);
+        pnlDanhSach.setBounds(625, 84, 640, 378);
         add(pnlDanhSach);
 
         JLabel lblTimKiem = new JLabel("Tìm Kiếm");
@@ -117,7 +117,7 @@ public class NhaXuatBanJPanel extends JPanel {
         pnlDanhSach.add(btnTimKiem);
 
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(10, 61, 471, 307);
+        scrollPane.setBounds(10, 61, 620, 307);
         pnlDanhSach.add(scrollPane);
 
         table = new JTable();
@@ -138,7 +138,7 @@ public class NhaXuatBanJPanel extends JPanel {
         table.setModel(model);
 
         JPanel pnlButton2 = new JPanel();
-        pnlButton2.setBounds(67, 335, 350, 30);
+        pnlButton2.setBounds(106, 413, 350, 30);
         add(pnlButton2);
         pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -183,7 +183,7 @@ public class NhaXuatBanJPanel extends JPanel {
         pnlButton2.add(btnLast);
 
         JPanel pnlButton1 = new JPanel();
-        pnlButton1.setBounds(67, 264, 350, 30);
+        pnlButton1.setBounds(106, 373, 350, 30);
         add(pnlButton1);
         pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -232,12 +232,12 @@ public class NhaXuatBanJPanel extends JPanel {
                 }
             }
         });
-        btnPrevList.setBounds(645, 487, 85, 21);
+        btnPrevList.setBounds(785, 487, 85, 21);
         add(btnPrevList);
 
         btnNextList = new JButton("Next");
 
-        btnNextList.setBounds(849, 487, 85, 21);
+        btnNextList.setBounds(1081, 487, 85, 21);
         add(btnNextList);
         btnNextList.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -256,7 +256,7 @@ public class NhaXuatBanJPanel extends JPanel {
         setStatus(true);
 
         lblIndexTrang = new JLabel("1");
-        lblIndexTrang.setBounds(785, 491, 39, 13);
+        lblIndexTrang.setBounds(975, 491, 39, 13);
         add(lblIndexTrang);
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
