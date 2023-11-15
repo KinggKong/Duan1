@@ -218,16 +218,16 @@ public class HangThanhVienJPanel extends JPanel {
 		};
 		model = new DefaultTableModel(rows, columns);
 		table.setModel(model);
-		
+
 		textField = new JTextField();
 		textField.setBounds(129, 24, 379, 19);
 		pnlDanhSach.add(textField);
 		textField.setColumns(10);
-		
+
 		JButton btnNewButton = new JButton("Search");
 		btnNewButton.setBounds(530, 23, 85, 21);
 		pnlDanhSach.add(btnNewButton);
-		
+
 		JLabel lblTmKim = new JLabel("Tìm Kiếm");
 		lblTmKim.setBounds(15, 22, 104, 19);
 		pnlDanhSach.add(lblTmKim);

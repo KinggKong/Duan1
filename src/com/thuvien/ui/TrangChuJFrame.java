@@ -17,9 +17,8 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
+import com.thuvien.utils.Auth;
 import com.thuvien.utils.ShareHelper;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class TrangChuJFrame extends JFrame {
 
@@ -162,6 +161,16 @@ public class TrangChuJFrame extends JFrame {
 		mntmNewMenuItem_5.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Brick house.png")));
 		mnuQuanLy.add(mntmNewMenuItem_5);
 
+		JMenuItem mntmNewMenuItem_6 = new JMenuItem("Tái Bản");
+		mntmNewMenuItem_6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new TaiBanJPanel();
+				changePanel(jpanel);
+			}
+		});
+		mntmNewMenuItem_6.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Yen.png")));
+		mnuQuanLy.add(mntmNewMenuItem_6);
+
 		JMenu mnuThongKe = new JMenu("Thống Kê");
 		menuBar.add(mnuThongKe);
 
@@ -226,11 +235,23 @@ public class TrangChuJFrame extends JFrame {
 		toolBar.add(btnNewButton_1);
 
 		JButton btnPhieuMuon = new JButton("Phiếu Mượn");
+		btnPhieuMuon.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new PhieuMuonJPanel();
+				changePanel(jpanel);
+			}
+		});
 		btnPhieuMuon.setIcon(
 				new ImageIcon(TrangChuJFrame.class.getResource("/icon/Fatcow-Farm-Fresh-Application-form-add.24.png")));
 		toolBar.add(btnPhieuMuon);
 
 		JButton btnPhieuTra = new JButton("Phiếu Trả");
+		btnPhieuTra.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new PhieuTraJPanel();
+				changePanel(jpanel);
+			}
+		});
 		btnPhieuTra.setIcon(new ImageIcon(
 				TrangChuJFrame.class.getResource("/icon/Fatcow-Farm-Fresh-Application-form-delete.24.png")));
 		toolBar.add(btnPhieuTra);
@@ -276,4 +297,5 @@ public class TrangChuJFrame extends JFrame {
 		ShareHelper.logoff();
 		this.openLogin();
 	}
+
 }

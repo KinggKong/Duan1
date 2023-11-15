@@ -14,4 +14,11 @@ public class ShareHelper {
 		return ShareHelper.USER != null;
 	}
 
+	public static String maNhanVien() {
+		return USER.getMaNV();
+	}
+
+	public static boolean isManager() {
+		return Auth.isLogin() && USER.isVaiTro();
+	}
 }
