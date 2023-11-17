@@ -408,7 +408,6 @@ public class TacGiaJPanel extends JPanel {
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Insert Failed");
 		}
-
 	}
 
 	void delete() {
@@ -423,7 +422,6 @@ public class TacGiaJPanel extends JPanel {
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Delete Failed");
 		}
-
 	}
 
 	void update() {

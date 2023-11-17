@@ -13,7 +13,7 @@ public class JDBCHelper {
 			DriverManager.registerDriver(new com.microsoft.sqlserver.jdbc.SQLServerDriver());
 			String url = "jdbc:sqlserver://localhost:1433;databaseName=QUANLITHUVIEN;encrypt=false";
 			String user = "sa";
-			String pass = "123";
+			String pass = "111";
 			con = DriverManager.getConnection(url, user, pass);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -70,4 +70,12 @@ public class JDBCHelper {
 			throw new RuntimeException(e);
 		}
 	}
+        public static void main(String[] args) {
+        Connection con = getConnection();
+        if(con != null){
+            System.out.println("Thanh cong");
+        }else{
+            System.out.println("That bai");
+        }
+    }
 }

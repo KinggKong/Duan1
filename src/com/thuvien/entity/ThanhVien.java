@@ -1,6 +1,6 @@
 package com.thuvien.entity;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class ThanhVien {
 	private String maTV, tenTV, SDT, diaChi, email, CCCD;
