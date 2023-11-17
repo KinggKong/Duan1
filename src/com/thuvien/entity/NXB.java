@@ -32,4 +32,22 @@ public class NXB {
 		this.id = id;
 	}
 
+	@Override
+	public String toString() {
+		return tenNXB;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		NXB other = (NXB) obj;
+		// So sánh bằng tên NXB
+		return this.tenNXB != null && this.tenNXB.equalsIgnoreCase(other.tenNXB);
+	}
+
 }

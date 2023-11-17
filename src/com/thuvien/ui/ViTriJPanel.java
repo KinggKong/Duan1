@@ -35,232 +35,232 @@ import java.util.HashSet;
 
 public class ViTriJPanel extends JPanel {
 
-    private static final long serialVersionUID = 1L;
-    private JTextField txtDay;
-    private final ButtonGroup buttonGroup = new ButtonGroup();
-    private JTable table;
-    DefaultTableModel model;
-    private JButton btnInsert;
-    private JButton btnDelete;
-    private JButton btnUpdate;
-    private JButton btnClear;
-    private JButton btnPrevList;
-    private JButton btnNextList;
-    ViTriDao vtdao = new ViTriDao();
-    int indexTrang = 1;
-    int index = 0;
-    private JButton btnFirst;
-    private JButton btnPrevEdit;
-    private JButton btnNextEdit;
-    private JButton btnLast;
-    private JLabel lblIndexTrang;
+	private static final long serialVersionUID = 1L;
+	private JTextField txtDay;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JTable table;
+	DefaultTableModel model;
+	private JButton btnInsert;
+	private JButton btnDelete;
+	private JButton btnUpdate;
+	private JButton btnClear;
+	private JButton btnPrevList;
+	private JButton btnNextList;
+	ViTriDao vtdao = new ViTriDao();
+	int indexTrang = 1;
+	int index = 0;
+	private JButton btnFirst;
+	private JButton btnPrevEdit;
+	private JButton btnNextEdit;
+	private JButton btnLast;
+	private JLabel lblIndexTrang;
 
-    public ViTriJPanel() {
-        setLayout(null);
-        JLabel lblTitle = new JLabel("Quản Lý Vị Trí");
-        lblTitle.setBounds(535, 10, 327, 37);
-        lblTitle.setForeground(Color.BLUE);
-        lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
-        add(lblTitle);
+	public ViTriJPanel() {
+		setLayout(null);
+		JLabel lblTitle = new JLabel("Quản Lý Vị Trí");
+		lblTitle.setBounds(535, 10, 327, 37);
+		lblTitle.setForeground(Color.BLUE);
+		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
+		add(lblTitle);
 
-        JPanel pnlThongTinTG = new JPanel();
-        pnlThongTinTG.setBounds(57, 174, 429, 105);
-        pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-        add(pnlThongTinTG);
-        pnlThongTinTG.setLayout(null);
+		JPanel pnlThongTinTG = new JPanel();
+		pnlThongTinTG.setBounds(57, 174, 429, 105);
+		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		add(pnlThongTinTG);
+		pnlThongTinTG.setLayout(null);
 
-        JLabel lblDay = new JLabel("Vị Trí Dãy");
-        lblDay.setFont(new Font("Tahoma", Font.BOLD, 15));
-        lblDay.setBounds(10, 16, 104, 19);
-        pnlThongTinTG.add(lblDay);
+		JLabel lblDay = new JLabel("Vị Trí Dãy");
+		lblDay.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblDay.setBounds(10, 16, 104, 19);
+		pnlThongTinTG.add(lblDay);
 
-        txtDay = new JTextField();
-        txtDay.setText("VD: 1");
-        txtDay.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (txtDay.getText().equals("VD: 1")) {
-                    txtDay.setText("");
-                }
-            }
+		txtDay = new JTextField();
+		txtDay.setText("VD: 1");
+		txtDay.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (txtDay.getText().equals("VD: 1")) {
+					txtDay.setText("");
+				}
+			}
 
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (txtDay.getText().isEmpty()) {
-                    txtDay.setText("VD: 1");
-                }
-            }
-        });
-        txtDay.setColumns(10);
-        txtDay.setBounds(10, 45, 296, 19);
-        pnlThongTinTG.add(txtDay);
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (txtDay.getText().isEmpty()) {
+					txtDay.setText("VD: 1");
+				}
+			}
+		});
+		txtDay.setColumns(10);
+		txtDay.setBounds(10, 45, 296, 19);
+		pnlThongTinTG.add(txtDay);
 
-        JPanel pnlDanhSach = new JPanel();
-        pnlDanhSach.setBounds(605, 94, 662, 345);
-        pnlDanhSach.setLayout(null);
-        pnlDanhSach.setBorder(new TitledBorder(
-                new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
-                "Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-        add(pnlDanhSach);
+		JPanel pnlDanhSach = new JPanel();
+		pnlDanhSach.setBounds(605, 94, 662, 345);
+		pnlDanhSach.setLayout(null);
+		pnlDanhSach.setBorder(new TitledBorder(
+				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
+				"Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
+		add(pnlDanhSach);
 
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(10, 28, 630, 307);
-        pnlDanhSach.add(scrollPane);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 28, 630, 307);
+		pnlDanhSach.add(scrollPane);
 
-        table = new JTable();
-        table.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                index = table.rowAtPoint(e.getPoint());
-                if (index >= 0) {
-                    edit();
-                }
+		table = new JTable();
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				index = table.rowAtPoint(e.getPoint());
+				if (index >= 0) {
+					edit();
+				}
 
-            }
-        });
-        scrollPane.setViewportView(table);
-        String[] columns = {"ID", "Vị Trí Dãy"};
-        Object[][] rows = {};
-        model = new DefaultTableModel(rows, columns);
-        table.setModel(model);
+			}
+		});
+		scrollPane.setViewportView(table);
+		String[] columns = { "ID", "Vị Trí Dãy" };
+		Object[][] rows = {};
+		model = new DefaultTableModel(rows, columns);
+		table.setModel(model);
 
-        JPanel pnlButton2 = new JPanel();
-        pnlButton2.setBounds(100, 381, 350, 30);
-        add(pnlButton2);
-        pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
+		JPanel pnlButton2 = new JPanel();
+		pnlButton2.setBounds(100, 381, 350, 30);
+		add(pnlButton2);
+		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
-        btnFirst = new JButton("First");
-        btnFirst.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                index = 0;
-                table.setRowSelectionInterval(index, index);
-                edit();
-            }
-        });
-        pnlButton2.add(btnFirst);
+		btnFirst = new JButton("First");
+		btnFirst.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				index = 0;
+				table.setRowSelectionInterval(index, index);
+				edit();
+			}
+		});
+		pnlButton2.add(btnFirst);
 
-        btnPrevEdit = new JButton("Prev");
-        btnPrevEdit.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                index--;
-                table.setRowSelectionInterval(index, index);
-                edit();
-            }
-        });
-        pnlButton2.add(btnPrevEdit);
+		btnPrevEdit = new JButton("Prev");
+		btnPrevEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				index--;
+				table.setRowSelectionInterval(index, index);
+				edit();
+			}
+		});
+		pnlButton2.add(btnPrevEdit);
 
-        btnNextEdit = new JButton("Next");
-        btnNextEdit.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                index++;
-                table.setRowSelectionInterval(index, index);
-                edit();
-            }
-        });
-        pnlButton2.add(btnNextEdit);
+		btnNextEdit = new JButton("Next");
+		btnNextEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				index++;
+				table.setRowSelectionInterval(index, index);
+				edit();
+			}
+		});
+		pnlButton2.add(btnNextEdit);
 
-        btnLast = new JButton("Last");
-        btnLast.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                index = model.getRowCount() - 1;
-                table.setRowSelectionInterval(index, index);
-                edit();
-            }
-        });
-        pnlButton2.add(btnLast);
+		btnLast = new JButton("Last");
+		btnLast.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				index = model.getRowCount() - 1;
+				table.setRowSelectionInterval(index, index);
+				edit();
+			}
+		});
+		pnlButton2.add(btnLast);
 
-        JPanel pnlButton1 = new JPanel();
-        pnlButton1.setBounds(100, 321, 350, 30);
-        add(pnlButton1);
-        pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
+		JPanel pnlButton1 = new JPanel();
+		pnlButton1.setBounds(100, 321, 350, 30);
+		add(pnlButton1);
+		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
-        btnInsert = new JButton("Insert");
-        btnInsert.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                insert();
-            }
-        });
-        pnlButton1.add(btnInsert);
+		btnInsert = new JButton("Insert");
+		btnInsert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				insert();
+			}
+		});
+		pnlButton1.add(btnInsert);
 
-        btnDelete = new JButton("Delete");
-        btnDelete.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                delete();
-            }
-        });
-        pnlButton1.add(btnDelete);
+		btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				delete();
+			}
+		});
+		pnlButton1.add(btnDelete);
 
-        btnUpdate = new JButton("Update");
-        btnUpdate.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                update();
-            }
-        });
-        pnlButton1.add(btnUpdate);
+		btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				update();
+			}
+		});
+		pnlButton1.add(btnUpdate);
 
-        btnClear = new JButton("Clear");
-        btnClear.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                clear();
-            }
-        });
-        pnlButton1.add(btnClear);
+		btnClear = new JButton("Clear");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clear();
+			}
+		});
+		pnlButton1.add(btnClear);
 
-        btnPrevList = new JButton("Prev");
-        btnPrevList.setBounds(777, 487, 85, 21);
-        btnPrevList.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                indexTrang--;
-                if (indexTrang == 0) {
-                    DialogHelper.alert(null, "Đây là trang đầu tiên !");
-                    indexTrang++;
-                } else {
-                    load(indexTrang);
-                    lblIndexTrang.setText(indexTrang + "");
-                }
-            }
-        });
-        add(btnPrevList);
+		btnPrevList = new JButton("Prev");
+		btnPrevList.setBounds(777, 487, 85, 21);
+		btnPrevList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				indexTrang--;
+				if (indexTrang == 0) {
+					DialogHelper.alert(null, "Đây là trang đầu tiên !");
+					indexTrang++;
+				} else {
+					load(indexTrang);
+					lblIndexTrang.setText(indexTrang + "");
+				}
+			}
+		});
+		add(btnPrevList);
 
-        btnNextList = new JButton("Next");
-        btnNextList.setBounds(1049, 487, 85, 21);
-        btnNextList.addActionListener(new ActionListener() {
-             public void actionPerformed(ActionEvent e) {
-                indexTrang++;
+		btnNextList = new JButton("Next");
+		btnNextList.setBounds(1049, 487, 85, 21);
+		btnNextList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				indexTrang++;
 
-                if (indexTrang > (Math.ceil(vtdao.selectAll().size() * 1.0 / 5))) {
-                    DialogHelper.alert(null, "Đây là trang cuối cùng !");
-                    indexTrang--;
-                } else {
+				if (indexTrang > (Math.ceil(vtdao.selectAll().size() * 1.0 / 5))) {
+					DialogHelper.alert(null, "Đây là trang cuối cùng !");
+					indexTrang--;
+				} else {
 
-                    load(indexTrang);
-                    lblIndexTrang.setText(indexTrang + "");
-                }
-            }
-        });
-        add(btnNextList);
+					load(indexTrang);
+					lblIndexTrang.setText(indexTrang + "");
+				}
+			}
+		});
+		add(btnNextList);
 
-        setStatus(true);
+		setStatus(true);
 
-        lblIndexTrang = new JLabel("1");
-        lblIndexTrang.setBounds(950, 491, 56, 13);
-        add(lblIndexTrang);
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                load(indexTrang);
-                return null;
-            }
+		lblIndexTrang = new JLabel("1");
+		lblIndexTrang.setBounds(950, 491, 56, 13);
+		add(lblIndexTrang);
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				load(indexTrang);
+				return null;
+			}
 
-            @Override
-            protected void done() {
-                super.done();
-                // Tự động thực hiện khi load xong
-            }
-        };
+			@Override
+			protected void done() {
+				super.done();
+				// Tự động thực hiện khi load xong
+			}
+		};
 
-        worker.execute();
-    }
+		worker.execute();
+	}
 
 //	void load(int soTrang) {
 //		SwingUtilities.invokeLater(() -> {
@@ -272,161 +272,160 @@ public class ViTriJPanel extends JPanel {
 //			}
 //		});
 //	}
-    void load(int soTrang) {
-        SwingWorker<List<ViTri>, Void> worker = new SwingWorker<List<ViTri>, Void>() {
-            @Override
-            protected List<ViTri> doInBackground() throws Exception {
-                return vtdao.loadTrang((soTrang - 1) * 5, 5);
-            }
+	void load(int soTrang) {
+		SwingWorker<List<ViTri>, Void> worker = new SwingWorker<List<ViTri>, Void>() {
+			@Override
+			protected List<ViTri> doInBackground() throws Exception {
+				return vtdao.loadTrang((soTrang - 1) * 5, 5);
+			}
 
-            @Override
-            protected void done() {
-                try {
-                    List<ViTri> list = get();
-                    model.setRowCount(0);
-                    for (ViTri nxb : list) {
-                        Object[] row = {nxb.getiD(), nxb.getDaySo()
-                        };
-                        model.addRow(row);
-                    }
-                } catch (Exception e) {
-                    DialogHelper.alert(ViTriJPanel.this, "Lỗi truy vấn dữ liệu!");
-                }
-            }
-        };
+			@Override
+			protected void done() {
+				try {
+					List<ViTri> list = get();
+					model.setRowCount(0);
+					for (ViTri nxb : list) {
+						Object[] row = { nxb.getiD(), nxb.getDaySo() };
+						model.addRow(row);
+					}
+				} catch (Exception e) {
+					DialogHelper.alert(ViTriJPanel.this, "Lỗi truy vấn dữ liệu!");
+				}
+			}
+		};
 
-        worker.execute();
+		worker.execute();
 
-    }
+	}
 
-    void insert() {
-        try {
-            ViTri nxb = getForminsert();
-            if (nxb != null) {
-                vtdao.insert(nxb);
-                load(indexTrang);
-                clear();
-                DialogHelper.alert(this, "Insert Successful");
-            }
-        } catch (Exception e) {
-            DialogHelper.alert(this, "Insert Failed");
-            e.printStackTrace();
-        }
+	void insert() {
+		try {
+			ViTri nxb = getForminsert();
+			if (nxb != null) {
+				vtdao.insert(nxb);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Insert Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Insert Failed");
+			e.printStackTrace();
+		}
 
-    }
+	}
 
-    void delete() {
-        try {
-            if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
-                ViTri vtd = getForm();
-                vtdao.delete(vtd.getiD());
-                load(indexTrang);
-                clear();
-                DialogHelper.alert(this, "Delete Successful");
-            }
-        } catch (Exception e) {
-            DialogHelper.alert(this, "Delete Failed");
-        }
+	void delete() {
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
+				ViTri vtd = getForm();
+				vtdao.delete(vtd.getiD());
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Delete Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Delete Failed");
+		}
 
-    }
+	}
 
-    void update() {
-        try {
-            if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
-                ViTri vtd = getForm();
-                vtdao.update(vtd);
-                load(indexTrang);
-                clear();
-                DialogHelper.alert(this, "Update Successful");
-            }
-        } catch (Exception e) {
-            DialogHelper.alert(this, "Update Failed");
-            e.printStackTrace();
-        }
+	void update() {
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
+				ViTri vtd = getForm();
+				vtdao.update(vtd);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Update Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Update Failed");
+			e.printStackTrace();
+		}
 
-    }
+	}
 
-    void clear() {
-        txtDay.setText("");
-        txtDay.setEditable(true);
-        btnInsert.setEnabled(true);
+	void clear() {
+		txtDay.setText("");
+		txtDay.setEditable(true);
+		btnInsert.setEnabled(true);
 
-    }
+	}
 
-    void setForm(ViTri vtd) {
-        txtDay.setText(vtd.getDaySo() + "");
+	void setForm(ViTri vtd) {
+		txtDay.setText(vtd.getDaySo() + "");
 
-    }
+	}
 
-    ViTri getForm() {
-        int ID = (int) table.getValueAt(this.index, 0);
-        ViTri nxb = new ViTri();
-        
-        nxb.setiD(ID);
-        nxb.setDaySo(Integer.parseInt(txtDay.getText()));
-        if (txtDay.getText().isEmpty()) {
-            DialogHelper.alert(this, "Không để trống họ tên tác giả");
-            return null;
-        } else {
-            nxb.setDaySo(Integer.valueOf(txtDay.getText()));
-        }
+	ViTri getForm() {
+		ViTri nxb = new ViTri();
+		int ID = (int) table.getValueAt(this.index, 0);
+		nxb.setiD(ID);
+		nxb.setDaySo(Integer.parseInt(txtDay.getText()));
+		if (txtDay.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống dãy");
+			return null;
+		} else {
+			nxb.setDaySo(Integer.valueOf(txtDay.getText()));
+		}
 
-        return nxb;
+		return nxb;
 
-    }
-     ViTri getForminsert() {
-        
-        ViTri nxb = new ViTri();
-        nxb.setDaySo(Integer.parseInt(txtDay.getText()));
-        if (txtDay.getText().isEmpty()) {
-            DialogHelper.alert(this, "Không để trống họ tên tác giả");
-            return null;
-        } else {
-            nxb.setDaySo(Integer.valueOf(txtDay.getText()));
-        }
+	}
 
-        return nxb;
-     }
+	ViTri getForminsert() {
+
+		ViTri nxb = new ViTri();
+		nxb.setDaySo(Integer.parseInt(txtDay.getText()));
+		if (txtDay.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống họ tên tác giả");
+			return null;
+		} else {
+			nxb.setDaySo(Integer.valueOf(txtDay.getText()));
+		}
+
+		return nxb;
+	}
 
 //        catch (NumberFormatException e) {
 //            // Xử lý nếu không thể chuyển đổi thành số nguyên
 //            DialogHelper.alert(this, "Ngày số không hợp lệ. Vui lòng nhập số nguyên.");
 //            return null;
-    void edit() {
-        try {
-            int maNxb = (int) table.getValueAt(this.index, 0);
-            ViTri tg = vtdao.selectById(maNxb);
-            if (tg != null) {
-                setForm(tg);
-                setStatus(false);
-            }
-        } catch (Exception e) {
-            DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
-        }
+	void edit() {
+		try {
+			int maNxb = (int) table.getValueAt(this.index, 0);
+			ViTri tg = vtdao.selectById(maNxb);
+			if (tg != null) {
+				setForm(tg);
+				setStatus(false);
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
+		}
 
-    }
+	}
 
-    void setStatus(boolean insertable) { 
-        btnInsert.setEnabled(insertable);
-        btnUpdate.setEnabled(!insertable);
-        btnDelete.setEnabled(!insertable);
-        boolean first = this.index > 0;
-        boolean last = this.index < model.getRowCount() - 1;
-        btnFirst.setEnabled(!insertable && first);
-        btnPrevEdit.setEnabled(!insertable && first);
-        btnNextEdit.setEnabled(!insertable && last);
-        btnLast.setEnabled(!insertable && last);
-    }
+	void setStatus(boolean insertable) {
+		btnInsert.setEnabled(insertable);
+		btnUpdate.setEnabled(!insertable);
+		btnDelete.setEnabled(!insertable);
+		boolean first = this.index > 0;
+		boolean last = this.index < model.getRowCount() - 1;
+		btnFirst.setEnabled(!insertable && first);
+		btnPrevEdit.setEnabled(!insertable && first);
+		btnNextEdit.setEnabled(!insertable && last);
+		btnLast.setEnabled(!insertable && last);
+	}
 
-    private ViTri getInsert() {
-        ViTri nxb = null;
-        if (txtDay.getText().isEmpty()) {
-            DialogHelper.alert(this, "Không để trống họ tên tác giả");
-            return null;
-        } else {
-            nxb.setDaySo(Integer.valueOf(txtDay.getText()));
-        }
+	private ViTri getInsert() {
+		ViTri nxb = null;
+		if (txtDay.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống họ tên tác giả");
+			return null;
+		} else {
+			nxb.setDaySo(Integer.valueOf(txtDay.getText()));
+		}
 
-        return nxb;
-    }
+		return nxb;
+	}
 }

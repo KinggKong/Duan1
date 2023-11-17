@@ -1,6 +1,6 @@
 package com.thuvien.entity;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Sach {
 	private String maSach;
@@ -8,9 +8,9 @@ public class Sach {
 	private int namXB;
 	private Date ngayNhap;
 	private boolean tinhTrang;
-	private int idNXB;
+	private NXB idNXB;
 
-	public Sach(String maSach, String tenSach, int namXB, Date ngayNhap, boolean tinhTrang, int idNXB) {
+	public Sach(String maSach, String tenSach, int namXB, Date ngayNhap, boolean tinhTrang, NXB idNXB) {
 		this.maSach = maSach;
 		this.tenSach = tenSach;
 		this.namXB = namXB;
@@ -62,11 +62,11 @@ public class Sach {
 		this.tinhTrang = tinhTrang;
 	}
 
-	public int getIdNXB() {
+	public NXB getIdNXB() {
 		return idNXB;
 	}
 
-	public void setIdNXB(int idNXB) {
+	public void setIdNXB(NXB idNXB) {
 		this.idNXB = idNXB;
 	}
 

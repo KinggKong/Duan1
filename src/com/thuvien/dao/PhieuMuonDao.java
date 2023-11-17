@@ -12,10 +12,36 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author tbluc
- */
-public class PhieuMuonDao extends QLTVDao<PhieuMuon, String>{
-  
+public class PhieuMuonDao extends QLTVDao<PhieuMuon, String> {
+
+	@Override
+	public void insert(PhieuMuon entity) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void update(PhieuMuon entity) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void delete(String key) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<PhieuMuon> selectAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PhieuMuon selectById(String key) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
