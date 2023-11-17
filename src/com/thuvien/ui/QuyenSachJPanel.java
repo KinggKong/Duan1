@@ -1,41 +1,44 @@
 package com.thuvien.ui;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import java.awt.Font;
 import java.awt.Color;
-import javax.swing.border.BevelBorder;
-import javax.swing.JTextField;
-import javax.swing.JRadioButton;
-import javax.swing.JComboBox;
+import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingWorker;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.thuvien.dao.QuyenSachDao;
+import com.thuvien.dao.QuyenSachRepoDao;
 import com.thuvien.entity.QuyenSach;
 import com.thuvien.entity.TacGia;
+import com.thuvien.repo.QuyenSachRepo;
 import com.thuvien.utils.DialogHelper;
-
-import javax.swing.border.EtchedBorder;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JTextArea;
-import java.awt.event.ActionListener;
-import java.util.List;
-import java.awt.event.ActionEvent;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingWorker;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class QuyenSachJPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTextField txtTenSach_1;
 	private JTextField txtMaQS;
-	private JTextField txtLanTaiBan;
+	private JTextField txtIDTaiBan;
 	private JTextField txtTimKiem;
 	private JTable table;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -55,7 +58,11 @@ public class QuyenSachJPanel extends JPanel {
 	private JButton btnPrevEdit;
 	private JButton btnNextEdit;
 	private JButton btnLast;
-	QuyenSachDao qsd = new QuyenSachDao();
+	QuyenSachRepoDao sachRepoDao = new QuyenSachRepoDao();
+	QuyenSachDao quyenSachDao = new QuyenSachDao();
+	
+	private JLabel lblIndexTrang;
+	private JButton btnTimKiem;
 
 	public QuyenSachJPanel() {
 		setLayout(null);
@@ -94,21 +101,19 @@ public class QuyenSachJPanel extends JPanel {
 		txtMaQS.setBounds(10, 87, 225, 19);
 		panel.add(txtMaQS);
 
-		JLabel lblNmXutBn = new JLabel("Lần Tái Bản");
+		JLabel lblNmXutBn = new JLabel("ID Tái Bản");
 		lblNmXutBn.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblNmXutBn.setBounds(283, 10, 144, 19);
 		panel.add(lblNmXutBn);
 
-		txtLanTaiBan = new JTextField();
-		txtLanTaiBan.setEditable(false);
-		txtLanTaiBan.setEnabled(false);
-		txtLanTaiBan.setBounds(283, 34, 183, 19);
-		panel.add(txtLanTaiBan);
-		txtLanTaiBan.setColumns(10);
+		txtIDTaiBan = new JTextField();
+		txtIDTaiBan.setBounds(283, 34, 183, 19);
+		panel.add(txtIDTaiBan);
+		txtIDTaiBan.setColumns(10);
 
 		cbxTinhTrang = new JComboBox();
 		cbxTinhTrang.setModel(new DefaultComboBoxModel(new String[] { "Mới", "Hỏng Nhẹ", "Không Dùng Được" }));
-		cbxTinhTrang.setBounds(10, 156, 225, 19);
+		cbxTinhTrang.setBounds(10, 156, 225, 24);
 		panel.add(cbxTinhTrang);
 
 		JLabel lblTinhTrang = new JLabel("Tình Trạng");
@@ -136,6 +141,7 @@ public class QuyenSachJPanel extends JPanel {
 		panel.add(lblNhaXuatBan);
 
 		cbxViTri = new JComboBox();
+		cbxViTri.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}));
 		cbxViTri.setBounds(283, 87, 183, 21);
 		panel.add(cbxViTri);
 
@@ -145,18 +151,34 @@ public class QuyenSachJPanel extends JPanel {
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
 		btnInsert = new JButton("Insert");
+		btnInsert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnInsert.setEnabled(true);
 		pnlButton1.add(btnInsert);
 
 		btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnDelete.setEnabled(false);
 		pnlButton1.add(btnDelete);
 
 		btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnUpdate.setEnabled(false);
 		pnlButton1.add(btnUpdate);
 
 		btnClear = new JButton("Clear");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		pnlButton1.add(btnClear);
 
 		JPanel pnlButton2 = new JPanel();
@@ -165,18 +187,46 @@ public class QuyenSachJPanel extends JPanel {
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
 		btnFirst = new JButton("First");
+		btnFirst.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				index = 0;
+				table.setRowSelectionInterval(index, index);
+				edit();
+			}
+		});
 		btnFirst.setEnabled(false);
 		pnlButton2.add(btnFirst);
 
 		btnPrevEdit = new JButton("Prev");
+		btnPrevEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				index--;
+				table.setRowSelectionInterval(index, index);
+				edit();
+			}
+		});
 		btnPrevEdit.setEnabled(false);
 		pnlButton2.add(btnPrevEdit);
 
 		btnNextEdit = new JButton("Next");
+		btnNextEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				index++;
+				table.setRowSelectionInterval(index, index);
+				edit();
+			}
+		});
 		btnNextEdit.setEnabled(false);
 		pnlButton2.add(btnNextEdit);
 
 		btnLast = new JButton("Last");
+		btnLast.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				index = model.getRowCount() - 1;
+				table.setRowSelectionInterval(index, index);
+				edit();
+			}
+		});
 		btnLast.setEnabled(false);
 		pnlButton2.add(btnLast);
 
@@ -199,7 +249,7 @@ public class QuyenSachJPanel extends JPanel {
 		txtTimKiem.setBounds(85, 17, 266, 19);
 		pnlDanhSach.add(txtTimKiem);
 
-		JButton btnTimKiem = new JButton("Tìm Kiếm");
+		btnTimKiem = new JButton("Tìm Kiếm");
 		btnTimKiem.setBounds(361, 16, 97, 21);
 		pnlDanhSach.add(btnTimKiem);
 
@@ -208,6 +258,15 @@ public class QuyenSachJPanel extends JPanel {
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				index = table.rowAtPoint(e.getPoint());
+				if (index >= 0) {
+					edit();
+				}
+			}
+		});
 		scrollPane.setViewportView(table);
 		String[] columns = { "Mã Sách", "Tên Sách", "Dãy Số", "Lần TB", "Ngày TB", "NXB", "Tên NXB", "Ghi Chú",
 				"Trạng Thái" };
@@ -216,19 +275,41 @@ public class QuyenSachJPanel extends JPanel {
 		};
 		model = new DefaultTableModel(rows, columns);
 		table.setModel(model);
-		JButton btnPrevList = new JButton("Prev");
+
+		btnPrevList = new JButton("Prev");
 		btnPrevList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				indexTrang--;
+				if (indexTrang == 0) {
+					DialogHelper.alert(null, "Đây là trang đầu tiên !");
+					indexTrang++;
+				} else {
+					load(indexTrang);
+					lblIndexTrang.setText(indexTrang + "");
+				}
+
 			}
 		});
 		btnPrevList.setBounds(775, 489, 85, 21);
 		add(btnPrevList);
 
-		JButton btnNextList = new JButton("Next");
+		btnNextList = new JButton("Next");
+		btnNextList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				indexTrang++;
+				if (indexTrang > (Math.ceil(sachRepoDao.selectAll().size() * 1.0 / 5))) {
+					DialogHelper.alert(null, "Đây là trang cuối cùng !");
+					indexTrang--;
+				} else {
+					load(indexTrang);
+					lblIndexTrang.setText(indexTrang + "");
+				}
+			}
+		});
 		btnNextList.setBounds(1032, 489, 85, 21);
 		add(btnNextList);
 
-		JLabel lblIndexTrang = new JLabel("1");
+		lblIndexTrang = new JLabel("1");
 		lblIndexTrang.setBounds(941, 493, 39, 13);
 		add(lblIndexTrang);
 		SwingWorker<Void, Void> wk = new SwingWorker<Void, Void>() {
@@ -250,28 +331,34 @@ public class QuyenSachJPanel extends JPanel {
 
 	void load(int soTrang) {
 		// Thực hiện truy vấn cơ sở dữ liệu trong một SwingWorker
-		SwingWorker<List<QuyenSach>, Void> worker = new SwingWorker<List<QuyenSach>, Void>() {
+		SwingWorker<List<QuyenSachRepo>, Void> worker = new SwingWorker<List<QuyenSachRepo>, Void>() {
 			@Override
-			protected List<QuyenSach> doInBackground() throws Exception {
-				return qsd.loadTrang((soTrang - 1) * 5, 5);
+			protected List<QuyenSachRepo> doInBackground() throws Exception {
+				return sachRepoDao.loadTrang((soTrang - 1) * 5, 5);
 			}
 
 			@Override
 			protected void done() {
 				try {
-					List<QuyenSach> list = get();
+					List<QuyenSachRepo> list = get();
 					model.setRowCount(0);
-					for (QuyenSach qs : list) {
+					for (QuyenSachRepo qs : list) {
 						String trangThai = null;
-						if (qs.getTinhTrang() == 0) {
+						switch (qs.getTinhTrang()) {
+						case 0:
 							trangThai = "Hỏng";
-						} else if (qs.getTinhTrang() == 1) {
+							break;
+						case 1:
 							trangThai = "Mới";
-						} else if (qs.getTinhTrang() == 2) {
+							break;
+						case 2:
 							trangThai = "Hỏng Nhẹ";
+							break;
+						default:
+							trangThai = "Tình Trạng Không Đúng !!!";
 						}
 						Object[] row = { qs.getMaQS(), qs.getTenSach(), qs.getDaySo(), qs.getLanTB(), qs.getNgayTB(),
-								qs.getNamXB(), qs.getGhiChu(), qs.getTenNXB(), trangThai };
+								qs.getNamXB(), qs.getTenNXB(), qs.getGhiChu(), trangThai };
 						model.addRow(row);
 					}
 				} catch (Exception e) {
@@ -300,16 +387,36 @@ public class QuyenSachJPanel extends JPanel {
 
 	}
 
-	void setForm(TacGia tg) {
-
+	void setForm(QuyenSach qs) {
+		txtMaQS.setText(qs.getMaQS());
+		txtGhiChu.setText(qs.getGhiChu());
+		if (qs.getTinhTrang() == 0) {
+			cbxTinhTrang.setSelectedIndex(2);
+		} else if (qs.getTinhTrang() == 1) {
+			cbxTinhTrang.setSelectedIndex(1);
+		} else {
+			cbxTinhTrang.setSelectedIndex(0);
+		}
+		cbxViTri.setSelectedItem(qs.getIdViTri());
+		txtIDTaiBan.setText(qs.getIdTaiBan() + "");
 	}
 
-	TacGia getForm() {
+	QuyenSach getForm() {
 
 		return null;
 	}
 
 	void edit() {
+		try {
+			String maQS = (String) table.getValueAt(this.index, 0);
+			QuyenSach tg = quyenSachDao.selectById(maQS);
+			if (tg != null) {
+				setForm(tg);
+				setStatus(false);
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
+		}
 
 	}
 

@@ -267,12 +267,6 @@ public class TrangChuJFrame extends JFrame {
 
 	}
 
-//	private void changePanel(JPanel p) {
-//		pnlContain.removeAll();
-//		pnlContain.add(p);
-//		pnlContain.updateUI();
-//	}
-
 	private void changePanel(JPanel p) {
 		pnlContain.removeAll();
 		pnlContain.add(p);

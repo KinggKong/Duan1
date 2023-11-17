@@ -4,28 +4,20 @@ import java.util.Date;
 
 public class QuyenSach {
 	private String maQS;
-	private String tenSach;
-	private int daySo;
-	private int lanTB;
-	private Date ngayTB;
-	private int namXB;
-	private String tenNXB, ghiChu;
+	private int idViTri;
+	private int idTaiBan;
 	private int tinhTrang;
+	private String ghiChu;
 
 	public QuyenSach() {
 	}
 
-	public QuyenSach(String maQS, String tenSach, int daySo, int lanTB, Date ngayTB, int namXB, String tenNXB,
-			String ghiChu, int tinhTrang) {
+	public QuyenSach(String maQS, int idViTri, int idTaiBan, int tinhTrang, String ghiChu) {
 		this.maQS = maQS;
-		this.tenSach = tenSach;
-		this.daySo = daySo;
-		this.lanTB = lanTB;
-		this.ngayTB = ngayTB;
-		this.namXB = namXB;
-		this.tenNXB = tenNXB;
-		this.ghiChu = ghiChu;
+		this.idViTri = idViTri;
+		this.idTaiBan = idTaiBan;
 		this.tinhTrang = tinhTrang;
+		this.ghiChu = ghiChu;
 	}
 
 	public String getMaQS() {
@@ -36,60 +28,20 @@ public class QuyenSach {
 		this.maQS = maQS;
 	}
 
-	public String getTenSach() {
-		return tenSach;
+	public int getIdViTri() {
+		return idViTri;
 	}
 
-	public void setTenSach(String tenSach) {
-		this.tenSach = tenSach;
+	public void setIdViTri(int idViTri) {
+		this.idViTri = idViTri;
 	}
 
-	public int getDaySo() {
-		return daySo;
+	public int getIdTaiBan() {
+		return idTaiBan;
 	}
 
-	public void setDaySo(int daySo) {
-		this.daySo = daySo;
-	}
-
-	public int getLanTB() {
-		return lanTB;
-	}
-
-	public void setLanTB(int lanTB) {
-		this.lanTB = lanTB;
-	}
-
-	public Date getNgayTB() {
-		return ngayTB;
-	}
-
-	public void setNgayTB(Date ngayTB) {
-		this.ngayTB = ngayTB;
-	}
-
-	public int getNamXB() {
-		return namXB;
-	}
-
-	public void setNamXB(int namXB) {
-		this.namXB = namXB;
-	}
-
-	public String getTenNXB() {
-		return tenNXB;
-	}
-
-	public void setTenNXB(String tenNXB) {
-		this.tenNXB = tenNXB;
-	}
-
-	public String getGhiChu() {
-		return ghiChu;
-	}
-
-	public void setGhiChu(String ghiChu) {
-		this.ghiChu = ghiChu;
+	public void setIdTaiBan(int idTaiBan) {
+		this.idTaiBan = idTaiBan;
 	}
 
 	public int getTinhTrang() {
@@ -98,6 +50,14 @@ public class QuyenSach {
 
 	public void setTinhTrang(int tinhTrang) {
 		this.tinhTrang = tinhTrang;
+	}
+
+	public String getGhiChu() {
+		return ghiChu;
+	}
+
+	public void setGhiChu(String ghiChu) {
+		this.ghiChu = ghiChu;
 	}
 
 }
