@@ -10,8 +10,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,18 +29,27 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.thuvien.dao.NhanVienDao;
+import com.thuvien.dao.PhieuTraDao;
 import com.thuvien.dao.TacGiaDao;
+import com.thuvien.dao.ThanhVienDao;
+import com.thuvien.entity.NhanVien;
+import com.thuvien.entity.PhieuMuon;
+import com.thuvien.entity.PhieuTra;
 import com.thuvien.entity.TacGia;
 import com.thuvien.entity.ThanhVien;
 import com.thuvien.utils.DialogHelper;
+import com.thuvien.utils.ShareHelper;
+import com.thuvien.utils.XDate;
+
 import javax.swing.JRadioButton;
+import javax.swing.JComboBox;
 
 public class PhieuTraJPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField txtMaTV;
-	private JTextField txtHoTen;
-	private JTextField txtEmail;
+	private JTextField txtNhanVien;
+	private JTextField txtNgayTraThucTe;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField txtTimKiem;
 	private JTable table;
@@ -56,8 +67,20 @@ public class PhieuTraJPanel extends JPanel {
 	private JButton btnNextEdit;
 	private JButton btnLast;
 	private JLabel lblIndexTrang;
-	private JTextField txtCCCD;
-	private JTextField textField;
+	private JTextField txtTienPhat;
+	private JTextField txtMaPhieuTra;
+	private JComboBox cbxThanhVien;
+
+	PhieuTraDao ptd = new PhieuTraDao();
+
+	DefaultComboBoxModel<ThanhVien> modelThanhVien = new DefaultComboBoxModel<>();
+
+	ThanhVienDao tvd = new ThanhVienDao();
+	NhanVienDao nvd = new NhanVienDao();
+	private JTextField txtTienTra;
+	private JTextArea txtLyDoPhat;
+	private JRadioButton rdoHoanThanh;
+	private JRadioButton rdoChuaHoanThanh;
 
 	public PhieuTraJPanel() {
 		setLayout(null);
@@ -78,34 +101,30 @@ public class PhieuTraJPanel extends JPanel {
 		lblMaThanhVien.setBounds(10, 16, 157, 19);
 		pnlThongTinTG.add(lblMaThanhVien);
 
-		txtMaTV = new JTextField();
-		txtMaTV.setColumns(10);
-		txtMaTV.setBounds(10, 38, 218, 19);
-		pnlThongTinTG.add(txtMaTV);
-
 		JLabel lblHoTen = new JLabel("ID Nhân Viên");
 		lblHoTen.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblHoTen.setBounds(273, 16, 104, 19);
 		pnlThongTinTG.add(lblHoTen);
 
-		txtHoTen = new JTextField();
-		txtHoTen.setColumns(10);
-		txtHoTen.setBounds(273, 38, 218, 19);
-		pnlThongTinTG.add(txtHoTen);
+		txtNhanVien = new JTextField();
+		txtNhanVien.setEditable(false);
+		txtNhanVien.setColumns(10);
+		txtNhanVien.setBounds(273, 38, 218, 21);
+		pnlThongTinTG.add(txtNhanVien);
 
 		JLabel lblEmail = new JLabel("Ngày Trả Thực Tế");
 		lblEmail.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblEmail.setBounds(10, 77, 157, 19);
+		lblEmail.setBounds(10, 133, 157, 19);
 		pnlThongTinTG.add(lblEmail);
 
-		txtEmail = new JTextField();
-		txtEmail.setColumns(10);
-		txtEmail.setBounds(10, 106, 218, 19);
-		pnlThongTinTG.add(txtEmail);
+		txtNgayTraThucTe = new JTextField();
+		txtNgayTraThucTe.setColumns(10);
+		txtNgayTraThucTe.setBounds(10, 162, 218, 19);
+		pnlThongTinTG.add(txtNgayTraThucTe);
 
 		JLabel lblNgayDangKy = new JLabel("Lý Do Phạt");
 		lblNgayDangKy.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblNgayDangKy.setBounds(10, 221, 139, 19);
+		lblNgayDangKy.setBounds(10, 241, 139, 19);
 		pnlThongTinTG.add(lblNgayDangKy);
 
 		JLabel lblCCCD = new JLabel("Tiền Phạt");
@@ -113,43 +132,58 @@ public class PhieuTraJPanel extends JPanel {
 		lblCCCD.setBounds(273, 77, 148, 19);
 		pnlThongTinTG.add(lblCCCD);
 
-		txtCCCD = new JTextField();
-		txtCCCD.setColumns(10);
-		txtCCCD.setBounds(273, 106, 218, 19);
-		pnlThongTinTG.add(txtCCCD);
-		
+		txtTienPhat = new JTextField();
+		txtTienPhat.setColumns(10);
+		txtTienPhat.setBounds(273, 106, 218, 19);
+		pnlThongTinTG.add(txtTienPhat);
+
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(10, 250, 492, 92);
+		scrollPane_1.setBounds(10, 270, 492, 92);
 		pnlThongTinTG.add(scrollPane_1);
-		
-		JTextArea txtLyDoPhat = new JTextArea();
+
+		txtLyDoPhat = new JTextArea();
 		scrollPane_1.setViewportView(txtLyDoPhat);
-		
+
 		JLabel lblTrngThi = new JLabel("Trạng Thái");
 		lblTrngThi.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblTrngThi.setBounds(273, 147, 148, 19);
 		pnlThongTinTG.add(lblTrngThi);
-		
-		textField = new JTextField();
-		textField.setColumns(10);
-		textField.setBounds(10, 176, 218, 19);
-		pnlThongTinTG.add(textField);
-		
-		JLabel lblTinTr = new JLabel("Tiền Trả");
+
+		txtMaPhieuTra = new JTextField();
+		txtMaPhieuTra.setColumns(10);
+		txtMaPhieuTra.setBounds(10, 104, 218, 19);
+		pnlThongTinTG.add(txtMaPhieuTra);
+
+		JLabel lblTinTr = new JLabel("Mã Phiếu Trả");
 		lblTinTr.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblTinTr.setBounds(10, 147, 148, 19);
+		lblTinTr.setBounds(10, 77, 157, 19);
 		pnlThongTinTG.add(lblTinTr);
-		
-		JRadioButton rdbtnNewRadioButton = new JRadioButton("Hoàn Thành");
-		rdbtnNewRadioButton.setSelected(true);
-		buttonGroup.add(rdbtnNewRadioButton);
-		rdbtnNewRadioButton.setBounds(273, 175, 103, 21);
-		pnlThongTinTG.add(rdbtnNewRadioButton);
-		
-		JRadioButton rdbtnHonThnh = new JRadioButton("Chưa Hoàn Thành");
-		buttonGroup.add(rdbtnHonThnh);
-		rdbtnHonThnh.setBounds(378, 175, 128, 21);
-		pnlThongTinTG.add(rdbtnHonThnh);
+
+		rdoHoanThanh = new JRadioButton("Hoàn Thành");
+		rdoHoanThanh.setSelected(true);
+		buttonGroup.add(rdoHoanThanh);
+		rdoHoanThanh.setBounds(273, 175, 103, 21);
+		pnlThongTinTG.add(rdoHoanThanh);
+
+		rdoChuaHoanThanh = new JRadioButton("Chưa Hoàn Thành");
+		buttonGroup.add(rdoChuaHoanThanh);
+		rdoChuaHoanThanh.setBounds(378, 175, 128, 21);
+		pnlThongTinTG.add(rdoChuaHoanThanh);
+
+		cbxThanhVien = new JComboBox();
+		cbxThanhVien.setBounds(10, 38, 218, 21);
+		pnlThongTinTG.add(cbxThanhVien);
+		cbxThanhVien.setModel(modelThanhVien);
+
+		JLabel lblTinTr_1 = new JLabel("Tiền Trả");
+		lblTinTr_1.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblTinTr_1.setBounds(10, 191, 148, 19);
+		pnlThongTinTG.add(lblTinTr_1);
+
+		txtTienTra = new JTextField();
+		txtTienTra.setColumns(10);
+		txtTienTra.setBounds(10, 212, 218, 19);
+		pnlThongTinTG.add(txtTienTra);
 
 		JPanel pnlDanhSach = new JPanel();
 		pnlDanhSach.setLayout(null);
@@ -209,7 +243,8 @@ public class PhieuTraJPanel extends JPanel {
 			}
 		});
 		scrollPane.setViewportView(table);
-		String[] columns = { "ID", "Tên Thành Viên", "Tên Nhân Viên", "ngày Trả Thực Tế", "Tiền Phạt", "Tiền Trả","Lý Do Phạt","Tình Trạng" };
+		String[] columns = { "ID", "Mã Phiếu Trả", "Thành Viên", "Nhân Viên", "Ngày Trả Thực Tế", "Tiền Phạt",
+				"Tiền Trả", "Lý Do Phạt", "Tình Trạng" };
 		Object[][] rows = {
 
 		};
@@ -317,7 +352,15 @@ public class PhieuTraJPanel extends JPanel {
 		btnNextList = new JButton("Next");
 		btnNextList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				indexTrang++;
 
+				if (indexTrang > (Math.ceil(ptd.selectAll().size() * 1.0 / 5))) {
+					DialogHelper.alert(null, "Đây là trang cuối cùng !");
+					indexTrang--;
+				} else {
+					load(indexTrang);
+					lblIndexTrang.setText(indexTrang + "");
+				}
 			}
 		});
 		btnNextList.setBounds(1048, 487, 85, 21);
@@ -328,7 +371,7 @@ public class PhieuTraJPanel extends JPanel {
 		lblIndexTrang = new JLabel("1");
 		lblIndexTrang.setBounds(958, 491, 39, 13);
 		add(lblIndexTrang);
-		
+
 		JButton btnNewButton = new JButton("Xem Chi Tiết");
 		btnNewButton.setBounds(590, 496, 145, 21);
 		add(btnNewButton);
@@ -336,6 +379,7 @@ public class PhieuTraJPanel extends JPanel {
 			@Override
 			protected Void doInBackground() throws Exception {
 				load(indexTrang);
+				fillThanhVien();
 				return null;
 			}
 
@@ -349,41 +393,192 @@ public class PhieuTraJPanel extends JPanel {
 		worker.execute();
 	}
 
-	void load(int soTrang) {
+	void fillThanhVien() {
+		SwingWorker<List<ThanhVien>, Void> worker = new SwingWorker<List<ThanhVien>, Void>() {
 
+			@Override
+			protected List<ThanhVien> doInBackground() throws Exception {
+				return tvd.selectAll();
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<ThanhVien> list = get();
+					modelThanhVien.removeAllElements();
+					for (ThanhVien tv : list) {
+						modelThanhVien.addElement(tv);
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		worker.execute();
+	}
+
+	void load(int soTrang) {
+		SwingWorker<List<PhieuTra>, Void> worker = new SwingWorker<List<PhieuTra>, Void>() {
+
+			@Override
+			protected List<PhieuTra> doInBackground() throws Exception {
+				return ptd.loadTrang((soTrang - 1) * 5, 5);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<PhieuTra> list = get();
+					model.setRowCount(0);
+					for (PhieuTra pt : list) {
+						Object[] row = { pt.getId(), pt.getMaPT(), pt.getIdThanhVien().getTenTV(),
+								pt.getIdNhanVien().getTenNV(), pt.getNgayTraThucTe(), pt.getTienPhat(), pt.getTienTra(),
+								pt.getLiDoPhat(), pt.isTrangThai() ? "Hoàn Thành" : "Chưa Hoàn Thành" };
+						model.addRow(row);
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		};
+		worker.execute();
 	}
 
 	void insert() {
-
+		try {
+			PhieuTra pm = getForm();
+			if (pm != null) {
+				ptd.insert(pm);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Insert Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Insert Failed");
+			e.printStackTrace();
+		}
 	}
 
 	void delete() {
-
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
+				int id = (int) table.getValueAt(this.index, 0);
+				ptd.delete(id);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Delete Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Delete Failed");
+		}
 	}
 
 	void update() {
-
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
+				PhieuTra pm = getForm();
+				ptd.update(pm);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Update Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Update Failed");
+		}
 	}
 
 	void clear() {
-
+		txtLyDoPhat.setText("");
+		txtMaPhieuTra.setText("");
+		txtNgayTraThucTe.setText("");
+		txtNhanVien.setText("");
+		txtTienPhat.setText("");
+		txtTienTra.setText("");
+		cbxThanhVien.setSelectedIndex(0);
+		rdoHoanThanh.setSelected(true);
 	}
 
-	void setForm(TacGia tg) {
-
+	void setForm(PhieuTra pt) {
+		cbxThanhVien.setSelectedItem(pt.getIdThanhVien());
+		txtLyDoPhat.setText(pt.getLiDoPhat());
+		txtMaPhieuTra.setText(pt.getMaPT());
+		txtNgayTraThucTe.setText(pt.getNgayTraThucTe() + "");
+		txtNhanVien.setText(pt.getIdNhanVien().getTenNV());
+		txtTienPhat.setText(pt.getTienPhat() + "");
+		txtTienTra.setText(pt.getTienTra() + "");
+		if (pt.isTrangThai() == true) {
+			rdoHoanThanh.setSelected(true);
+		} else {
+			rdoChuaHoanThanh.setSelected(true);
+		}
 	}
 
-	ThanhVien getForm() {
+	PhieuTra getForm() {
+		PhieuTra pt = new PhieuTra();
+		if (txtMaPhieuTra.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống mã phiếu trả");
+			return null;
+		} else {
+			pt.setMaPT(txtMaPhieuTra.getText());
+		}
 
-		return null;
+		if (txtNgayTraThucTe.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống ngày trả thực tế");
+			return null;
+		} else {
+			pt.setNgayTraThucTe(XDate.toDate(txtNgayTraThucTe.getText(), "yyyy-MM-dd"));
+		}
+
+		if (txtTienTra.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống tiền trả");
+			return null;
+		} else {
+			try {
+				float tienTra = Float.parseFloat(txtTienTra.getText());
+				pt.setTienTra(tienTra);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		ThanhVien tv = (ThanhVien) cbxThanhVien.getSelectedItem();
+		pt.setIdThanhVien(tv);
+		NhanVien nv = nvd.selectById2(ShareHelper.idNhanVien());
+		pt.setIdNhanVien(nv);
+		if (rdoHoanThanh.isSelected()) {
+			pt.setTrangThai(true);
+		} else {
+			pt.setTrangThai(false);
+		}
+		pt.setTienPhat(Float.parseFloat(txtTienPhat.getText()));
+		pt.setLiDoPhat(txtLyDoPhat.getText());
+
+		return pt;
 	}
 
 	void edit() {
-
+		try {
+			int id = (int) table.getValueAt(this.index, 0);
+			PhieuTra pm = ptd.selectById(id);
+			if (pm != null) {
+				setForm(pm);
+				setStatus(false);
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
+		}
 	}
 
 	void setStatus(boolean insertable) {
-		txtMaTV.setEditable(insertable);
 		btnInsert.setEnabled(insertable);
 		btnUpdate.setEnabled(!insertable);
 		btnDelete.setEnabled(!insertable);

@@ -281,7 +281,7 @@ public class SachJPanel extends JPanel {
 			}
 		});
 		scrollPane.setViewportView(table);
-		String[] columns = { "Mã Sách", "Tên Sách", "Năm XB", "Ngày Nhập", "Tình Trạng", "NXB" };
+		String[] columns = { "ID", "Mã Sách", "Tên Sách", "Năm XB", "Ngày Nhập", "Tình Trạng", "NXB" };
 		Object[][] rows = {
 
 		};
@@ -357,7 +357,7 @@ public class SachJPanel extends JPanel {
 					List<Sach> list = get();
 					model.setRowCount(0);
 					for (Sach s : list) {
-						Object[] row = { s.getMaSach(), s.getTenSach(), s.getNamXB(), s.getNgayNhap(),
+						Object[] row = { s.getId(), s.getMaSach(), s.getTenSach(), s.getNamXB(), s.getNgayNhap(),
 								s.isTinhTrang() ? "Còn Sản Xuất" : "Ngừng Sản Xuất", s.getIdNXB().getTenNXB() };
 						model.addRow(row);
 					}
@@ -415,8 +415,9 @@ public class SachJPanel extends JPanel {
 	void delete() {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
-				Sach tg = getForm();
-				sd.delete(tg.getMaSach());
+				String maSach = (String) table.getValueAt(this.index, 1);
+				Sach s = sd.selectById(maSach);
+				sd.delete(s.getMaSach());
 				load(indexTrang);
 				clear();
 				DialogHelper.alert(this, "Delete Successful");
@@ -510,7 +511,7 @@ public class SachJPanel extends JPanel {
 
 	void edit() {
 		try {
-			String maSach = (String) table.getValueAt(this.index, 0);
+			String maSach = (String) table.getValueAt(this.index, 1);
 			Sach s = sd.selectById(maSach);
 			if (s != null) {
 				setForm(s);

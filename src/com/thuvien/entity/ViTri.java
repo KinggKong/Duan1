@@ -1,36 +1,56 @@
 package com.thuvien.entity;
 
+import java.util.Objects;
+
 public class ViTri {
 
-	private int daySo, iD;
+	private int ID;
+	private String day;
 
-	public ViTri(int daySo, int iD) {
-		this.daySo = daySo;
-		this.iD = iD;
+	public ViTri(int iD, String day) {
+		ID = iD;
+		this.day = day;
 	}
 
 	public ViTri() {
 	}
 
-	public int getDaySo() {
-		return daySo;
+	public int getID() {
+		return ID;
 	}
 
-	public void setDaySo(int daySo) {
-		this.daySo = daySo;
+	public void setID(int iD) {
+		ID = iD;
 	}
 
-	public int getiD() {
-		return iD;
+	public String getDay() {
+		return day;
 	}
 
-	public void setiD(int iD) {
-		this.iD = iD;
+	public void setDay(String day) {
+		this.day = day;
 	}
 
 	@Override
 	public String toString() {
-		return "ViTri [daySo=" + daySo + "]";
+		return day;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(ID, day);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ViTri other = (ViTri) obj;
+		return ID == other.ID && Objects.equals(day, other.day);
 	}
 
 }

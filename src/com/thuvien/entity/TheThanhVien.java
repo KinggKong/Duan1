@@ -7,11 +7,13 @@ public class TheThanhVien {
 	private String maTTV;
 	private int idHangTV;
 	private Date ngayCap, ngayHieuLuc;
-	private int tgHieuLuc, idThanhVien, oldID;
+	private int tgHieuLuc;
+	private ThanhVien idThanhVien;
+	private int oldID;
 	private boolean trangThai;
 
 	public TheThanhVien(int id, String maTTV, int idHangTV, Date ngayCap, Date ngayHieuLuc, int tgHieuLuc,
-			int idThanhVien, int oldID, boolean trangThai) {
+			ThanhVien idThanhVien, int oldID, boolean trangThai) {
 		this.id = id;
 		this.maTTV = maTTV;
 		this.idHangTV = idHangTV;
@@ -31,8 +33,8 @@ public class TheThanhVien {
 		this.id = id;
 	}
 
-	public TheThanhVien(String maTTV, int idHangTV, Date ngayCap, Date ngayHieuLuc, int tgHieuLuc, int idThanhVien,
-			int oldID, boolean trangThai) {
+	public TheThanhVien(String maTTV, int idHangTV, Date ngayCap, Date ngayHieuLuc, int tgHieuLuc,
+			ThanhVien idThanhVien, int oldID, boolean trangThai) {
 		this.maTTV = maTTV;
 		this.idHangTV = idHangTV;
 		this.ngayCap = ngayCap;
@@ -86,11 +88,11 @@ public class TheThanhVien {
 		this.tgHieuLuc = tgHieuLuc;
 	}
 
-	public int getIdThanhVien() {
+	public ThanhVien getIdThanhVien() {
 		return idThanhVien;
 	}
 
-	public void setIdThanhVien(int idThanhVien) {
+	public void setIdThanhVien(ThanhVien idThanhVien) {
 		this.idThanhVien = idThanhVien;
 	}
 

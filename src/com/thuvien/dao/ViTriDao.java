@@ -15,25 +15,25 @@ import java.util.List;
  *
  * @author th231
  */
-public class ViTriDao extends QLTVDao<ViTri, Integer>{
-    @Override
+public class ViTriDao extends QLTVDao<ViTri, Integer> {
+	@Override
 	public void insert(ViTri entity) {
 		String sql = "insert into ViTri values(?)";
-		JDBCHelper.executeUpdate(sql, entity.getDaySo());
+		JDBCHelper.executeUpdate(sql, entity.getDay());
 
 	}
 
 	@Override
 	public void update(ViTri entity) {
-		String sql = "update ViTri set daySo =? where id=?";
-		JDBCHelper.executeUpdate(sql, entity.getDaySo(),entity.getiD());
+		String sql = "update ViTri set day =? where id=?";
+		JDBCHelper.executeUpdate(sql, entity.getDay(), entity.getID());
 
 	}
 
 	@Override
 	public void delete(Integer key) {
 		String sql = "delete from ViTri where id=?";
-                JDBCHelper.executeUpdate(sql, key);
+		JDBCHelper.executeUpdate(sql, key);
 
 	}
 
@@ -45,7 +45,7 @@ public class ViTriDao extends QLTVDao<ViTri, Integer>{
 
 	@Override
 	public ViTri selectById(Integer key) {
-		
+
 		String sql = "Select * from ViTri where Id = ?";
 		ViTri Nxb = null;
 		try {
@@ -64,21 +64,23 @@ public class ViTriDao extends QLTVDao<ViTri, Integer>{
 		}
 		return Nxb;
 	}
-        
-        public List<ViTri> loadTrang(int indexTrang, int limit) {
+
+	public List<ViTri> loadTrang(int indexTrang, int limit) {
 		String sql = "select * from ViTri order by ID offset ? rows fetch next ? rows only ";
 		List<ViTri> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 	}
-        private ViTri readFromResultSet(ResultSet rs) throws SQLException {
+
+	private ViTri readFromResultSet(ResultSet rs) throws SQLException {
 		ViTri model = new ViTri();
-                model.setiD(rs.getInt("ID"));
-                
-		model.setDaySo(rs.getInt("daySo"));
+		model.setID(rs.getInt("ID"));
+
+		model.setDay(rs.getString("day"));
 		return model;
 	}
-        private List<ViTri> select(String sql, Object... args) {
-           
+
+	private List<ViTri> select(String sql, Object... args) {
+
 		List<ViTri> list = new ArrayList<>();
 		try {
 			ResultSet rs = null;
@@ -86,8 +88,8 @@ public class ViTriDao extends QLTVDao<ViTri, Integer>{
 				rs = JDBCHelper.executeQuery(sql, args);
 				while (rs.next()) {
 					ViTri nxb = readFromResultSet(rs);
-                                        list.add(nxb);
-					
+					list.add(nxb);
+
 				}
 			} finally {
 				rs.getStatement().getConnection().close();
@@ -98,9 +100,9 @@ public class ViTriDao extends QLTVDao<ViTri, Integer>{
 		return list;
 	}
 
-    public List<ViTri> selectByKeyword(String keyword) {
-        String sql = "SELECT * FROM ViTri WHERE Id LIKE ? or daySo LIKE ?";
+	public List<ViTri> selectByKeyword(String keyword) {
+		String sql = "SELECT * FROM ViTri WHERE Id LIKE ? or daySo LIKE ?";
 		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
-    }
-    
+	}
+
 }

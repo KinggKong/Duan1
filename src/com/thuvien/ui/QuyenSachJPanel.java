@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -25,20 +26,25 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.thuvien.dao.QuyenSachDao;
-import com.thuvien.dao.QuyenSachRepoDao;
+
+import com.thuvien.dao.SachDao;
+import com.thuvien.dao.TaiBanDao;
+import com.thuvien.dao.ViTriDao;
 import com.thuvien.entity.QuyenSach;
+import com.thuvien.entity.Sach;
 import com.thuvien.entity.TacGia;
-import com.thuvien.repo.QuyenSachRepo;
+import com.thuvien.entity.TaiBan;
+import com.thuvien.entity.ViTri;
 import com.thuvien.utils.DialogHelper;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class QuyenSachJPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField txtTenSach_1;
 	private JTextField txtMaQS;
-	private JTextField txtIDTaiBan;
 	private JTextField txtTimKiem;
 	private JTable table;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -58,11 +64,19 @@ public class QuyenSachJPanel extends JPanel {
 	private JButton btnPrevEdit;
 	private JButton btnNextEdit;
 	private JButton btnLast;
-	QuyenSachRepoDao sachRepoDao = new QuyenSachRepoDao();
+	SachDao sd = new SachDao();
 	QuyenSachDao quyenSachDao = new QuyenSachDao();
-	
+	TaiBanDao tbd = new TaiBanDao();
+	ViTriDao vtd = new ViTriDao();
+
 	private JLabel lblIndexTrang;
 	private JButton btnTimKiem;
+	private JComboBox cbxSach;
+	private JComboBox cbxTaiBan;
+
+	DefaultComboBoxModel<TaiBan> modelTaiBan = new DefaultComboBoxModel<>();
+	DefaultComboBoxModel<Sach> modelSach = new DefaultComboBoxModel<>();
+	DefaultComboBoxModel<ViTri> modelViTri = new DefaultComboBoxModel<>();
 
 	public QuyenSachJPanel() {
 		setLayout(null);
@@ -84,14 +98,7 @@ public class QuyenSachJPanel extends JPanel {
 		lblMSch.setBounds(10, 58, 104, 19);
 		panel.add(lblMSch);
 
-		txtTenSach_1 = new JTextField();
-		txtTenSach_1.setEnabled(false);
-		txtTenSach_1.setEditable(false);
-		txtTenSach_1.setBounds(10, 34, 225, 19);
-		panel.add(txtTenSach_1);
-		txtTenSach_1.setColumns(10);
-
-		JLabel lblTenSach = new JLabel("Tên Sách");
+		JLabel lblTenSach = new JLabel("Sách");
 		lblTenSach.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblTenSach.setBounds(10, 10, 104, 19);
 		panel.add(lblTenSach);
@@ -101,18 +108,13 @@ public class QuyenSachJPanel extends JPanel {
 		txtMaQS.setBounds(10, 87, 225, 19);
 		panel.add(txtMaQS);
 
-		JLabel lblNmXutBn = new JLabel("ID Tái Bản");
+		JLabel lblNmXutBn = new JLabel("Lần Tái Bản\r\n");
 		lblNmXutBn.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblNmXutBn.setBounds(283, 10, 144, 19);
 		panel.add(lblNmXutBn);
 
-		txtIDTaiBan = new JTextField();
-		txtIDTaiBan.setBounds(283, 34, 183, 19);
-		panel.add(txtIDTaiBan);
-		txtIDTaiBan.setColumns(10);
-
 		cbxTinhTrang = new JComboBox();
-		cbxTinhTrang.setModel(new DefaultComboBoxModel(new String[] { "Mới", "Hỏng Nhẹ", "Không Dùng Được" }));
+		cbxTinhTrang.setModel(new DefaultComboBoxModel(new String[] { "Hỏng", "Mới", "Hỏng Nhẹ" }));
 		cbxTinhTrang.setBounds(10, 156, 225, 24);
 		panel.add(cbxTinhTrang);
 
@@ -135,15 +137,33 @@ public class QuyenSachJPanel extends JPanel {
 		txtGhiChu = new JTextArea();
 		scrollPane_1.setViewportView(txtGhiChu);
 
-		JLabel lblNhaXuatBan = new JLabel("Dãy Số");
+		JLabel lblNhaXuatBan = new JLabel("Dãy ");
 		lblNhaXuatBan.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblNhaXuatBan.setBounds(283, 63, 144, 19);
 		panel.add(lblNhaXuatBan);
 
 		cbxViTri = new JComboBox();
-		cbxViTri.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}));
+		cbxViTri.setModel(new DefaultComboBoxModel(new String[] { "A", "B", "C", "D", "E" }));
 		cbxViTri.setBounds(283, 87, 183, 21);
 		panel.add(cbxViTri);
+		cbxViTri.setModel(modelViTri);
+
+		cbxSach = new JComboBox();
+		cbxSach.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				Sach s = (Sach) cbxSach.getSelectedItem();
+				int idSach = s.getId();
+				fillTaiBan(idSach);
+			}
+		});
+		cbxSach.setBounds(10, 33, 225, 24);
+		panel.add(cbxSach);
+		cbxSach.setModel(modelSach);
+
+		cbxTaiBan = new JComboBox();
+		cbxTaiBan.setBounds(283, 35, 183, 21);
+		panel.add(cbxTaiBan);
+		cbxTaiBan.setModel(modelTaiBan);
 
 		JPanel pnlButton1 = new JPanel();
 		pnlButton1.setBounds(97, 436, 350, 30);
@@ -153,6 +173,7 @@ public class QuyenSachJPanel extends JPanel {
 		btnInsert = new JButton("Insert");
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				insert();
 			}
 		});
 		btnInsert.setEnabled(true);
@@ -161,6 +182,7 @@ public class QuyenSachJPanel extends JPanel {
 		btnDelete = new JButton("Delete");
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				delete();
 			}
 		});
 		btnDelete.setEnabled(false);
@@ -169,6 +191,7 @@ public class QuyenSachJPanel extends JPanel {
 		btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				update();
 			}
 		});
 		btnUpdate.setEnabled(false);
@@ -177,6 +200,7 @@ public class QuyenSachJPanel extends JPanel {
 		btnClear = new JButton("Clear");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				clear();
 			}
 		});
 		pnlButton1.add(btnClear);
@@ -246,11 +270,15 @@ public class QuyenSachJPanel extends JPanel {
 
 		txtTimKiem = new JTextField();
 		txtTimKiem.setColumns(10);
-		txtTimKiem.setBounds(85, 17, 266, 19);
+		txtTimKiem.setBounds(85, 17, 441, 19);
 		pnlDanhSach.add(txtTimKiem);
 
 		btnTimKiem = new JButton("Tìm Kiếm");
-		btnTimKiem.setBounds(361, 16, 97, 21);
+		btnTimKiem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnTimKiem.setBounds(550, 16, 97, 21);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -268,8 +296,7 @@ public class QuyenSachJPanel extends JPanel {
 			}
 		});
 		scrollPane.setViewportView(table);
-		String[] columns = { "Mã Sách", "Tên Sách", "Dãy Số", "Lần TB", "Ngày TB", "NXB", "Tên NXB", "Ghi Chú",
-				"Trạng Thái" };
+		String[] columns = { "Mã Sách", "Tên Sách", "Dãy", "Lần TB", "Ghi Chú", "Trạng Thái" };
 		Object[][] rows = {
 
 		};
@@ -297,7 +324,7 @@ public class QuyenSachJPanel extends JPanel {
 		btnNextList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang++;
-				if (indexTrang > (Math.ceil(sachRepoDao.selectAll().size() * 1.0 / 5))) {
+				if (indexTrang > (Math.ceil(quyenSachDao.selectAll().size() * 1.0 / 5))) {
 					DialogHelper.alert(null, "Đây là trang cuối cùng !");
 					indexTrang--;
 				} else {
@@ -317,6 +344,8 @@ public class QuyenSachJPanel extends JPanel {
 			@Override
 			protected Void doInBackground() throws Exception {
 				load(indexTrang);
+				fillSach();
+				fillViTri();
 				return null;
 			}
 
@@ -331,18 +360,18 @@ public class QuyenSachJPanel extends JPanel {
 
 	void load(int soTrang) {
 		// Thực hiện truy vấn cơ sở dữ liệu trong một SwingWorker
-		SwingWorker<List<QuyenSachRepo>, Void> worker = new SwingWorker<List<QuyenSachRepo>, Void>() {
+		SwingWorker<List<QuyenSach>, Void> worker = new SwingWorker<List<QuyenSach>, Void>() {
 			@Override
-			protected List<QuyenSachRepo> doInBackground() throws Exception {
-				return sachRepoDao.loadTrang((soTrang - 1) * 5, 5);
+			protected List<QuyenSach> doInBackground() throws Exception {
+				return quyenSachDao.loadTrang((soTrang - 1) * 5, 5);
 			}
 
 			@Override
 			protected void done() {
 				try {
-					List<QuyenSachRepo> list = get();
+					List<QuyenSach> list = get();
 					model.setRowCount(0);
-					for (QuyenSachRepo qs : list) {
+					for (QuyenSach qs : list) {
 						String trangThai = null;
 						switch (qs.getTinhTrang()) {
 						case 0:
@@ -357,8 +386,8 @@ public class QuyenSachJPanel extends JPanel {
 						default:
 							trangThai = "Tình Trạng Không Đúng !!!";
 						}
-						Object[] row = { qs.getMaQS(), qs.getTenSach(), qs.getDaySo(), qs.getLanTB(), qs.getNgayTB(),
-								qs.getNamXB(), qs.getTenNXB(), qs.getGhiChu(), trangThai };
+						Object[] row = { qs.getMaQS(), qs.getTenQS(), qs.getIdViTri().getDay(),
+								qs.getIdTaiBan().getLanTaiBan(), qs.getGhiChu(), trangThai };
 						model.addRow(row);
 					}
 				} catch (Exception e) {
@@ -371,39 +400,175 @@ public class QuyenSachJPanel extends JPanel {
 		worker.execute();
 	}
 
-	void insert() {
+	void fillTaiBan(int idSach) {
+		SwingWorker<List<TaiBan>, Void> worker = new SwingWorker<List<TaiBan>, Void>() {
 
+			@Override
+			protected List<TaiBan> doInBackground() throws Exception {
+				return tbd.selectAllTheoIDSach(idSach);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<TaiBan> list = get();
+					modelTaiBan.removeAllElements();
+					for (TaiBan tb : list) {
+						modelTaiBan.addElement(tb);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		};
+		worker.execute();
+	}
+
+	void fillViTri() {
+		SwingWorker<List<ViTri>, Void> worker = new SwingWorker<List<ViTri>, Void>() {
+
+			@Override
+			protected List<ViTri> doInBackground() throws Exception {
+				return vtd.selectAll();
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<ViTri> list = get();
+					modelViTri.removeAllElements();
+					for (ViTri tb : list) {
+						modelViTri.addElement(tb);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		};
+		worker.execute();
+	}
+
+	void fillSach() {
+		SwingWorker<List<Sach>, Void> worker = new SwingWorker<List<Sach>, Void>() {
+
+			@Override
+			protected List<Sach> doInBackground() throws Exception {
+				return sd.selectAll();
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<Sach> list = get();
+					modelSach.removeAllElements();
+					for (Sach s : list) {
+						modelSach.addElement(s);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		};
+		worker.execute();
+	}
+
+	void insert() {
+		try {
+			QuyenSach qs = getForm();
+			if (qs != null) {
+				quyenSachDao.insert(qs);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Insert Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Insert Fail !");
+			e.printStackTrace();
+		}
 	}
 
 	void delete() {
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
+				String maQS = (String) table.getValueAt(this.index, 0);
+				quyenSachDao.delete(maQS);
+				load(indexTrang);
+				clear();
+				DialogHelper.alert(this, "Delete Successful");
+			}
 
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Delete Fail !");
+			e.printStackTrace();
+		}
 	}
 
 	void update() {
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
+				QuyenSach qs = getForm();
+				if (qs != null) {
+					quyenSachDao.update(qs);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Update Successful");
+				}
+			}
+
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Update Fail !");
+			e.printStackTrace();
+		}
 
 	}
 
 	void clear() {
-
+		cbxSach.setSelectedIndex(0);
+		cbxTaiBan.setSelectedIndex(0);
+		txtGhiChu.setText("");
+		txtMaQS.setText("");
+		cbxViTri.setSelectedIndex(0);
+		cbxTinhTrang.setSelectedIndex(0);
+		setStatus(true);
 	}
 
 	void setForm(QuyenSach qs) {
 		txtMaQS.setText(qs.getMaQS());
+		cbxSach.setSelectedItem(qs.getIdTaiBan().getIdSach());
 		txtGhiChu.setText(qs.getGhiChu());
-		if (qs.getTinhTrang() == 0) {
-			cbxTinhTrang.setSelectedIndex(2);
-		} else if (qs.getTinhTrang() == 1) {
-			cbxTinhTrang.setSelectedIndex(1);
-		} else {
-			cbxTinhTrang.setSelectedIndex(0);
-		}
+		cbxTinhTrang.setSelectedIndex(qs.getTinhTrang());
 		cbxViTri.setSelectedItem(qs.getIdViTri());
-		txtIDTaiBan.setText(qs.getIdTaiBan() + "");
+		cbxTaiBan.setSelectedItem(qs.getIdTaiBan());
 	}
 
 	QuyenSach getForm() {
+		QuyenSach qs = new QuyenSach();
 
-		return null;
+		if (txtMaQS.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống mã quyển sách ");
+			return null;
+		} else {
+			qs.setMaQS(txtMaQS.getText());
+		}
+
+		qs.setTenQS(cbxSach.getSelectedItem().toString());
+		TaiBan tb = (TaiBan) cbxTaiBan.getSelectedItem();
+		qs.setIdTaiBan(tb);
+		ViTri vt = (ViTri) cbxViTri.getSelectedItem();
+		qs.setIdViTri(vt);
+		qs.setGhiChu(txtGhiChu.getText());
+		if (cbxTinhTrang.getSelectedIndex() == 0) {
+			qs.setTinhTrang(0);
+		} else if (cbxTinhTrang.getSelectedIndex() == 1) {
+			qs.setTinhTrang(1);
+		} else {
+			qs.setTinhTrang(2);
+		}
+
+		return qs;
 	}
 
 	void edit() {
@@ -431,37 +596,4 @@ public class QuyenSachJPanel extends JPanel {
 		btnNextEdit.setEnabled(!insertable && last);
 		btnLast.setEnabled(!insertable && last);
 	}
-
-//	void search() {
-//		String keyword = txtTimKiem.getText().trim();
-//		// Thực hiện tìm kiếm trong một SwingWorker
-//		SwingWorker<List<TacGia>, Void> worker = new SwingWorker<List<TacGia>, Void>() {
-//			@Override
-//			protected List<TacGia> doInBackground() throws Exception {
-//				return tgd.selectByKeyword(keyword);
-//			}
-//
-//			@Override
-//			protected void done() {
-//				try {
-//					List<TacGia> list = get();
-//					if (list.size() == 0) {
-//						DialogHelper.alert(null, "Không tồn tại ");
-//					} else {
-//						model.setRowCount(0);
-//						for (TacGia tg : list) {
-//							Object[] row = { tg.getMaTG(), tg.getHoTen(), tg.getQuocTich(),
-//									tg.isGioiTinh() ? "Nam" : "Nữ" };
-//							model.addRow(row);
-//						}
-//					}
-//
-//				} catch (Exception e) {
-//					DialogHelper.alert(QuyenSachJPanel.this, "Lỗi truy vấn dữ liệu!");
-//				}
-//			}
-//		};
-//
-//		worker.execute();
-//	}
 }

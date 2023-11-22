@@ -252,7 +252,7 @@ public class TrangChuJFrame extends JFrame {
 				changePanel(jpanel);
 			}
 		});
-		btnPhieuTra.setIcon(new ImageIcon(
+		btnPhieuTra.setIcon(new ImageIcon( 
 				TrangChuJFrame.class.getResource("/icon/Fatcow-Farm-Fresh-Application-form-delete.24.png")));
 		toolBar.add(btnPhieuTra);
 

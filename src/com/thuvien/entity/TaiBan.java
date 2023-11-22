@@ -1,52 +1,82 @@
 package com.thuvien.entity;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class TaiBan {
-	private String maSach;
+	private int id;
+	private Sach idSach;
 	private int lanTaiBan;
 	private Date thoiGianTB;
-	private boolean trangThai;
-	
-	
-	
-	public TaiBan(String maSach, int lanTaiBan, Date thoiGianTB, boolean trangThai) {
-		this.maSach = maSach;
+
+	public TaiBan(int id, Sach idSach, int lanTaiBan, Date thoiGianTB) {
+		this.id = id;
+		this.idSach = idSach;
 		this.lanTaiBan = lanTaiBan;
 		this.thoiGianTB = thoiGianTB;
-		this.trangThai = trangThai;
 	}
-	
-	
-	
+
+	public TaiBan(Sach idSach, int lanTaiBan, Date thoiGianTB) {
+		this.idSach = idSach;
+		this.lanTaiBan = lanTaiBan;
+		this.thoiGianTB = thoiGianTB;
+	}
+
 	public TaiBan() {
 	}
 
-
-
-	public String getMaSach() {
-		return maSach;
+	public Sach getIdSach() {
+		return idSach;
 	}
-	public void setMaSach(String maSach) {
-		this.maSach = maSach;
+
+	public void setIdSach(Sach idSach) {
+		this.idSach = idSach;
 	}
+
 	public int getLanTaiBan() {
 		return lanTaiBan;
 	}
+
 	public void setLanTaiBan(int lanTaiBan) {
 		this.lanTaiBan = lanTaiBan;
 	}
+
 	public Date getThoiGianTB() {
 		return thoiGianTB;
 	}
+
 	public void setThoiGianTB(Date thoiGianTB) {
 		this.thoiGianTB = thoiGianTB;
 	}
-	public boolean isTrangThai() {
-		return trangThai;
+
+	@Override
+	public String toString() {
+		return lanTaiBan + "";
 	}
-	public void setTrangThai(boolean trangThai) {
-		this.trangThai = trangThai;
+
+	public int getId() {
+		return id;
 	}
-	
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(lanTaiBan);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TaiBan other = (TaiBan) obj;
+		return lanTaiBan == other.lanTaiBan;
+	}
+
 }

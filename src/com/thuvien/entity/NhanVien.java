@@ -1,6 +1,7 @@
 package com.thuvien.entity;
 
 public class NhanVien {
+	private int id;
 	private String tenNV;
 	private String maNV;
 	private String sdt;
@@ -9,8 +10,9 @@ public class NhanVien {
 	private boolean vaiTro;
 	private boolean trangThai;
 
-	public NhanVien(String tenNV, String maNV, String sdt, String userName, String passWord, boolean vaiTro,
+	public NhanVien(int id, String tenNV, String maNV, String sdt, String userName, String passWord, boolean vaiTro,
 			boolean trangThai) {
+		this.id = id;
 		this.tenNV = tenNV;
 		this.maNV = maNV;
 		this.sdt = sdt;
@@ -20,9 +22,11 @@ public class NhanVien {
 		this.trangThai = trangThai;
 	}
 
-	public NhanVien(String tenNV, String maNV, String userName, String passWord, boolean vaiTro, boolean trangThai) {
+	public NhanVien(String tenNV, String maNV, String sdt, String userName, String passWord, boolean vaiTro,
+			boolean trangThai) {
 		this.tenNV = tenNV;
 		this.maNV = maNV;
+		this.sdt = sdt;
 		this.userName = userName;
 		this.passWord = passWord;
 		this.vaiTro = vaiTro;
@@ -88,10 +92,17 @@ public class NhanVien {
 		this.sdt = sdt;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	@Override
 	public String toString() {
-		return "NhanVien [tenNV=" + tenNV + ", maNV=" + maNV + ", userName=" + userName + ", passWord=" + passWord
-				+ ", vaiTro=" + vaiTro + ", trangThai=" + trangThai + "]";
+		return maNV + " " + tenNV;
 	}
 
 }

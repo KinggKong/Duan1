@@ -14,8 +14,8 @@ public class ShareHelper {
 		return ShareHelper.USER != null;
 	}
 
-	public static String maNhanVien() {
-		return USER.getMaNV();
+	public static int idNhanVien() {
+		return USER.getId();
 	}
 
 	public static boolean isManager() {

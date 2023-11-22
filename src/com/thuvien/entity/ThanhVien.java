@@ -1,10 +1,25 @@
 package com.thuvien.entity;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class ThanhVien {
+	private int id;
 	private String maTV, tenTV, SDT, diaChi, email, CCCD;
 	private Date ngaySinh, ngayDK;
+
+	public ThanhVien(int id, String maTV, String tenTV, String sDT, String diaChi, String email, String cCCD,
+			Date ngaySinh, Date ngayDK) {
+		this.id = id;
+		this.maTV = maTV;
+		this.tenTV = tenTV;
+		SDT = sDT;
+		this.diaChi = diaChi;
+		this.email = email;
+		CCCD = cCCD;
+		this.ngaySinh = ngaySinh;
+		this.ngayDK = ngayDK;
+	}
 
 	public ThanhVien(String maTV, String tenTV, String sDT, String diaChi, String email, String cCCD, Date ngaySinh,
 			Date ngayDK) {
@@ -87,7 +102,32 @@ public class ThanhVien {
 
 	@Override
 	public String toString() {
-		return tenTV;
+		return maTV + " " + tenTV;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(maTV);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ThanhVien other = (ThanhVien) obj;
+		return Objects.equals(maTV, other.maTV);
 	}
 
 }

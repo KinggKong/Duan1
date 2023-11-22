@@ -1,15 +1,30 @@
 package com.thuvien.entity;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class PhieuMuon {
-	private int idThanhVien;
-	private int idNhanVien;
+	private int id;
+	private String maPhieuMuon;
+	private ThanhVien idThanhVien;
+	private NhanVien idNhanVien;
 	private Date ngayMuon;
 	private Date ngayPhaiTra;
 	private float tienCoc;
 
-	public PhieuMuon(int idThanhVien, int idNhanVien, Date ngayMuon, Date ngayPhaiTra, float tienCoc) {
+	public PhieuMuon(int id, String maPhieuMuon, ThanhVien idThanhVien, NhanVien idNhanVien, Date ngayMuon,
+			Date ngayPhaiTra, float tienCoc) {
+		this.id = id;
+		this.maPhieuMuon = maPhieuMuon;
+		this.idThanhVien = idThanhVien;
+		this.idNhanVien = idNhanVien;
+		this.ngayMuon = ngayMuon;
+		this.ngayPhaiTra = ngayPhaiTra;
+		this.tienCoc = tienCoc;
+	}
+
+	public PhieuMuon(String maPhieuMuon, ThanhVien idThanhVien, NhanVien idNhanVien, Date ngayMuon, Date ngayPhaiTra,
+			float tienCoc) {
+		this.maPhieuMuon = maPhieuMuon;
 		this.idThanhVien = idThanhVien;
 		this.idNhanVien = idNhanVien;
 		this.ngayMuon = ngayMuon;
@@ -20,19 +35,27 @@ public class PhieuMuon {
 	public PhieuMuon() {
 	}
 
-	public int getIdThanhVien() {
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public ThanhVien getIdThanhVien() {
 		return idThanhVien;
 	}
 
-	public void setIdThanhVien(int idThanhVien) {
+	public void setIdThanhVien(ThanhVien idThanhVien) {
 		this.idThanhVien = idThanhVien;
 	}
 
-	public int getIdNhanVien() {
+	public NhanVien getIdNhanVien() {
 		return idNhanVien;
 	}
 
-	public void setIdNhanVien(int idNhanVien) {
+	public void setIdNhanVien(NhanVien idNhanVien) {
 		this.idNhanVien = idNhanVien;
 	}
 
@@ -58,6 +81,14 @@ public class PhieuMuon {
 
 	public void setTienCoc(float tienCoc) {
 		this.tienCoc = tienCoc;
+	}
+
+	public String getMaPhieuMuon() {
+		return maPhieuMuon;
+	}
+
+	public void setMaPhieuMuon(String maPhieuMuon) {
+		this.maPhieuMuon = maPhieuMuon;
 	}
 
 	@Override

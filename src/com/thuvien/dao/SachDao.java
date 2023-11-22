@@ -35,19 +35,25 @@ public class SachDao extends QLTVDao<Sach, String> {
 
 	@Override
 	public List<Sach> selectAll() {
-		String sql = "select MaSach,TenSach,NamXB,NgayNhap,TinhTrang,IDNXB from Sach";
+		String sql = "select * from Sach";
 		return select(sql);
 	}
 
 	@Override
 	public Sach selectById(String key) {
-		String sql = "select MaSach,TenSach,NamXB,NgayNhap,TinhTrang,IDNXB from Sach WHERE MaSach=?";
+		String sql = "select * from Sach WHERE MaSach=?";
+		List<Sach> list = select(sql, key);
+		return list.size() > 0 ? list.get(0) : null;
+	}
+
+	public Sach selectByIdSach(int key) {
+		String sql = "select * from Sach WHERE id=?";
 		List<Sach> list = select(sql, key);
 		return list.size() > 0 ? list.get(0) : null;
 	}
 
 	public List<Sach> loadTrang(int indexTrang, int limit) {
-		String sql = "select MaSach,TenSach,NamXB,NgayNhap,TinhTrang,IDNXB from Sach order by MaSach offset ? rows fetch next ? rows only ";
+		String sql = "select * from Sach order by ID offset ? rows fetch next ? rows only ";
 		List<Sach> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 
@@ -55,6 +61,7 @@ public class SachDao extends QLTVDao<Sach, String> {
 
 	private Sach readFromResultSet(ResultSet rs) throws SQLException {
 		Sach model = new Sach();
+		model.setId(rs.getInt("ID"));
 		model.setMaSach(rs.getString("MaSach"));
 		model.setTenSach(rs.getString("TenSach"));
 		model.setNamXB(rs.getInt("NamXB"));

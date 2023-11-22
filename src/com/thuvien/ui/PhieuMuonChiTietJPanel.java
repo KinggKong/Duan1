@@ -5,8 +5,12 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -15,11 +19,11 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
@@ -27,30 +31,29 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.thuvien.dao.SachDao;
+import com.thuvien.dao.NhanVienDao;
+import com.thuvien.dao.PhieuMuonDao;
 import com.thuvien.dao.TacGiaDao;
-import com.thuvien.dao.TaiBanDao;
-import com.thuvien.dao.TheLoaiDao;
-import com.thuvien.entity.Sach;
+import com.thuvien.dao.ThanhVienDao;
+import com.thuvien.entity.NhanVien;
+import com.thuvien.entity.PhieuMuon;
 import com.thuvien.entity.TacGia;
-import com.thuvien.entity.TaiBan;
-import com.thuvien.entity.TheLoai;
+import com.thuvien.entity.ThanhVien;
+import com.thuvien.entity.TheThanhVien;
 import com.thuvien.utils.DialogHelper;
+import com.thuvien.utils.ShareHelper;
 import com.thuvien.utils.XDate;
 
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import javax.swing.JComboBox;
+import javax.swing.JLayeredPane;
 
-public class TaiBanJPanel extends JPanel {
+public class PhieuMuonChiTietJPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField txLanTB;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField txtTimKiem;
 	private JTable table;
 	DefaultTableModel model;
-	TaiBanDao tbd = new TaiBanDao();
 	private JButton btnInsert;
 	private JButton btnDelete;
 	private JButton btnUpdate;
@@ -64,63 +67,31 @@ public class TaiBanJPanel extends JPanel {
 	private JButton btnNextEdit;
 	private JButton btnLast;
 	private JLabel lblIndexTrang;
-	private JTextField txtThoiGianTB;
-	private JComboBox cbxSach;
-	SachDao sd = new SachDao();
 
-	DefaultComboBoxModel<Sach> modelSach = new DefaultComboBoxModel<>();
+	ThanhVienDao tvd = new ThanhVienDao();
+	NhanVienDao nvd = new NhanVienDao();
 
-	public TaiBanJPanel() {
+	DefaultComboBoxModel<ThanhVien> modelThanhVien = new DefaultComboBoxModel<>();
+
+	Date ngayHienTai = new Date();
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+	PhieuMuonDao pmd = new PhieuMuonDao();
+
+	public PhieuMuonChiTietJPanel() {
 		setLayout(null);
-		JLabel lblTitle = new JLabel("Quản Lý Tái Bản");
+		JLabel lblTitle = new JLabel("Phiếu Mượn Chi Tiết");
 		lblTitle.setForeground(Color.BLUE);
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblTitle.setBounds(525, 10, 327, 37);
+		lblTitle.setBounds(495, 10, 327, 37);
 		add(lblTitle);
-
-		JPanel pnlThongTinTG = new JPanel();
-		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		pnlThongTinTG.setBounds(99, 139, 412, 247);
-		add(pnlThongTinTG);
-		pnlThongTinTG.setLayout(null);
-
-		JLabel lblIDSach = new JLabel("Sách");
-		lblIDSach.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblIDSach.setBounds(22, 17, 104, 19);
-		pnlThongTinTG.add(lblIDSach);
-
-		JLabel lblLanTB = new JLabel("Lần Tái Bản");
-		lblLanTB.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblLanTB.setBounds(22, 90, 104, 19);
-		pnlThongTinTG.add(lblLanTB);
-
-		txLanTB = new JTextField();
-
-		txLanTB.setColumns(10);
-		txLanTB.setBounds(22, 113, 296, 19);
-		pnlThongTinTG.add(txLanTB);
-
-		JLabel lblThiGianTi = new JLabel("Thời Gian Tái Bản");
-		lblThiGianTi.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblThiGianTi.setBounds(22, 155, 150, 19);
-		pnlThongTinTG.add(lblThiGianTi);
-
-		txtThoiGianTB = new JTextField();
-		txtThoiGianTB.setColumns(10);
-		txtThoiGianTB.setBounds(22, 178, 296, 19);
-		pnlThongTinTG.add(txtThoiGianTB);
-
-		cbxSach = new JComboBox();
-		cbxSach.setBounds(22, 41, 296, 21);
-		pnlThongTinTG.add(cbxSach);
-		cbxSach.setModel(modelSach);
 
 		JPanel pnlDanhSach = new JPanel();
 		pnlDanhSach.setLayout(null);
 		pnlDanhSach.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
 				"Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		pnlDanhSach.setBounds(655, 103, 649, 378);
+		pnlDanhSach.setBounds(530, 87, 765, 378);
 		add(pnlDanhSach);
 
 		JLabel lblTimKiem = new JLabel("Tìm Kiếm");
@@ -128,21 +99,37 @@ public class TaiBanJPanel extends JPanel {
 		pnlDanhSach.add(lblTimKiem);
 
 		txtTimKiem = new JTextField();
-		txtTimKiem.setBounds(85, 17, 409, 19);
+		txtTimKiem.setText("Nhập vào tên hoặc mã phiếu mượn");
+		txtTimKiem.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (txtTimKiem.getText().equals("Nhập vào mã hoặc tên của thành viên")) {
+					txtTimKiem.setText("");
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (txtTimKiem.getText().isEmpty()) {
+					txtTimKiem.setText("Nhập vào mã hoặc tên của thành viên");
+				}
+			}
+		});
+		txtTimKiem.setBounds(85, 17, 514, 19);
 		pnlDanhSach.add(txtTimKiem);
 		txtTimKiem.setColumns(10);
 
 		JButton btnTimKiem = new JButton("Tìm Kiếm");
 		btnTimKiem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				search();
+				search();
 			}
 		});
-		btnTimKiem.setBounds(529, 16, 97, 21);
+		btnTimKiem.setBounds(609, 16, 97, 21);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 61, 629, 307);
+		scrollPane.setBounds(10, 61, 739, 307);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -157,17 +144,20 @@ public class TaiBanJPanel extends JPanel {
 			}
 		});
 		scrollPane.setViewportView(table);
-		String[] columns = { "ID", "Tên Sách", "Lần TB", "Ngày TB" };
-		Object[][] rows = {};
+		String[] columns = { "ID", "Mã Phiếu Mượn", "Tên Sách" };
+		Object[][] rows = {
+
+		};
 		model = new DefaultTableModel(rows, columns);
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(135, 509, 350, 30);
+		pnlButton2.setBounds(98, 506, 350, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
 		btnFirst = new JButton("First");
+		btnFirst.setEnabled(false);
 		btnFirst.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				index = 0;
@@ -208,7 +198,7 @@ public class TaiBanJPanel extends JPanel {
 		pnlButton2.add(btnLast);
 
 		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(135, 451, 350, 30);
+		pnlButton1.setBounds(98, 466, 350, 30);
 		add(pnlButton1);
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -257,16 +247,15 @@ public class TaiBanJPanel extends JPanel {
 				}
 			}
 		});
-		btnPrevList.setBounds(826, 491, 85, 21);
+		btnPrevList.setBounds(959, 487, 85, 21);
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
-		btnNextList.setBounds(1063, 491, 85, 21);
 		btnNextList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang++;
 
-				if (indexTrang > (Math.ceil(tbd.selectAll().size() * 1.0 / 5))) {
+				if (indexTrang > (Math.ceil(pmd.selectAll().size() * 1.0 / 5))) {
 					DialogHelper.alert(null, "Đây là trang cuối cùng !");
 					indexTrang--;
 				} else {
@@ -276,18 +265,24 @@ public class TaiBanJPanel extends JPanel {
 				}
 			}
 		});
+		btnNextList.setBounds(1169, 487, 85, 21);
 		add(btnNextList);
 
 		setStatus(true);
 
 		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(984, 495, 39, 13);
+		lblIndexTrang.setBounds(1100, 491, 39, 13);
 		add(lblIndexTrang);
+		
+		JPanel panel = new JPanel();
+		panel.setBounds(32, 87, 477, 352);
+		add(panel);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
 				load(indexTrang);
-				fillSach();
+//				fillNhanVien();
+				fillThanhVien();
 				return null;
 			}
 
@@ -301,93 +296,98 @@ public class TaiBanJPanel extends JPanel {
 		worker.execute();
 	}
 
-	void fillSach() {
-		SwingWorker<List<Sach>, Void> worker = new SwingWorker<List<Sach>, Void>() {
+	void fillThanhVien() {
+		SwingWorker<List<ThanhVien>, Void> worker = new SwingWorker<List<ThanhVien>, Void>() {
 
 			@Override
-			protected List<Sach> doInBackground() throws Exception {
-				return sd.selectAll();
+			protected List<ThanhVien> doInBackground() throws Exception {
+				return tvd.selectAll();
 			}
 
 			@Override
 			protected void done() {
 				try {
-					List<Sach> list = get();
-					modelSach.removeAllElements();
-					for (Sach s : list) {
-						modelSach.addElement(s);
+					List<ThanhVien> list = get();
+					modelThanhVien.removeAllElements();
+					for (ThanhVien tv : list) {
+						modelThanhVien.addElement(tv);
 					}
-				} catch (InterruptedException | ExecutionException e) {
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
 		};
 		worker.execute();
 	}
 
 	void load(int soTrang) {
-		SwingWorker<List<TaiBan>, Void> worker = new SwingWorker<List<TaiBan>, Void>() {
+		SwingWorker<List<PhieuMuon>, Void> worker = new SwingWorker<List<PhieuMuon>, Void>() {
+
 			@Override
-			protected List<TaiBan> doInBackground() throws Exception {
-				return tbd.loadTrang((soTrang - 1) * 5, 5);
+			protected List<PhieuMuon> doInBackground() throws Exception {
+				return pmd.loadTrang((soTrang - 1) * 5, 5);
 			}
 
 			@Override
 			protected void done() {
 				try {
-					List<TaiBan> list = get();
+					List<PhieuMuon> list = get();
 					model.setRowCount(0);
-					for (TaiBan tb : list) {
-						Object[] row = { tb.getId(), tb.getIdSach().getTenSach(), tb.getLanTaiBan(),
-								tb.getThoiGianTB() };
+					for (PhieuMuon pm : list) {
+						Object[] row = { pm.getId(), pm.getMaPhieuMuon(), pm.getIdThanhVien().getTenTV(),
+								pm.getIdNhanVien().getTenNV(), pm.getNgayMuon(), pm.getNgayPhaiTra(), pm.getTienCoc() };
 						model.addRow(row);
 					}
-				} catch (Exception e) {
-					DialogHelper.alert(TaiBanJPanel.this, "Lỗi truy vấn dữ liệu!");
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		};
-
 		worker.execute();
 	}
 
 	void insert() {
 		try {
-			TaiBan tl = getFormInsert();
-			if (tl != null) {
-				tbd.insert(tl);
+			PhieuMuon pm = getForm();
+			if (pm != null) {
+				pmd.insert(pm);
 				load(indexTrang);
 				clear();
 				DialogHelper.alert(this, "Insert Successful");
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Insert Failed");
+			e.printStackTrace();
 		}
-
 	}
 
 	void delete() {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
 				int id = (int) table.getValueAt(this.index, 0);
-				tbd.delete(id);
+				pmd.delete(id);
 				load(indexTrang);
 				clear();
 				DialogHelper.alert(this, "Delete Successful");
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Delete Failed");
-			e.printStackTrace();
 		}
 	}
 
 	void update() {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
-				TaiBan tl = getForm();
-				tbd.update(tl);
+				PhieuMuon pm = getForm();
+				pmd.update(pm);
 				load(indexTrang);
 				clear();
 				DialogHelper.alert(this, "Update Successful");
@@ -395,52 +395,33 @@ public class TaiBanJPanel extends JPanel {
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Update Failed");
 		}
+
 	}
 
 	void clear() {
-		cbxSach.setSelectedIndex(0);
-		txLanTB.setText("");
-		txtThoiGianTB.setText("");
+
 		setStatus(true);
 	}
 
-	void setForm(TaiBan tl) {
-		cbxSach.setSelectedItem(tl.getIdSach());
-		txtThoiGianTB.setText(tl.getThoiGianTB() + "");
-		txLanTB.setText(tl.getLanTaiBan() + "");
+	void setForm(PhieuMuon pm) {
+
 	}
 
-	TaiBan getForm() {
-		TaiBan tb = new TaiBan();
-		int id = (int) table.getValueAt(this.index, 0);
-		Sach s = (Sach) cbxSach.getSelectedItem();
-		tb.setId(id);
-		tb.setIdSach(s);
-		tb.setLanTaiBan(Integer.parseInt(txLanTB.getText()));
-		tb.setThoiGianTB(XDate.toDate(txtThoiGianTB.getText(), "yyyy-MM-dd"));
-		return tb;
-	}
+	PhieuMuon getForm() {
 
-	TaiBan getFormInsert() {
-		TaiBan tb = new TaiBan();
-		Sach s = (Sach) cbxSach.getSelectedItem();
-		tb.setIdSach(s);
-		tb.setLanTaiBan(Integer.parseInt(txLanTB.getText()));
-		tb.setThoiGianTB(XDate.toDate(txtThoiGianTB.getText(), "yyyy-MM-dd"));
-		return tb;
+		return null;
 	}
 
 	void edit() {
 		try {
 			int id = (int) table.getValueAt(this.index, 0);
-			TaiBan tl = tbd.selectById(id);
-			if (tl != null) {
-				setForm(tl);
+			PhieuMuon pm = pmd.selectById(id);
+			if (pm != null) {
+				setForm(pm);
 				setStatus(false);
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
-			e.printStackTrace();
 		}
 	}
 
@@ -456,35 +437,6 @@ public class TaiBanJPanel extends JPanel {
 		btnLast.setEnabled(!insertable && last);
 	}
 
-//	void search() {
-//		String keyword = txtTimKiem.getText().trim();
-//		// Thực hiện tìm kiếm trong một SwingWorker
-//		SwingWorker<List<TaiBan>, Void> worker = new SwingWorker<List<TaiBan>, Void>() {
-//			@Override
-//			protected List<TaiBan> doInBackground() throws Exception {
-//				return tbd.selectByKeyword(keyword);
-//			}
-//
-//			@Override
-//			protected void done() {
-//				try {
-//					List<TaiBan> list = get();
-//					if (list.size() == 0) {
-//						DialogHelper.alert(null, "Không tồn tại ");
-//					} else {
-//						model.setRowCount(0);
-//						for (TaiBan tl : list) {
-//							Object[] row = {};
-//							model.addRow(row);
-//						}
-//					}
-//
-//				} catch (Exception e) {
-//					DialogHelper.alert(TaiBanJPanel.this, "Lỗi truy vấn dữ liệu!");
-//				}
-//			}
-//		};
-//
-//		worker.execute();
-//	}
+	void search() {
+	}
 }

@@ -1,5 +1,6 @@
 package com.thuvien.dao;
 
+import com.thuvien.entity.Sach;
 import com.thuvien.entity.TacGia;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,95 +10,102 @@ import com.thuvien.utils.JDBCHelper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class TaiBanDao extends QLTVDao<TaiBan, String> {
+public class TaiBanDao extends QLTVDao<TaiBan, Integer> {
+	SachDao sd = new SachDao();
 
 	@Override
 	public void insert(TaiBan model) {
-		String sql = "insert into TaiBan(maSach,lanTB,thoiGian,trangThai) values(?,?,?,?)";
-		JDBCHelper.executeUpdate(sql, model.getMaSach(), model.getLanTaiBan(), model.getThoiGianTB(),
-				model.isTrangThai());
+		String sql = "insert into TaiBan(IDSach,LanTB,NgayTB) values(?,?,?)";
+		JDBCHelper.executeUpdate(sql, model.getIdSach().getId(), model.getLanTaiBan(), model.getThoiGianTB());
 
 	}
 
 	@Override
 	public void update(TaiBan model) {
-		String sql = "update TaiBan set lanTB = ?, thoiGian=?,trangThai=? where maSach = ?";
-		JDBCHelper.executeUpdate(sql, model.getLanTaiBan(), model.getThoiGianTB(), model.isTrangThai(),
-				model.getMaSach());
+		String sql = "update TaiBan set IDSach = ?,LanTB = ?, NgayTB=? where id = ?";
+		JDBCHelper.executeUpdate(sql, model.getIdSach().getId(), model.getLanTaiBan(), model.getThoiGianTB(),
+				model.getId());
 
 	}
 
 	@Override
-	public void delete(String key) {
-		String sql = "delete from TaiBan where maSach = ?";
+	public void delete(Integer key) {
+		String sql = "delete from TaiBan where id = ?";
 		JDBCHelper.executeUpdate(sql, key);
 
 	}
 
 	@Override
 	public List<TaiBan> selectAll() {
-		String sql="select * from TaiBan";
-		return selectAll();
+		String sql = "select * from TaiBan";
+		return select(sql);
+	}
+
+	public List<TaiBan> selectAllTheoIDSach(int idSach) {
+		String sql = "select * from TaiBan where IDSach =?";
+		return select(sql, idSach);
 	}
 
 	@Override
-        public TaiBan selectById(String maTG) {
-        String sql = "Select * from TaiBan where MaTG = ?";
-        TaiBan tg = null;
-        try {
-            ResultSet rs = null;
-            try {
-                rs = JDBCHelper.executeQuery(sql, maTG);
-                while (rs.next()) {
-                    tg = readFromResultSet(rs);
+	public TaiBan selectById(Integer id) {
+		String sql = "Select * from TaiBan where id = ?";
+		TaiBan tg = null;
+		try {
+			ResultSet rs = null;
+			try {
+				rs = JDBCHelper.executeQuery(sql, id);
+				while (rs.next()) {
+					tg = readFromResultSet(rs);
 
-                }
-            } finally {
-                rs.getStatement().getConnection().close();
-            }
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
-        return tg;
-    }
+				}
+			} finally {
+				rs.getStatement().getConnection().close();
+			}
+		} catch (SQLException ex) {
+			throw new RuntimeException(ex);
+		}
+		return tg;
+	}
 
-    public List<TaiBan> loadTrang(int indexTrang, int limit) {
-        String sql = "select * from TaiBan order by ID offset ? rows fetch next ? rows only ";
-        List<TaiBan> list = new ArrayList<>();
-        return list = select(sql, indexTrang, limit);
-    }
+	public List<TaiBan> loadTrang(int indexTrang, int limit) {
+		String sql = "select * from TaiBan order by ID offset ? rows fetch next ? rows only ";
+		List<TaiBan> list = new ArrayList<>();
+		return list = select(sql, indexTrang, limit);
+	}
 
-    private TaiBan readFromResultSet(ResultSet rs) throws SQLException {
-        TaiBan model = new TaiBan();
-        model.setLanTaiBan(rs.getInt("MaTG"));
-        model.setMaSach(rs.getString("TenTG"));
-        model.setThoiGianTB(rs.getDate("QuocTich"));
-        model.setTrangThai(rs.getBoolean("GioiTinh"));
-        return model;
-    }
+	private TaiBan readFromResultSet(ResultSet rs) throws SQLException {
+		TaiBan model = new TaiBan();
+		model.setId(rs.getInt("ID"));
+		int id = rs.getInt("IDSach");
+		Sach s = sd.selectByIdSach(id);
+		model.setIdSach(s);
+		model.setLanTaiBan(rs.getInt("LanTB"));
+		model.setThoiGianTB(rs.getDate("NgayTB"));
+		return model;
+	}
 
-    private List<TaiBan> select(String sql, Object... args) {
-        List<TaiBan> list = new ArrayList<>();
-        try {
-            ResultSet rs = null;
-            try {
-                rs = JDBCHelper.executeQuery(sql, args);
-                while (rs.next()) {
-                    TaiBan model = readFromResultSet(rs);
-                    list.add(model);
-                }
-            } finally {
-                rs.getStatement().getConnection().close();
-            }
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
-        return list;
-    }
+	private List<TaiBan> select(String sql, Object... args) {
+		List<TaiBan> list = new ArrayList<>();
+		try {
+			ResultSet rs = null;
+			try {
+				rs = JDBCHelper.executeQuery(sql, args);
+				while (rs.next()) {
+					TaiBan model = readFromResultSet(rs);
+					list.add(model);
+				}
+			} finally {
+				rs.getStatement().getConnection().close();
+			}
+		} catch (SQLException ex) {
+			throw new RuntimeException(ex);
+		}
+		return list;
+	}
 
-    public List<TaiBan> selectByKeyword(String keyword) {
-        String sql = "SELECT * FROM TacGia WHERE MaTG LIKE ? or TenTG LIKE ?";
-        return select(sql, "%" + keyword + "%", "%" + keyword + "%");
-    }
+	public List<TaiBan> selectByKeyword(String keyword) {
+		String sql = "SELECT * FROM TacGia WHERE MaTG LIKE ? or TenTG LIKE ?";
+		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
+	}
 
 }

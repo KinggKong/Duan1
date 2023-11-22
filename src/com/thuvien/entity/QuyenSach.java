@@ -4,20 +4,30 @@ import java.util.Date;
 
 public class QuyenSach {
 	private String maQS;
-	private int idViTri;
-	private int idTaiBan;
+	private String tenQS;
+	private ViTri idViTri;
+	private TaiBan idTaiBan;
 	private int tinhTrang;
 	private String ghiChu;
 
 	public QuyenSach() {
 	}
 
-	public QuyenSach(String maQS, int idViTri, int idTaiBan, int tinhTrang, String ghiChu) {
+	public QuyenSach(String maQS, String tenQS, ViTri idViTri, TaiBan idTaiBan, int tinhTrang, String ghiChu) {
 		this.maQS = maQS;
+		this.tenQS = tenQS;
 		this.idViTri = idViTri;
 		this.idTaiBan = idTaiBan;
 		this.tinhTrang = tinhTrang;
 		this.ghiChu = ghiChu;
+	}
+
+	public String getTenQS() {
+		return tenQS;
+	}
+
+	public void setTenQS(String tenQS) {
+		this.tenQS = tenQS;
 	}
 
 	public String getMaQS() {
@@ -28,19 +38,19 @@ public class QuyenSach {
 		this.maQS = maQS;
 	}
 
-	public int getIdViTri() {
+	public ViTri getIdViTri() {
 		return idViTri;
 	}
 
-	public void setIdViTri(int idViTri) {
+	public void setIdViTri(ViTri idViTri) {
 		this.idViTri = idViTri;
 	}
 
-	public int getIdTaiBan() {
+	public TaiBan getIdTaiBan() {
 		return idTaiBan;
 	}
 
-	public void setIdTaiBan(int idTaiBan) {
+	public void setIdTaiBan(TaiBan idTaiBan) {
 		this.idTaiBan = idTaiBan;
 	}
 

@@ -28,6 +28,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.thuvien.dao.HangTheThanhVienDao;
+import com.thuvien.dao.ThanhVienDao;
 import com.thuvien.dao.TheThanhVienDao;
 import com.thuvien.entity.HangThanhVien;
 import com.thuvien.entity.TacGia;
@@ -67,10 +68,11 @@ public class TheThanhVienJPanel extends JPanel {
 	private JComboBox cbxTrangThai;
 	DefaultComboBoxModel cbxModel = new DefaultComboBoxModel<>();
 	HangTheThanhVienDao htvd = new HangTheThanhVienDao();
+	ThanhVienDao tvd = new ThanhVienDao();
 	private JTextField txtID;
 	private JComboBox cbxThoiGianHieuLuc;
 	private JComboBox cbxThanhVien;
-	DefaultComboBoxModel cbxModelThanhVien = new DefaultComboBoxModel<>();
+	DefaultComboBoxModel<ThanhVien> cbxModelThanhVien = new DefaultComboBoxModel<>();
 
 	public TheThanhVienJPanel() {
 		setLayout(null);
@@ -174,8 +176,8 @@ public class TheThanhVienJPanel extends JPanel {
 		pnlThongTinTG.add(txtID);
 
 		cbxThanhVien = new JComboBox();
-		cbxThanhVien.setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4" }));
 		cbxThanhVien.setBounds(10, 190, 198, 21);
+		cbxThanhVien.setModel(cbxModelThanhVien);
 		pnlThongTinTG.add(cbxThanhVien);
 
 		JPanel pnlDanhSach = new JPanel();
@@ -369,6 +371,7 @@ public class TheThanhVienJPanel extends JPanel {
 			@Override
 			protected Void doInBackground() throws Exception {
 				load(indexTrang);
+				fillThanhVien();
 				return null;
 			}
 
@@ -405,6 +408,32 @@ public class TheThanhVienJPanel extends JPanel {
 			}
 		};
 
+		worker.execute();
+	}
+
+	void fillThanhVien() {
+		SwingWorker<List<ThanhVien>, Void> worker = new SwingWorker<List<ThanhVien>, Void>() {
+
+			@Override
+			protected List<ThanhVien> doInBackground() throws Exception {
+				return tvd.selectAll();
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<ThanhVien> list = get();
+					cbxModelThanhVien.removeAllElements();
+					for (ThanhVien tv : list) {
+						cbxModelThanhVien.addElement(tv);
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+
+			}
+		};
 		worker.execute();
 	}
 
@@ -461,7 +490,7 @@ public class TheThanhVienJPanel extends JPanel {
 		cbxThanhVien.setSelectedIndex(0);
 		cbxThoiGianHieuLuc.setSelectedIndex(0);
 		cbxTrangThai.setSelectedIndex(0);
-		btnInsert.setEnabled(true);
+		setStatus(true);
 
 	}
 
@@ -477,7 +506,9 @@ public class TheThanhVienJPanel extends JPanel {
 		}
 		txtNgayCap.setText(ttv.getNgayCap() + "");
 		txtNgayHieuLuc.setText(ttv.getNgayHieuLuc() + "");
-		cbxThoiGianHieuLuc.setSelectedItem(ttv.getTgHieuLuc());
+//		cbxThoiGianHieuLuc.setSelectedItem(ttv.getTgHieuLuc());
+		String tgHieuLuc = String.valueOf(ttv.getTgHieuLuc());
+		cbxThoiGianHieuLuc.setSelectedItem(tgHieuLuc);
 		txtOldID.setText(ttv.getOldID() + "");
 		if (ttv.isTrangThai()) {
 			cbxTrangThai.setSelectedIndex(0);
@@ -528,7 +559,9 @@ public class TheThanhVienJPanel extends JPanel {
 		ttv.setIdHangTV(htv.getId());
 		Integer tg = Integer.valueOf((String) cbxThoiGianHieuLuc.getSelectedItem());
 		ttv.setTgHieuLuc(tg);
-		ttv.setIdThanhVien(Integer.valueOf((String) cbxThanhVien.getSelectedItem()));
+
+		ThanhVien tv = (ThanhVien) cbxThanhVien.getSelectedItem();
+		ttv.setIdThanhVien(tv);
 		ttv.setTrangThai(cbxTrangThai.getSelectedItem() == "Hoạt Động" ? true : false);
 		return ttv;
 	}
@@ -573,8 +606,4 @@ public class TheThanhVienJPanel extends JPanel {
 		cbxHangThanhVien.setModel(cbxModel);
 	}
 
-	public void fillCbxThanhVien() {
-		cbxThanhVien.removeAllItems();
-		List<ThanhVien> listThanhVien;
-	}
 }

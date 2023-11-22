@@ -285,7 +285,7 @@ public class ViTriJPanel extends JPanel {
 					List<ViTri> list = get();
 					model.setRowCount(0);
 					for (ViTri nxb : list) {
-						Object[] row = { nxb.getiD(), nxb.getDaySo() };
+						Object[] row = { nxb.getID(), nxb.getDay() };
 						model.addRow(row);
 					}
 				} catch (Exception e) {
@@ -318,7 +318,7 @@ public class ViTriJPanel extends JPanel {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
 				ViTri vtd = getForm();
-				vtdao.delete(vtd.getiD());
+				vtdao.delete(vtd.getID());
 				load(indexTrang);
 				clear();
 				DialogHelper.alert(this, "Delete Successful");
@@ -353,20 +353,20 @@ public class ViTriJPanel extends JPanel {
 	}
 
 	void setForm(ViTri vtd) {
-		txtDay.setText(vtd.getDaySo() + "");
+		txtDay.setText(vtd.getDay() + "");
 
 	}
 
 	ViTri getForm() {
 		ViTri nxb = new ViTri();
 		int ID = (int) table.getValueAt(this.index, 0);
-		nxb.setiD(ID);
-		nxb.setDaySo(Integer.parseInt(txtDay.getText()));
+		nxb.setID(ID);
+		nxb.setDay(txtDay.getText());
 		if (txtDay.getText().isEmpty()) {
 			DialogHelper.alert(this, "Không để trống dãy");
 			return null;
 		} else {
-			nxb.setDaySo(Integer.valueOf(txtDay.getText()));
+			nxb.setDay(txtDay.getText());
 		}
 
 		return nxb;
@@ -376,12 +376,12 @@ public class ViTriJPanel extends JPanel {
 	ViTri getForminsert() {
 
 		ViTri nxb = new ViTri();
-		nxb.setDaySo(Integer.parseInt(txtDay.getText()));
+		nxb.setDay(txtDay.getText());
 		if (txtDay.getText().isEmpty()) {
 			DialogHelper.alert(this, "Không để trống họ tên tác giả");
 			return null;
 		} else {
-			nxb.setDaySo(Integer.valueOf(txtDay.getText()));
+			nxb.setDay(txtDay.getText());
 		}
 
 		return nxb;
@@ -393,6 +393,9 @@ public class ViTriJPanel extends JPanel {
 //            return null;
 	void edit() {
 		try {
+			//Kiểm tra giá trị là kiểu dữ liệu gì 
+//			Object value = table.getValueAt(this.index, 0);
+//			System.out.println(value.getClass());
 			int maNxb = (int) table.getValueAt(this.index, 0);
 			ViTri tg = vtdao.selectById(maNxb);
 			if (tg != null) {
@@ -401,6 +404,7 @@ public class ViTriJPanel extends JPanel {
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
+			e.printStackTrace();
 		}
 
 	}
@@ -423,7 +427,7 @@ public class ViTriJPanel extends JPanel {
 			DialogHelper.alert(this, "Không để trống họ tên tác giả");
 			return null;
 		} else {
-			nxb.setDaySo(Integer.valueOf(txtDay.getText()));
+			nxb.setDay(txtDay.getText());
 		}
 
 		return nxb;

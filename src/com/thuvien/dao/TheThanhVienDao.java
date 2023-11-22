@@ -9,13 +9,14 @@ import com.thuvien.entity.TheThanhVien;
 import com.thuvien.utils.JDBCHelper;
 
 public class TheThanhVienDao extends QLTVDao<TheThanhVien, Integer> {
+	ThanhVienDao tvd = new ThanhVienDao();
 
 	@Override
 	public void insert(TheThanhVien entity) {
 		String sql = " insert into TheThanhVien (MaTheTV,IDHangTV,NgayCap,NgayHieuLuc,TgHieuLuc,IDThanhVien,OldID,TrangThai)\r\n"
 				+ " values(?,?,?,?,?,?,?,?);";
 		JDBCHelper.executeUpdate(sql, entity.getMaTTV(), entity.getIdHangTV(), entity.getNgayCap(),
-				entity.getNgayHieuLuc(), entity.getTgHieuLuc(), entity.getIdThanhVien(), entity.getOldID(),
+				entity.getNgayHieuLuc(), entity.getTgHieuLuc(), entity.getIdThanhVien().getId(), entity.getOldID(),
 				entity.isTrangThai());
 	}
 
@@ -23,7 +24,7 @@ public class TheThanhVienDao extends QLTVDao<TheThanhVien, Integer> {
 	public void update(TheThanhVien entity) {
 		String sql = " update  TheThanhVien  set IDHangTV=?,NgayCap=?,NgayHieuLuc=?,TgHieuLuc=?,IDThanhVien=?,OldID=?,TrangThai=? where id = ?";
 		JDBCHelper.executeUpdate(sql, entity.getIdHangTV(), entity.getNgayCap(), entity.getNgayHieuLuc(),
-				entity.getTgHieuLuc(), entity.getIdThanhVien(), entity.getOldID(), entity.isTrangThai(),
+				entity.getTgHieuLuc(), entity.getIdThanhVien().getId(), entity.getOldID(), entity.isTrangThai(),
 				entity.getId());
 
 	}
@@ -75,7 +76,8 @@ public class TheThanhVienDao extends QLTVDao<TheThanhVien, Integer> {
 		model.setNgayCap(rs.getDate(4));
 		model.setNgayHieuLuc(rs.getDate(5));
 		model.setTgHieuLuc(rs.getInt(6));
-		model.setIdThanhVien(rs.getInt(7));
+		int id = rs.getInt("IDThanhVien");
+		model.setIdThanhVien(tvd.selectById2(id));
 		model.setOldID(rs.getInt(8));
 		model.setTrangThai(rs.getBoolean(9));
 		return model;
