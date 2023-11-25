@@ -1,6 +1,7 @@
 package com.thuvien.ui;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -30,13 +31,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.thuvien.dao.NhanVienDao;
+import com.thuvien.dao.PhieuTraChiTietDao;
 import com.thuvien.dao.PhieuTraDao;
-import com.thuvien.dao.TacGiaDao;
 import com.thuvien.dao.ThanhVienDao;
 import com.thuvien.entity.NhanVien;
 import com.thuvien.entity.PhieuMuon;
 import com.thuvien.entity.PhieuTra;
-import com.thuvien.entity.TacGia;
 import com.thuvien.entity.ThanhVien;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.ShareHelper;
@@ -72,6 +72,7 @@ public class PhieuTraJPanel extends JPanel {
 	private JComboBox cbxThanhVien;
 
 	PhieuTraDao ptd = new PhieuTraDao();
+	PhieuTraChiTietDao ptctd = new PhieuTraChiTietDao();
 
 	DefaultComboBoxModel<ThanhVien> modelThanhVien = new DefaultComboBoxModel<>();
 
@@ -373,6 +374,26 @@ public class PhieuTraJPanel extends JPanel {
 		add(lblIndexTrang);
 
 		JButton btnNewButton = new JButton("Xem Chi Tiết");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PhieuTra pt = new PhieuTra();
+				// Lấy dữ liệu từ PhieuMuonJPanel và truyền vào PhieuMuonChiTietJPanel
+				int selectedRowIndex = table.getSelectedRow();
+				if (selectedRowIndex >= 0) {
+					int id = (int) table.getValueAt(selectedRowIndex, 0);
+					pt = ptd.selectById(id);
+					if (pt != null) {
+						// Tạo một instance mới của PhieuMuonChiTietJPanel
+						PhieuTraChiTietJPanel chiTietJPanel = new PhieuTraChiTietJPanel(pt);
+						Container container = PhieuTraJPanel.this.getParent();
+						container.remove(PhieuTraJPanel.this);
+						container.add(chiTietJPanel);
+						container.revalidate();
+						container.repaint();
+					}
+				}
+			}
+		});
 		btnNewButton.setBounds(590, 496, 145, 21);
 		add(btnNewButton);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {

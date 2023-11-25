@@ -93,8 +93,7 @@ public class PhieuMuon {
 
 	@Override
 	public String toString() {
-		return "PhieuMuon [idThanhVien=" + idThanhVien + ", idNhanVien=" + idNhanVien + ", ngayMuon=" + ngayMuon
-				+ ", ngayPhaiTra=" + ngayPhaiTra + ", tienCoc=" + tienCoc + "]";
+		return maPhieuMuon + " " + idThanhVien.getTenTV();
 	}
 
 }

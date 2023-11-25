@@ -1,11 +1,14 @@
 package com.thuvien.entity;
 
 public class PhieuTraCT {
-	private int idPhieuMuonCT;
-	private int idPhieuTra;
-	private String tinhTrangSach, ghiChu;
+	private int id;
+	private PhieuMuonCT idPhieuMuonCT;
+	private PhieuTra idPhieuTra;
+	private boolean tinhTrangSach;
+	private String ghiChu;
 
-	public PhieuTraCT(int idPhieuMuonCT, int idPhieuTra, String tinhTrangSach, String ghiChu) {
+	public PhieuTraCT(int id, PhieuMuonCT idPhieuMuonCT, PhieuTra idPhieuTra, boolean tinhTrangSach, String ghiChu) {
+		this.id = id;
 		this.idPhieuMuonCT = idPhieuMuonCT;
 		this.idPhieuTra = idPhieuTra;
 		this.tinhTrangSach = tinhTrangSach;
@@ -15,27 +18,35 @@ public class PhieuTraCT {
 	public PhieuTraCT() {
 	}
 
-	public int getIdPhieuMuonCT() {
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public PhieuMuonCT getIdPhieuMuonCT() {
 		return idPhieuMuonCT;
 	}
 
-	public void setIdPhieuMuonCT(int idPhieuMuonCT) {
+	public void setIdPhieuMuonCT(PhieuMuonCT idPhieuMuonCT) {
 		this.idPhieuMuonCT = idPhieuMuonCT;
 	}
 
-	public int getIdPhieuTra() {
+	public PhieuTra getIdPhieuTra() {
 		return idPhieuTra;
 	}
 
-	public void setIdPhieuTra(int idPhieuTra) {
+	public void setIdPhieuTra(PhieuTra idPhieuTra) {
 		this.idPhieuTra = idPhieuTra;
 	}
 
-	public String getTinhTrangSach() {
+	public boolean isTinhTrangSach() {
 		return tinhTrangSach;
 	}
 
-	public void setTinhTrangSach(String tinhTrangSach) {
+	public void setTinhTrangSach(boolean tinhTrangSach) {
 		this.tinhTrangSach = tinhTrangSach;
 	}
 

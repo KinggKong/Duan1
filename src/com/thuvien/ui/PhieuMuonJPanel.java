@@ -1,6 +1,7 @@
 package com.thuvien.ui;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -69,6 +70,7 @@ public class PhieuMuonJPanel extends JPanel {
 	private JLabel lblIndexTrang;
 	private JTextField txtTienCoc;
 	private JTextField txtNgayTra;
+	private JButton btnXemChiTiet;
 
 	ThanhVienDao tvd = new ThanhVienDao();
 	NhanVienDao nvd = new NhanVienDao();
@@ -90,6 +92,8 @@ public class PhieuMuonJPanel extends JPanel {
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblTitle.setBounds(495, 10, 327, 37);
 		add(lblTitle);
+
+		btnXemChiTiet = new JButton("Xem Chi Tiết");
 
 		JPanel pnlThongTinTG = new JPanel();
 		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -349,9 +353,31 @@ public class PhieuMuonJPanel extends JPanel {
 		lblIndexTrang.setBounds(958, 491, 39, 13);
 		add(lblIndexTrang);
 
-		JButton btnNewButton = new JButton("Xem Chi Tiết");
-		btnNewButton.setBounds(590, 496, 145, 21);
-		add(btnNewButton);
+		btnXemChiTiet.setEnabled(false);
+		btnXemChiTiet.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PhieuMuon pm = new PhieuMuon();
+				// Lấy dữ liệu từ PhieuMuonJPanel và truyền vào PhieuMuonChiTietJPanel
+				int selectedRowIndex = table.getSelectedRow();
+				if (selectedRowIndex >= 0) {
+					int id = (int) table.getValueAt(selectedRowIndex, 0);
+					pm = pmd.selectById(id);
+					if (pm != null) {
+						// Tạo một instance mới của PhieuMuonChiTietJPanel
+						PhieuMuonChiTietJPanel chiTietJPanel = new PhieuMuonChiTietJPanel(pm);
+						Container container = PhieuMuonJPanel.this.getParent();
+						container.remove(PhieuMuonJPanel.this);
+						container.add(chiTietJPanel);
+						container.revalidate();
+						container.repaint();
+					}
+				}
+
+			}
+		});
+		btnXemChiTiet.setBounds(597, 487, 145, 21);
+		add(btnXemChiTiet);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -498,7 +524,6 @@ public class PhieuMuonJPanel extends JPanel {
 		ThanhVien tv = (ThanhVien) cbxThanhVien.getSelectedItem();
 		if (tv != null) {
 			pm.setIdThanhVien(tv);
-			System.out.println(tv);
 		} else {
 			// Xử lý trường hợp cbxThanhVien.getSelectedItem() là null
 			DialogHelper.alert(null, "Chọn một thành viên!");
@@ -553,6 +578,7 @@ public class PhieuMuonJPanel extends JPanel {
 		btnPrevEdit.setEnabled(!insertable && first);
 		btnNextEdit.setEnabled(!insertable && last);
 		btnLast.setEnabled(!insertable && last);
+		btnXemChiTiet.setEnabled(!insertable);
 	}
 
 	void search() {

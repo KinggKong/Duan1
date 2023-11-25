@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thuvien.entity.PhieuMuonCT;
 import com.thuvien.entity.QuyenSach;
 import com.thuvien.entity.TaiBan;
 import com.thuvien.utils.JDBCHelper;
@@ -24,8 +25,8 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 	@Override
 	public void update(QuyenSach entity) {
 		String sql = "UPDATE QuyenSach SET TenQS =?, IDViTri =?, IDTaiBan =?, TinhTrang =?, GhiChu =?  where MaQS =?";
-		JDBCHelper.executeUpdate(sql, entity.getTenQS(), entity.getIdViTri().getID(),
-				entity.getIdTaiBan().getLanTaiBan(), entity.getTinhTrang(), entity.getGhiChu(), entity.getMaQS());
+		JDBCHelper.executeUpdate(sql, entity.getTenQS(), entity.getIdViTri().getID(), entity.getIdTaiBan().getId(),
+				entity.getTinhTrang(), entity.getGhiChu(), entity.getMaQS());
 	}
 
 	@Override
@@ -37,13 +38,13 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 
 	@Override
 	public List<QuyenSach> selectAll() {
-		String sql = "SELECT MaQS, TenQS, IDViTri, IDTaiBan,GhiChu, TinhTrang\r\n" + "FROM  QuyenSach";
+		String sql = "SELECT * FROM  QuyenSach";
 		return select(sql);
 	}
 
 	@Override
 	public QuyenSach selectById(String key) {
-		String sql = "Select MaQS, TenQS, IDViTri, IDTaiBan,GhiChu, TinhTrang from QuyenSach where MaQS = ?";
+		String sql = "Select * from QuyenSach where MaQS = ?";
 		QuyenSach quyenSach = null;
 		try {
 			ResultSet rs = null;
@@ -62,14 +63,30 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 		return quyenSach;
 	}
 
+	public QuyenSach selectById2(int key) {
+		QuyenSach nv = new QuyenSach();
+		String sql = "select * from QuyenSach where ID =?";
+		List<QuyenSach> list = select(sql, key);
+		return list.size() > 0 ? list.get(0) : null;
+	}
+
+	public List<QuyenSach> sachMuonDuoc() {
+		String sql = "SELECT *\r\n" + "FROM QuyenSach qs\r\n" + "WHERE qs.TinhTrang IN (1, 2)\r\n"
+				+ "AND qs.ID NOT IN (\r\n" + "    SELECT DISTINCT qs.ID\r\n" + "    FROM QuyenSach qs\r\n"
+				+ "    JOIN PhieuMuonCT pmct ON qs.ID = pmct.IDQuyenSach\r\n"
+				+ "    LEFT JOIN PhieuTraCT ptct ON pmct.ID = ptct.IDPhieuMuonCT\r\n"
+				+ "    WHERE ptct.TinhTrang = 0 OR ptct.TinhTrang IS NULL\r\n" + ");";
+		return select(sql);
+	}
+
 	public List<QuyenSach> loadTrang(int indexTrang, int limit) {
-		String sql = "SELECT MaQS, TenQS, IDTaiBan, IDViTri, TinhTrang,GhiChu FROM QuyenSach order by MaQS offset ? rows fetch next ? rows only ";
+		String sql = "SELECT * FROM QuyenSach order by ID offset ? rows fetch next ? rows only ";
 		List<QuyenSach> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 	}
 
 	public List<QuyenSach> loadTrangCBX(int indexTrang, int limit) {
-		String sql = "SELECT MaQS, TenQS, IDTaiBan, IDViTri, TinhTrang,GhiChu FROM QuyenSach order by MaQS offset ? rows fetch next ? rows only ";
+		String sql = "SELECT * FROM QuyenSach order by ID offset ? rows fetch next ? rows only ";
 		List<QuyenSach> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 	}
@@ -95,6 +112,7 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 
 	private QuyenSach readFromResultSet(ResultSet rs) throws SQLException {
 		QuyenSach qs = new QuyenSach();
+		qs.setId(rs.getInt("ID"));
 		qs.setMaQS(rs.getString("MaQS"));
 		qs.setTenQS(rs.getString("TenQS"));
 		int viTri = rs.getInt("IDViTri");

@@ -556,7 +556,11 @@ public class QuyenSachJPanel extends JPanel {
 
 		qs.setTenQS(cbxSach.getSelectedItem().toString());
 		TaiBan tb = (TaiBan) cbxTaiBan.getSelectedItem();
-		qs.setIdTaiBan(tb);
+		if (tb != null) {
+			qs.setIdTaiBan(tb);
+		} else {
+			DialogHelper.alert(this, "Dang loi tai ban");
+		}
 		ViTri vt = (ViTri) cbxViTri.getSelectedItem();
 		qs.setIdViTri(vt);
 		qs.setGhiChu(txtGhiChu.getText());

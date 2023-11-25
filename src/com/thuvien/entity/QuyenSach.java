@@ -1,14 +1,26 @@
 package com.thuvien.entity;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class QuyenSach {
+	private int id;
 	private String maQS;
 	private String tenQS;
 	private ViTri idViTri;
 	private TaiBan idTaiBan;
 	private int tinhTrang;
 	private String ghiChu;
+
+	public QuyenSach(int id, String maQS, String tenQS, ViTri idViTri, TaiBan idTaiBan, int tinhTrang, String ghiChu) {
+		this.id = id;
+		this.maQS = maQS;
+		this.tenQS = tenQS;
+		this.idViTri = idViTri;
+		this.idTaiBan = idTaiBan;
+		this.tinhTrang = tinhTrang;
+		this.ghiChu = ghiChu;
+	}
 
 	public QuyenSach() {
 	}
@@ -68,6 +80,36 @@ public class QuyenSach {
 
 	public void setGhiChu(String ghiChu) {
 		this.ghiChu = ghiChu;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public String toString() {
+		return maQS + " " + tenQS;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, maQS);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		QuyenSach other = (QuyenSach) obj;
+		return id == other.id && Objects.equals(maQS, other.maQS);
 	}
 
 }

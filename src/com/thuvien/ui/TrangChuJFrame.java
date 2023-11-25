@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -15,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import com.thuvien.utils.Auth;
@@ -25,6 +28,8 @@ public class TrangChuJFrame extends JFrame {
 	private JPanel contentPane;
 	private JPanel pnlContain;
 	JPanel jpanel;
+	private JLabel lblTaiKhoanDangDung;
+	private JLabel lblThoiGian;
 
 // Lưu ý !!!
 // các panel con có kích thước chiều dài: 1325; chiều rộng: 575;
@@ -94,6 +99,11 @@ public class TrangChuJFrame extends JFrame {
 		mnuHeThong.add(separator_1);
 
 		JMenuItem mniKetThuc = new JMenuItem("Kết Thúc");
+		mniKetThuc.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
 		mniKetThuc.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/-Exit.24.png")));
 		mnuHeThong.add(mniKetThuc);
 
@@ -189,7 +199,7 @@ public class TrangChuJFrame extends JFrame {
 		mnuTroGiup.add(mntmNewMenuItem_1);
 
 		JToolBar toolBar = new JToolBar();
-		toolBar.setBounds(0, 33, 1336, 34);
+		toolBar.setBounds(0, 33, 1063, 34);
 		contentPane.add(toolBar);
 
 		JButton btnSach = new JButton("Sách");
@@ -252,7 +262,7 @@ public class TrangChuJFrame extends JFrame {
 				changePanel(jpanel);
 			}
 		});
-		btnPhieuTra.setIcon(new ImageIcon( 
+		btnPhieuTra.setIcon(new ImageIcon(
 				TrangChuJFrame.class.getResource("/icon/Fatcow-Farm-Fresh-Application-form-delete.24.png")));
 		toolBar.add(btnPhieuTra);
 
@@ -263,8 +273,25 @@ public class TrangChuJFrame extends JFrame {
 
 		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/logo.png")));
+		lblNewLabel.setHorizontalAlignment(JLabel.CENTER);
+		lblNewLabel.setVerticalAlignment(JLabel.CENTER);
 		pnlContain.add(lblNewLabel, BorderLayout.CENTER);
 
+		JLabel lblNewLabel_1 = new JLabel("");
+		lblNewLabel_1.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/User.png")));
+		lblNewLabel_1.setBounds(1072, 33, 32, 34);
+		contentPane.add(lblNewLabel_1);
+
+		lblTaiKhoanDangDung = new JLabel("");
+		lblTaiKhoanDangDung.setBounds(1114, 33, 111, 34);
+		contentPane.add(lblTaiKhoanDangDung);
+		lblTaiKhoanDangDung.setText(ShareHelper.USER.getTenNV());
+
+		lblThoiGian = new JLabel((String) null);
+		lblThoiGian.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Clock.png")));
+		lblThoiGian.setBounds(1225, 33, 111, 34);
+		contentPane.add(lblThoiGian);
+		thoiGian();
 	}
 
 	private void changePanel(JPanel p) {
@@ -277,6 +304,19 @@ public class TrangChuJFrame extends JFrame {
 	public void init() {
 		openWelcome();
 		openLogin();
+	}
+
+	public void thoiGian() {
+		new Timer(1000, new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Date dateTime = new Date();
+				SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+				String time = dateFormat.format(dateTime);
+				lblThoiGian.setText(time);
+			}
+		}).start();
 	}
 
 	void openWelcome() {

@@ -40,12 +40,12 @@ import javax.swing.table.DefaultTableModel;
 
 import com.thuvien.dao.PhieuMuonChiTietDao;
 import com.thuvien.dao.PhieuMuonDao;
-import com.thuvien.dao.QuyenSachDao;
-
+import com.thuvien.dao.PhieuTraChiTietDao;
 import com.thuvien.entity.PhieuMuon;
 import com.thuvien.entity.PhieuMuonCT;
-import com.thuvien.entity.QuyenSach;
-import com.thuvien.entity.TacGia;
+import com.thuvien.entity.PhieuTra;
+import com.thuvien.entity.PhieuTraCT;
+
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.ShareHelper;
 import com.thuvien.utils.XDate;
@@ -55,8 +55,11 @@ import javax.swing.JLayeredPane;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
-public class PhieuMuonChiTietJPanel extends JPanel {
+public class PhieuTraChiTietJPanel extends JPanel {
 
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTable table;
@@ -74,27 +77,30 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 	private JButton btnNextEdit;
 	private JButton btnLast;
 	private JLabel lblIndexTrang;
-	private JTextField txtTimSach;
-	private JList jListSach;
+	private JTextField txtMaPhieuTra;
+	private JComboBox cbxMaPhieuMuon;
+	private JComboBox cbxPhieuMuonChiTiet;
+	private JRadioButton rdoDaTra;
+	private JRadioButton rdoChuaTra;
+	private JTextArea txtGhiChu;
 	Date ngayHienTai = new Date();
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-	QuyenSachDao qsd = new QuyenSachDao();
+	DefaultComboBoxModel<PhieuMuon> modelPhieuMuon = new DefaultComboBoxModel<>();
+	DefaultComboBoxModel<PhieuMuonCT> modelPhieuMuonCT = new DefaultComboBoxModel<>();
+
+	PhieuTraChiTietDao ptctd = new PhieuTraChiTietDao();
 	PhieuMuonDao pmd = new PhieuMuonDao();
 	PhieuMuonChiTietDao pmctd = new PhieuMuonChiTietDao();
-
-	DefaultListModel<QuyenSach> listModel = new DefaultListModel<>();
-
-	List<QuyenSach> listQuyenSach = new ArrayList<>();
 	private JLabel lblNewLabel_2;
 	private JLabel lblThanhVien;
 
-	public PhieuMuonChiTietJPanel(PhieuMuon phieuMuon) {
+	public PhieuTraChiTietJPanel(PhieuTra phieuTra) {
 		setLayout(null);
-		JLabel lblTitle = new JLabel("Phiếu Mượn Chi Tiết");
+		JLabel lblTitle = new JLabel("Phiếu Trả Chi Tiết");
 		lblTitle.setForeground(Color.BLUE);
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblTitle.setBounds(495, 10, 327, 37);
+		lblTitle.setBounds(530, 10, 327, 37);
 		add(lblTitle);
 
 		JPanel pnlDanhSach = new JPanel();
@@ -109,8 +115,6 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		scrollPane.setBounds(10, 30, 739, 338);
 		pnlDanhSach.add(scrollPane);
 
-		loadJList();
-
 		table = new JTable();
 		table.addMouseListener(new MouseAdapter() {
 			@Override
@@ -123,7 +127,7 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 			}
 		});
 		scrollPane.setViewportView(table);
-		String[] columns = { "ID", "Mã Phiếu Mượn", "Tên Sách" };
+		String[] columns = { "ID", "ID Phiếu Trả", "ID Phiếu Mượn CT", "Tình Trạng ", "Ghi Chú" };
 		Object[][] rows = {
 
 		};
@@ -131,7 +135,7 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(98, 521, 350, 30);
+		pnlButton2.setBounds(98, 515, 350, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -177,7 +181,7 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		pnlButton2.add(btnLast);
 
 		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(98, 481, 350, 30);
+		pnlButton1.setBounds(98, 475, 350, 30);
 		add(pnlButton1);
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -237,106 +241,99 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		lblIndexTrang.setBounds(916, 491, 39, 13);
 		add(lblIndexTrang);
 
-		JPanel panel = new JPanel();
-		panel.setBounds(32, 113, 477, 352);
-		add(panel);
-		panel.setLayout(null);
-
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane_1.setBounds(10, 66, 457, 265);
-		panel.add(scrollPane_1);
-
-		jListSach = new JList();
-		scrollPane_1.setViewportView(jListSach);
-		jListSach.setModel(listModel);
-
-		txtTimSach = new JTextField();
-		txtTimSach.setBounds(10, 37, 457, 19);
-		panel.add(txtTimSach);
-		txtTimSach.setColumns(10);
-		txtTimSach.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				updateList();
-			}
-
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				updateList();
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				updateList();
-			}
-
-			private void updateList() {
-				String prefix = txtTimSach.getText();
-				List<QuyenSach> filteredData = new ArrayList<>();
-
-				for (QuyenSach item : listQuyenSach) {
-					if (item.getTenQS().toLowerCase().startsWith(prefix.toLowerCase())) {
-						filteredData.add(item);
-					}
-				}
-
-				listModel.clear();
-				for (QuyenSach item : filteredData) {
-					listModel.addElement(item);
-				}
-			}
-		});
-
-		jListSach.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (!jListSach.isSelectionEmpty()) {
-					QuyenSach selectedValue = (QuyenSach) jListSach.getSelectedValue();
-
-					int kq = insert(phieuMuon, selectedValue);
-
-					if (kq == 1) {
-						// Loại bỏ đối tượng đã chọn khỏi danh sách
-						// Cập nhật lại JList
-						listQuyenSach.remove(selectedValue);
-						listModel.removeElement(selectedValue);
-					}
-				}
-			}
-		});
-
-		JLabel lblNewLabel = new JLabel("Nhập Tên Sách");
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblNewLabel.setBounds(10, 10, 120, 19);
-		panel.add(lblNewLabel);
-
 		JLabel lblNewLabel_1 = new JLabel("");
 		lblNewLabel_1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				quayLaiPhieuMuon();
+				quayLaiPhieuTra();
 			}
 		});
-		lblNewLabel_1.setIcon(new ImageIcon(PhieuMuonChiTietJPanel.class.getResource("/icon/quayLai.png")));
+		lblNewLabel_1.setIcon(new ImageIcon(PhieuTraChiTietJPanel.class.getResource("/icon/quayLai.png")));
 		lblNewLabel_1.setBounds(32, 29, 66, 30);
 		add(lblNewLabel_1);
 
-		lblNewLabel_2 = new JLabel("Phiếu Mượn Chi Tiết Của :");
+		JPanel panel = new JPanel();
+		panel.setBounds(21, 122, 499, 343);
+		add(panel);
+		panel.setLayout(null);
+
+		JLabel lblNewLabel = new JLabel("Mã Phiếu Mượn");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblNewLabel.setBounds(10, 10, 144, 29);
+		panel.add(lblNewLabel);
+
+		cbxMaPhieuMuon = new JComboBox();
+		cbxMaPhieuMuon.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				PhieuMuon pm = (PhieuMuon) cbxMaPhieuMuon.getSelectedItem();
+				int idPhieuMuon = pm.getId();
+				fillCbxPhieuMuonCT(idPhieuMuon);
+				loadTable(idPhieuMuon);
+			}
+		});
+		cbxMaPhieuMuon.setBounds(10, 49, 203, 21);
+		panel.add(cbxMaPhieuMuon);
+		cbxMaPhieuMuon.setModel(modelPhieuMuon);
+
+		cbxPhieuMuonChiTiet = new JComboBox();
+		cbxPhieuMuonChiTiet.setBounds(265, 49, 224, 21);
+		panel.add(cbxPhieuMuonChiTiet);
+		cbxPhieuMuonChiTiet.setModel(modelPhieuMuonCT);
+
+		JLabel lblPhiuMnChi = new JLabel("Phiếu Mượn Chi Tiết");
+		lblPhiuMnChi.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblPhiuMnChi.setBounds(265, 10, 224, 29);
+		panel.add(lblPhiuMnChi);
+
+		JLabel lblMPhiuTr = new JLabel("Mã Phiếu Trả");
+		lblMPhiuTr.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblMPhiuTr.setBounds(10, 104, 144, 29);
+		panel.add(lblMPhiuTr);
+
+		txtMaPhieuTra = new JTextField();
+		txtMaPhieuTra.setBounds(10, 136, 192, 19);
+		panel.add(txtMaPhieuTra);
+		txtMaPhieuTra.setColumns(10);
+
+		JLabel lblNewLabel_2_1 = new JLabel("Tình Trạng");
+		lblNewLabel_2_1.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblNewLabel_2_1.setBounds(265, 104, 144, 29);
+		panel.add(lblNewLabel_2_1);
+
+		rdoDaTra = new JRadioButton("Đã Trả");
+		rdoDaTra.setSelected(true);
+		buttonGroup.add(rdoDaTra);
+		rdoDaTra.setBounds(265, 135, 103, 21);
+		panel.add(rdoDaTra);
+
+		rdoChuaTra = new JRadioButton("Chưa Trả");
+		buttonGroup.add(rdoChuaTra);
+		rdoChuaTra.setBounds(390, 135, 89, 21);
+		panel.add(rdoChuaTra);
+
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane_1.setBounds(10, 200, 479, 125);
+		panel.add(scrollPane_1);
+
+		txtGhiChu = new JTextArea();
+		scrollPane_1.setViewportView(txtGhiChu);
+
+		lblNewLabel_2 = new JLabel("Phiếu Trả Chi Tiết Của :");
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblNewLabel_2.setBounds(45, 82, 162, 21);
+		lblNewLabel_2.setBounds(31, 82, 145, 21);
 		add(lblNewLabel_2);
 
 		lblThanhVien = new JLabel("");
 		lblThanhVien.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblThanhVien.setBounds(206, 82, 269, 21);
-		lblThanhVien.setText(phieuMuon.getIdThanhVien().getTenTV());
+		lblThanhVien.setBounds(186, 82, 283, 21);
 		add(lblThanhVien);
+		lblThanhVien.setText(phieuTra.getIdThanhVien().getTenTV());
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				loadTable(phieuMuon);
+				fillCbxPhieuMuon(phieuTra);
 				return null;
 			}
 
@@ -350,9 +347,9 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		worker.execute();
 	}
 
-	private void quayLaiPhieuMuon() {
+	private void quayLaiPhieuTra() {
 		// Tạo một đối tượng của PhieuMuonJPanel
-		PhieuMuonJPanel phieuMuonJPanel = new PhieuMuonJPanel();
+		PhieuTraJPanel phieuMuonJPanel = new PhieuTraJPanel();
 
 		// Lấy đối tượng Container chứa PhieuMuonChiTietJPanel
 		Container container = this.getParent();
@@ -366,26 +363,21 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		container.repaint();
 	}
 
-	void loadJList() {
-		SwingWorker<List<QuyenSach>, Void> worker = new SwingWorker<List<QuyenSach>, Void>() {
+	void fillCbxPhieuMuon(PhieuTra phieuTra) {
+		SwingWorker<List<PhieuMuon>, Void> worker = new SwingWorker<List<PhieuMuon>, Void>() {
 
 			@Override
-			protected List<QuyenSach> doInBackground() throws Exception {
-				return qsd.sachMuonDuoc();
+			protected List<PhieuMuon> doInBackground() throws Exception {
+				return pmd.selectTheoThanhVien(phieuTra.getIdThanhVien().getId());
 			}
 
 			@Override
 			protected void done() {
 				try {
-					List<QuyenSach> initialData = get();
-					// Xóa dữ liệu hiện tại
-					listModel.clear();
-					listQuyenSach.clear();
-
-					// Thêm dữ liệu ban đầu vào danh sách và mô hình danh sách
-					for (QuyenSach qs : initialData) {
-						listQuyenSach.add(qs);
-						listModel.addElement(qs);
+					List<PhieuMuon> listPhieuMuon = get();
+					modelPhieuMuon.removeAllElements();
+					for (PhieuMuon pm : listPhieuMuon) {
+						modelPhieuMuon.addElement(pm);
 					}
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
@@ -394,27 +386,60 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+
 			}
+
 		};
 		worker.execute();
 	}
 
-	void loadTable(PhieuMuon phieuMuon) {
+	void fillCbxPhieuMuonCT(int idPhieuMuon) {
 		SwingWorker<List<PhieuMuonCT>, Void> worker = new SwingWorker<List<PhieuMuonCT>, Void>() {
 
 			@Override
 			protected List<PhieuMuonCT> doInBackground() throws Exception {
-				return pmctd.selectAllTheoPhieuMuon(phieuMuon.getId());
+				return pmctd.selectPhieuMuonCTChuaTra(idPhieuMuon);
 			}
 
 			@Override
 			protected void done() {
 				try {
-					List<PhieuMuonCT> listPMCT = get();
+					List<PhieuMuonCT> list = get();
+					modelPhieuMuonCT.removeAllElements();
+					for (PhieuMuonCT pmct : list) {
+						modelPhieuMuonCT.addElement(pmct);
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+		};
+		worker.execute();
+	}
+
+	void loadTable(int idPhieuMuon) {
+		SwingWorker<List<PhieuTraCT>, Void> worker = new SwingWorker<List<PhieuTraCT>, Void>() {
+
+			@Override
+			protected List<PhieuTraCT> doInBackground() throws Exception {
+				return ptctd.selectAllTheoIDPhieuMuon(idPhieuMuon);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<PhieuTraCT> listPMCT = get();
 					model.setRowCount(0);
-					for (PhieuMuonCT pmct : listPMCT) {
-						Object[] row = { pmct.getId(), pmct.getIdPhieuMuon().getMaPhieuMuon(),
-								pmct.getIdQuyenSach().getTenQS() };
+					for (PhieuTraCT ptct : listPMCT) {
+						Object[] row = { ptct.getId(), ptct.getIdPhieuTra().getIdThanhVien().getTenTV(),
+								ptct.getIdPhieuMuonCT().getIdQuyenSach().getTenQS(),
+								ptct.isTinhTrangSach() ? "Đã Trả" : "Chưa Trả", ptct.getGhiChu() };
 						model.addRow(row);
 					}
 				} catch (InterruptedException e) {
@@ -430,28 +455,28 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		};
 		worker.execute();
 	}
-
-	int insert(PhieuMuon pm, QuyenSach qs) {
-		int kq = 0;
-		try {
-			int choose = JOptionPane.showConfirmDialog(this,
-					"Bạn có chắc chắn muốn thêm " + qs.getTenQS() + " vào không ? ", "Thêm Sách Mượn",
-					JOptionPane.YES_NO_OPTION);
-			if (choose == JOptionPane.YES_OPTION) {
-				PhieuMuonCT pmct = new PhieuMuonCT(pm, qs);
-				if (pmct != null) {
-					pmctd.insert(pmct);
-					loadTable(pm);
-					clear();
-					DialogHelper.alert(this, "Insert Successful");
-					kq = 1;
-				}
-			}
-		} catch (Exception e) {
-			DialogHelper.alert(this, "Insert Failed");
-		}
-		return kq;
-	}
+//
+//	int insert(PhieuMuon pm, QuyenSach qs) {
+//		int kq = 0;
+//		try {
+//			int choose = JOptionPane.showConfirmDialog(this,
+//					"Bạn có chắc chắn muốn thêm " + qs.getTenQS() + " vào không ? ", "Thêm Sách Mượn",
+//					JOptionPane.YES_NO_OPTION);
+//			if (choose == JOptionPane.YES_OPTION) {
+//				PhieuMuonCT pmct = new PhieuMuonCT(pm, qs);
+//				if (pmct != null) {
+//					pmctd.insert(pmct);
+//					loadTable(pm);
+//					clear();
+//					DialogHelper.alert(this, "Insert Successful");
+//					kq = 1;
+//				}
+//			}
+//		} catch (Exception e) {
+//			DialogHelper.alert(this, "Insert Failed");
+//		}
+//		return kq;
+//	}
 
 	void delete() {
 
@@ -466,11 +491,11 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		setStatus(true);
 	}
 
-	void setForm(PhieuMuon pm) {
+	void setForm(PhieuTra pt) {
 
 	}
 
-	PhieuMuon getForm() {
+	PhieuTra getForm() {
 
 		return null;
 	}
@@ -490,5 +515,4 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		btnNextEdit.setEnabled(!insertable && last);
 		btnLast.setEnabled(!insertable && last);
 	}
-
 }

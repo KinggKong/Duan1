@@ -64,7 +64,7 @@ public class TaiBan {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(lanTaiBan);
+		return Objects.hash(id, idSach, lanTaiBan);
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class TaiBan {
 		if (getClass() != obj.getClass())
 			return false;
 		TaiBan other = (TaiBan) obj;
-		return lanTaiBan == other.lanTaiBan;
+		return id == other.id && Objects.equals(idSach, other.idSach) && lanTaiBan == other.lanTaiBan;
 	}
 
 }

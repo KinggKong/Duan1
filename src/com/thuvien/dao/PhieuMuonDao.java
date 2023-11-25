@@ -59,6 +59,11 @@ public class PhieuMuonDao extends QLTVDao<PhieuMuon, Integer> {
 		return list.size() > 0 ? list.get(0) : null;
 	}
 
+	public List<PhieuMuon> selectTheoThanhVien(int key) {
+		String sql = "select * from PhieuMuon where IDThanhVien =?";
+		return select(sql, key);
+	}
+
 	public List<PhieuMuon> loadTrang(int indexTrang, int limit) {
 		String sql = "select * from PhieuMuon order by ID offset ? rows fetch next ? rows only ";
 		List<PhieuMuon> list = new ArrayList<>();
