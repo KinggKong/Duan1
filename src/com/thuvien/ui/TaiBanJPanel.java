@@ -346,6 +346,7 @@ public class TaiBanJPanel extends JPanel {
 					}
 				} catch (Exception e) {
 					DialogHelper.alert(TaiBanJPanel.this, "Lỗi truy vấn dữ liệu!");
+					e.printStackTrace();
 				}
 			}
 		};

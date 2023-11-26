@@ -16,17 +16,17 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 
 	@Override
 	public void insert(QuyenSach entity) {
-		String sql = "INSERT INTO QuyenSach\r\n"
-				+ "                  (MaQS, TenQS, IDViTri, TinhTrang, IDTaiBan, GhiChu)\r\n" + "VALUES (?,?,?,?,?,?)";
-		JDBCHelper.executeUpdate(sql, entity.getMaQS(), entity.getTenQS(), entity.getIdViTri().getID(),
-				entity.getTinhTrang(), entity.getIdTaiBan().getId(), entity.getGhiChu());
+		String sql = "INSERT INTO QuyenSach\r\n" + "                  (MaQS, TenQS, TinhTrang, IDTaiBan, GhiChu)\r\n"
+				+ "VALUES (?,?,?,?,?,?)";
+		JDBCHelper.executeUpdate(sql, entity.getMaQS(), entity.getTenQS(), entity.getTinhTrang(),
+				entity.getIdTaiBan().getId(), entity.getGhiChu());
 	}
 
 	@Override
 	public void update(QuyenSach entity) {
-		String sql = "UPDATE QuyenSach SET TenQS =?, IDViTri =?, IDTaiBan =?, TinhTrang =?, GhiChu =?  where MaQS =?";
-		JDBCHelper.executeUpdate(sql, entity.getTenQS(), entity.getIdViTri().getID(), entity.getIdTaiBan().getId(),
-				entity.getTinhTrang(), entity.getGhiChu(), entity.getMaQS());
+		String sql = "UPDATE QuyenSach SET TenQS =?, IDTaiBan =?, TinhTrang =?, GhiChu =?  where MaQS =?";
+		JDBCHelper.executeUpdate(sql, entity.getTenQS(), entity.getIdTaiBan().getId(), entity.getTinhTrang(),
+				entity.getGhiChu(), entity.getMaQS());
 	}
 
 	@Override
@@ -64,7 +64,6 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 	}
 
 	public QuyenSach selectById2(int key) {
-		QuyenSach nv = new QuyenSach();
 		String sql = "select * from QuyenSach where ID =?";
 		List<QuyenSach> list = select(sql, key);
 		return list.size() > 0 ? list.get(0) : null;
@@ -115,8 +114,6 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 		qs.setId(rs.getInt("ID"));
 		qs.setMaQS(rs.getString("MaQS"));
 		qs.setTenQS(rs.getString("TenQS"));
-		int viTri = rs.getInt("IDViTri");
-		qs.setIdViTri(vtd.selectById(viTri));
 		int id = rs.getInt("IDTaiBan");
 		TaiBan tb = tbd.selectById(id);
 		qs.setIdTaiBan(tb);

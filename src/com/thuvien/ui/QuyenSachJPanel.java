@@ -19,6 +19,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
@@ -26,11 +27,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.thuvien.dao.QuyenSachDao;
-
+import com.thuvien.dao.QuyenSachTimDao;
 import com.thuvien.dao.SachDao;
 import com.thuvien.dao.TaiBanDao;
 import com.thuvien.dao.ViTriDao;
 import com.thuvien.entity.QuyenSach;
+import com.thuvien.entity.QuyenSachTim;
 import com.thuvien.entity.Sach;
 import com.thuvien.entity.TacGia;
 import com.thuvien.entity.TaiBan;
@@ -51,23 +53,23 @@ public class QuyenSachJPanel extends JPanel {
 	DefaultTableModel model;
 	private JComboBox cbxTinhTrang;
 	private JTextArea txtGhiChu;
-	private JComboBox cbxViTri;
 	private JButton btnInsert;
 	private JButton btnDelete;
 	private JButton btnUpdate;
 	private JButton btnClear;
 	private JButton btnPrevList;
 	private JButton btnNextList;
-	int indexTrang = 1;
-	int index = 0;
+	private int indexTrang = 1;
+	private int index = 0;
 	private JButton btnFirst;
 	private JButton btnPrevEdit;
 	private JButton btnNextEdit;
 	private JButton btnLast;
+
 	SachDao sd = new SachDao();
 	QuyenSachDao quyenSachDao = new QuyenSachDao();
 	TaiBanDao tbd = new TaiBanDao();
-	ViTriDao vtd = new ViTriDao();
+	QuyenSachTimDao qstd = new QuyenSachTimDao();
 
 	private JLabel lblIndexTrang;
 	private JButton btnTimKiem;
@@ -89,13 +91,13 @@ public class QuyenSachJPanel extends JPanel {
 
 		JPanel panel = new JPanel();
 		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel.setBounds(23, 108, 495, 318);
+		panel.setBounds(21, 108, 516, 318);
 		add(panel);
 		panel.setLayout(null);
 
 		JLabel lblMSch = new JLabel("Mã QS");
 		lblMSch.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblMSch.setBounds(10, 58, 104, 19);
+		lblMSch.setBounds(10, 75, 104, 19);
 		panel.add(lblMSch);
 
 		JLabel lblTenSach = new JLabel("Sách");
@@ -105,48 +107,37 @@ public class QuyenSachJPanel extends JPanel {
 
 		txtMaQS = new JTextField();
 		txtMaQS.setColumns(10);
-		txtMaQS.setBounds(10, 87, 225, 19);
+		txtMaQS.setBounds(10, 104, 264, 19);
 		panel.add(txtMaQS);
 
 		JLabel lblNmXutBn = new JLabel("Lần Tái Bản\r\n");
 		lblNmXutBn.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblNmXutBn.setBounds(283, 10, 144, 19);
+		lblNmXutBn.setBounds(302, 10, 144, 19);
 		panel.add(lblNmXutBn);
 
 		cbxTinhTrang = new JComboBox();
 		cbxTinhTrang.setModel(new DefaultComboBoxModel(new String[] { "Hỏng", "Mới", "Hỏng Nhẹ" }));
-		cbxTinhTrang.setBounds(10, 156, 225, 24);
+		cbxTinhTrang.setBounds(302, 101, 204, 24);
 		panel.add(cbxTinhTrang);
 
 		JLabel lblTinhTrang = new JLabel("Tình Trạng");
 		lblTinhTrang.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblTinhTrang.setBounds(10, 126, 128, 19);
+		lblTinhTrang.setBounds(299, 75, 128, 19);
 		panel.add(lblTinhTrang);
 
 		JLabel lblGhiChu = new JLabel("Ghi Chú");
 		lblGhiChu.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblGhiChu.setBounds(10, 190, 128, 19);
+		lblGhiChu.setBounds(10, 161, 128, 19);
 		panel.add(lblGhiChu);
 
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPane_1.setBounds(10, 219, 475, 89);
+		scrollPane_1.setBounds(10, 190, 496, 118);
 		panel.add(scrollPane_1);
 
 		txtGhiChu = new JTextArea();
 		scrollPane_1.setViewportView(txtGhiChu);
-
-		JLabel lblNhaXuatBan = new JLabel("Dãy ");
-		lblNhaXuatBan.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblNhaXuatBan.setBounds(283, 63, 144, 19);
-		panel.add(lblNhaXuatBan);
-
-		cbxViTri = new JComboBox();
-		cbxViTri.setModel(new DefaultComboBoxModel(new String[] { "A", "B", "C", "D", "E" }));
-		cbxViTri.setBounds(283, 87, 183, 21);
-		panel.add(cbxViTri);
-		cbxViTri.setModel(modelViTri);
 
 		cbxSach = new JComboBox();
 		cbxSach.addItemListener(new ItemListener() {
@@ -154,14 +145,15 @@ public class QuyenSachJPanel extends JPanel {
 				Sach s = (Sach) cbxSach.getSelectedItem();
 				int idSach = s.getId();
 				fillTaiBan(idSach);
+				
 			}
 		});
-		cbxSach.setBounds(10, 33, 225, 24);
+		cbxSach.setBounds(10, 33, 264, 24);
 		panel.add(cbxSach);
 		cbxSach.setModel(modelSach);
 
 		cbxTaiBan = new JComboBox();
-		cbxTaiBan.setBounds(283, 35, 183, 21);
+		cbxTaiBan.setBounds(304, 33, 202, 24);
 		panel.add(cbxTaiBan);
 		cbxTaiBan.setModel(modelTaiBan);
 
@@ -261,7 +253,7 @@ public class QuyenSachJPanel extends JPanel {
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
 
 				"Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		pnlDanhSach.setBounds(548, 82, 755, 378);
+		pnlDanhSach.setBounds(549, 83, 755, 378);
 		add(pnlDanhSach);
 
 		JLabel lblTimKiem = new JLabel("Tìm Kiếm");
@@ -270,19 +262,31 @@ public class QuyenSachJPanel extends JPanel {
 
 		txtTimKiem = new JTextField();
 		txtTimKiem.setColumns(10);
-		txtTimKiem.setBounds(85, 17, 441, 19);
+		txtTimKiem.setBounds(85, 17, 210, 19);
 		pnlDanhSach.add(txtTimKiem);
 
 		btnTimKiem = new JButton("Tìm Kiếm");
 		btnTimKiem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (txtTimKiem.getText().isEmpty()) {
+					DialogHelper.alert(QuyenSachJPanel.this, "Vui Lòng Nhập Mã Sách Để Tìm Kiếm Vị Trí");
+				} else {
+					String keySearch = txtTimKiem.getText();
+					QuyenSachTim qst = qstd.selectById(keySearch);
+					if (qst != null) {
+						new ViTriTimSachJDialog(QuyenSachJPanel.this, true, qst).setVisible(true);
+
+					} else {
+						DialogHelper.alert(QuyenSachJPanel.this, "Quyển Sách Rỗng ");
+					}
+				}
 			}
 		});
-		btnTimKiem.setBounds(550, 16, 97, 21);
+		btnTimKiem.setBounds(320, 16, 97, 21);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 61, 735, 307);
+		scrollPane.setBounds(10, 71, 735, 297);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -296,12 +300,16 @@ public class QuyenSachJPanel extends JPanel {
 			}
 		});
 		scrollPane.setViewportView(table);
-		String[] columns = { "Mã Sách", "Tên Sách", "Dãy", "Lần TB", "Ghi Chú", "Trạng Thái" };
+		String[] columns = { "Mã Sách", "Tên Sách", "Lần TB", "Ghi Chú", "Trạng Thái" };
 		Object[][] rows = {
 
 		};
 		model = new DefaultTableModel(rows, columns);
 		table.setModel(model);
+
+		JComboBox comboBox = new JComboBox();
+		comboBox.setBounds(438, 16, 307, 21);
+		pnlDanhSach.add(comboBox);
 
 		btnPrevList = new JButton("Prev");
 		btnPrevList.addActionListener(new ActionListener() {
@@ -321,18 +329,13 @@ public class QuyenSachJPanel extends JPanel {
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
-		btnNextList.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				indexTrang++;
-				if (indexTrang > (Math.ceil(quyenSachDao.selectAll().size() * 1.0 / 5))) {
-					DialogHelper.alert(null, "Đây là trang cuối cùng !");
-					indexTrang--;
-				} else {
-					load(indexTrang);
-					lblIndexTrang.setText(indexTrang + "");
-				}
+		btnNextList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				nextPage();
 			}
 		});
+
 		btnNextList.setBounds(1032, 489, 85, 21);
 		add(btnNextList);
 
@@ -345,7 +348,6 @@ public class QuyenSachJPanel extends JPanel {
 			protected Void doInBackground() throws Exception {
 				load(indexTrang);
 				fillSach();
-				fillViTri();
 				return null;
 			}
 
@@ -363,7 +365,7 @@ public class QuyenSachJPanel extends JPanel {
 		SwingWorker<List<QuyenSach>, Void> worker = new SwingWorker<List<QuyenSach>, Void>() {
 			@Override
 			protected List<QuyenSach> doInBackground() throws Exception {
-				return quyenSachDao.loadTrang((soTrang - 1) * 5, 5);
+				return quyenSachDao.loadTrang((soTrang - 1) * 15, 15);
 			}
 
 			@Override
@@ -372,24 +374,12 @@ public class QuyenSachJPanel extends JPanel {
 					List<QuyenSach> list = get();
 					model.setRowCount(0);
 					for (QuyenSach qs : list) {
-						String trangThai = null;
-						switch (qs.getTinhTrang()) {
-						case 0:
-							trangThai = "Hỏng";
-							break;
-						case 1:
-							trangThai = "Mới";
-							break;
-						case 2:
-							trangThai = "Hỏng Nhẹ";
-							break;
-						default:
-							trangThai = "Tình Trạng Không Đúng !!!";
-						}
-						Object[] row = { qs.getMaQS(), qs.getTenQS(), qs.getIdViTri().getDay(),
-								qs.getIdTaiBan().getLanTaiBan(), qs.getGhiChu(), trangThai };
+						String trangThai = getTrangThai(qs.getTinhTrang());
+						Object[] row = { qs.getMaQS(), qs.getTenQS(), qs.getIdTaiBan().getLanTaiBan(), qs.getGhiChu(),
+								trangThai };
 						model.addRow(row);
 					}
+					SwingUtilities.invokeLater(() -> table.repaint());
 				} catch (Exception e) {
 					DialogHelper.alert(QuyenSachJPanel.this, "Lỗi truy vấn dữ liệu!");
 					e.printStackTrace();
@@ -398,6 +388,19 @@ public class QuyenSachJPanel extends JPanel {
 		};
 
 		worker.execute();
+	}
+
+	String getTrangThai(int tinhTrang) {
+		switch (tinhTrang) {
+		case 0:
+			return "Hỏng";
+		case 1:
+			return "Mới";
+		case 2:
+			return "Hỏng Nhẹ";
+		default:
+			return "Tình Trạng Không Đúng !!!";
+		}
 	}
 
 	void fillTaiBan(int idSach) {
@@ -415,31 +418,6 @@ public class QuyenSachJPanel extends JPanel {
 					modelTaiBan.removeAllElements();
 					for (TaiBan tb : list) {
 						modelTaiBan.addElement(tb);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			}
-		};
-		worker.execute();
-	}
-
-	void fillViTri() {
-		SwingWorker<List<ViTri>, Void> worker = new SwingWorker<List<ViTri>, Void>() {
-
-			@Override
-			protected List<ViTri> doInBackground() throws Exception {
-				return vtd.selectAll();
-			}
-
-			@Override
-			protected void done() {
-				try {
-					List<ViTri> list = get();
-					modelViTri.removeAllElements();
-					for (ViTri tb : list) {
-						modelViTri.addElement(tb);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -530,7 +508,6 @@ public class QuyenSachJPanel extends JPanel {
 		cbxTaiBan.setSelectedIndex(0);
 		txtGhiChu.setText("");
 		txtMaQS.setText("");
-		cbxViTri.setSelectedIndex(0);
 		cbxTinhTrang.setSelectedIndex(0);
 		setStatus(true);
 	}
@@ -540,7 +517,6 @@ public class QuyenSachJPanel extends JPanel {
 		cbxSach.setSelectedItem(qs.getIdTaiBan().getIdSach());
 		txtGhiChu.setText(qs.getGhiChu());
 		cbxTinhTrang.setSelectedIndex(qs.getTinhTrang());
-		cbxViTri.setSelectedItem(qs.getIdViTri());
 		cbxTaiBan.setSelectedItem(qs.getIdTaiBan());
 	}
 
@@ -561,8 +537,6 @@ public class QuyenSachJPanel extends JPanel {
 		} else {
 			DialogHelper.alert(this, "Dang loi tai ban");
 		}
-		ViTri vt = (ViTri) cbxViTri.getSelectedItem();
-		qs.setIdViTri(vt);
 		qs.setGhiChu(txtGhiChu.getText());
 		if (cbxTinhTrang.getSelectedIndex() == 0) {
 			qs.setTinhTrang(0);
@@ -599,5 +573,23 @@ public class QuyenSachJPanel extends JPanel {
 		btnPrevEdit.setEnabled(!insertable && first);
 		btnNextEdit.setEnabled(!insertable && last);
 		btnLast.setEnabled(!insertable && last);
+	}
+
+	private void nextPage() {
+		indexTrang++;
+		int totalPages = calculateTotalPages();
+		if (indexTrang > totalPages) {
+			DialogHelper.alert(null, "Đây là trang cuối cùng !");
+			indexTrang--;
+		} else {
+			load(indexTrang);
+			lblIndexTrang.setText(indexTrang + "");
+		}
+	}
+
+	private int calculateTotalPages() {
+		double totalBooks = quyenSachDao.selectAll().size();
+		int booksPerPage = 15;
+		return (int) Math.ceil(totalBooks / booksPerPage);
 	}
 }

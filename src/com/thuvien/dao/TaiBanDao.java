@@ -4,9 +4,15 @@ import com.thuvien.entity.Sach;
 import com.thuvien.entity.TacGia;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.SwingWorker;
 
 import com.thuvien.entity.TaiBan;
 import com.thuvien.utils.JDBCHelper;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -49,22 +55,8 @@ public class TaiBanDao extends QLTVDao<TaiBan, Integer> {
 	@Override
 	public TaiBan selectById(Integer id) {
 		String sql = "Select * from TaiBan where id = ?";
-		TaiBan tg = null;
-		try {
-			ResultSet rs = null;
-			try {
-				rs = JDBCHelper.executeQuery(sql, id);
-				while (rs.next()) {
-					tg = readFromResultSet(rs);
-
-				}
-			} finally {
-				rs.getStatement().getConnection().close();
-			}
-		} catch (SQLException ex) {
-			throw new RuntimeException(ex);
-		}
-		return tg;
+		List<TaiBan> list = select(sql, id);
+		return list.size() > 0 ? list.get(0) : null;
 	}
 
 	public List<TaiBan> loadTrang(int indexTrang, int limit) {
@@ -108,4 +100,5 @@ public class TaiBanDao extends QLTVDao<TaiBan, Integer> {
 		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
 	}
 
+	
 }

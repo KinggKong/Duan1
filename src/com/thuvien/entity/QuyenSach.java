@@ -7,16 +7,14 @@ public class QuyenSach {
 	private int id;
 	private String maQS;
 	private String tenQS;
-	private ViTri idViTri;
 	private TaiBan idTaiBan;
 	private int tinhTrang;
 	private String ghiChu;
 
-	public QuyenSach(int id, String maQS, String tenQS, ViTri idViTri, TaiBan idTaiBan, int tinhTrang, String ghiChu) {
+	public QuyenSach(int id, String maQS, String tenQS, TaiBan idTaiBan, int tinhTrang, String ghiChu) {
 		this.id = id;
 		this.maQS = maQS;
 		this.tenQS = tenQS;
-		this.idViTri = idViTri;
 		this.idTaiBan = idTaiBan;
 		this.tinhTrang = tinhTrang;
 		this.ghiChu = ghiChu;
@@ -25,10 +23,9 @@ public class QuyenSach {
 	public QuyenSach() {
 	}
 
-	public QuyenSach(String maQS, String tenQS, ViTri idViTri, TaiBan idTaiBan, int tinhTrang, String ghiChu) {
+	public QuyenSach(String maQS, String tenQS, TaiBan idTaiBan, int tinhTrang, String ghiChu) {
 		this.maQS = maQS;
 		this.tenQS = tenQS;
-		this.idViTri = idViTri;
 		this.idTaiBan = idTaiBan;
 		this.tinhTrang = tinhTrang;
 		this.ghiChu = ghiChu;
@@ -48,14 +45,6 @@ public class QuyenSach {
 
 	public void setMaQS(String maQS) {
 		this.maQS = maQS;
-	}
-
-	public ViTri getIdViTri() {
-		return idViTri;
-	}
-
-	public void setIdViTri(ViTri idViTri) {
-		this.idViTri = idViTri;
 	}
 
 	public TaiBan getIdTaiBan() {
