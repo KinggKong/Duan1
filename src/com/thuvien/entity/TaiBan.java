@@ -5,18 +5,18 @@ import java.util.Objects;
 
 public class TaiBan {
 	private int id;
-	private Sach idSach;
+	private int idSach;
 	private int lanTaiBan;
 	private Date thoiGianTB;
 
-	public TaiBan(int id, Sach idSach, int lanTaiBan, Date thoiGianTB) {
+	public TaiBan(int id, int idSach, int lanTaiBan, Date thoiGianTB) {
 		this.id = id;
 		this.idSach = idSach;
 		this.lanTaiBan = lanTaiBan;
 		this.thoiGianTB = thoiGianTB;
 	}
 
-	public TaiBan(Sach idSach, int lanTaiBan, Date thoiGianTB) {
+	public TaiBan(int idSach, int lanTaiBan, Date thoiGianTB) {
 		this.idSach = idSach;
 		this.lanTaiBan = lanTaiBan;
 		this.thoiGianTB = thoiGianTB;
@@ -25,11 +25,11 @@ public class TaiBan {
 	public TaiBan() {
 	}
 
-	public Sach getIdSach() {
+	public int getIdSach() {
 		return idSach;
 	}
 
-	public void setIdSach(Sach idSach) {
+	public void setIdSach(int idSach) {
 		this.idSach = idSach;
 	}
 
@@ -64,7 +64,7 @@ public class TaiBan {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
+		return Objects.hash(id, lanTaiBan);
 	}
 
 	@Override
@@ -76,7 +76,9 @@ public class TaiBan {
 		if (getClass() != obj.getClass())
 			return false;
 		TaiBan other = (TaiBan) obj;
-		return id == other.id;
+		return id == other.id && lanTaiBan == other.lanTaiBan;
 	}
+
+
 
 }

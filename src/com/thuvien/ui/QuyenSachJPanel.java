@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -42,6 +43,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class QuyenSachJPanel extends JPanel {
 
@@ -145,7 +148,7 @@ public class QuyenSachJPanel extends JPanel {
 				Sach s = (Sach) cbxSach.getSelectedItem();
 				int idSach = s.getId();
 				fillTaiBan(idSach);
-				
+
 			}
 		});
 		cbxSach.setBounds(10, 33, 264, 24);
@@ -172,6 +175,7 @@ public class QuyenSachJPanel extends JPanel {
 		pnlButton1.add(btnInsert);
 
 		btnDelete = new JButton("Delete");
+		btnDelete.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Delete.png")));
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				delete();
@@ -179,6 +183,7 @@ public class QuyenSachJPanel extends JPanel {
 		});
 		btnDelete.setEnabled(false);
 		pnlButton1.add(btnDelete);
+		btnDelete.setRolloverIcon(new ImageIcon("src/icon/delete2.png"));
 
 		btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(new ActionListener() {
@@ -261,8 +266,24 @@ public class QuyenSachJPanel extends JPanel {
 		pnlDanhSach.add(lblTimKiem);
 
 		txtTimKiem = new JTextField();
+		txtTimKiem.setText("Nhập vào mã quyển sách để tìm vị trí");
+		txtTimKiem.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (txtTimKiem.getText().equals("Nhập vào mã quyển sách để tìm vị trí")) {
+					txtTimKiem.setText("");
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (txtTimKiem.getText().isEmpty()) {
+					txtTimKiem.setText("Nhập vào mã quyển sách để tìm vị trí");
+				}
+			}
+		});
 		txtTimKiem.setColumns(10);
-		txtTimKiem.setBounds(85, 17, 210, 19);
+		txtTimKiem.setBounds(85, 17, 238, 19);
 		pnlDanhSach.add(txtTimKiem);
 
 		btnTimKiem = new JButton("Tìm Kiếm");
@@ -277,12 +298,12 @@ public class QuyenSachJPanel extends JPanel {
 						new ViTriTimSachJDialog(QuyenSachJPanel.this, true, qst).setVisible(true);
 
 					} else {
-						DialogHelper.alert(QuyenSachJPanel.this, "Quyển Sách Rỗng ");
+						DialogHelper.alert(QuyenSachJPanel.this, "Quyển Sách Không Tồn Tại ");
 					}
 				}
 			}
 		});
-		btnTimKiem.setBounds(320, 16, 97, 21);
+		btnTimKiem.setBounds(345, 16, 97, 21);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -306,10 +327,6 @@ public class QuyenSachJPanel extends JPanel {
 		};
 		model = new DefaultTableModel(rows, columns);
 		table.setModel(model);
-
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(438, 16, 307, 21);
-		pnlDanhSach.add(comboBox);
 
 		btnPrevList = new JButton("Prev");
 		btnPrevList.addActionListener(new ActionListener() {
@@ -375,8 +392,8 @@ public class QuyenSachJPanel extends JPanel {
 					model.setRowCount(0);
 					for (QuyenSach qs : list) {
 						String trangThai = getTrangThai(qs.getTinhTrang());
-						Object[] row = { qs.getMaQS(), qs.getTenQS(), qs.getIdTaiBan().getLanTaiBan(), qs.getGhiChu(),
-								trangThai };
+						Object[] row = { qs.getMaQS(), qs.getTenQS(), tbd.selectById(qs.getIdTaiBan()).getLanTaiBan(),
+								qs.getGhiChu(), trangThai };
 						model.addRow(row);
 					}
 					SwingUtilities.invokeLater(() -> table.repaint());
@@ -514,10 +531,14 @@ public class QuyenSachJPanel extends JPanel {
 
 	void setForm(QuyenSach qs) {
 		txtMaQS.setText(qs.getMaQS());
-		cbxSach.setSelectedItem(qs.getIdTaiBan().getIdSach());
+		cbxSach.setSelectedItem(sd.selectByIdSach(tbd.selectById(qs.getIdTaiBan()).getIdSach()));
 		txtGhiChu.setText(qs.getGhiChu());
 		cbxTinhTrang.setSelectedIndex(qs.getTinhTrang());
 		cbxTaiBan.setSelectedItem(qs.getIdTaiBan());
+	}
+
+	void setTaiBan() {
+
 	}
 
 	QuyenSach getForm() {
@@ -533,7 +554,7 @@ public class QuyenSachJPanel extends JPanel {
 		qs.setTenQS(cbxSach.getSelectedItem().toString());
 		TaiBan tb = (TaiBan) cbxTaiBan.getSelectedItem();
 		if (tb != null) {
-			qs.setIdTaiBan(tb);
+			qs.setIdTaiBan(tb.getId());
 		} else {
 			DialogHelper.alert(this, "Dang loi tai ban");
 		}

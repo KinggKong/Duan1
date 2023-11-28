@@ -22,15 +22,14 @@ public class TaiBanDao extends QLTVDao<TaiBan, Integer> {
 	@Override
 	public void insert(TaiBan model) {
 		String sql = "insert into TaiBan(IDSach,LanTB,NgayTB) values(?,?,?)";
-		JDBCHelper.executeUpdate(sql, model.getIdSach().getId(), model.getLanTaiBan(), model.getThoiGianTB());
+		JDBCHelper.executeUpdate(sql, model.getIdSach(), model.getLanTaiBan(), model.getThoiGianTB());
 
 	}
 
 	@Override
 	public void update(TaiBan model) {
 		String sql = "update TaiBan set IDSach = ?,LanTB = ?, NgayTB=? where id = ?";
-		JDBCHelper.executeUpdate(sql, model.getIdSach().getId(), model.getLanTaiBan(), model.getThoiGianTB(),
-				model.getId());
+		JDBCHelper.executeUpdate(sql, model.getIdSach(), model.getLanTaiBan(), model.getThoiGianTB(), model.getId());
 
 	}
 
@@ -68,9 +67,7 @@ public class TaiBanDao extends QLTVDao<TaiBan, Integer> {
 	private TaiBan readFromResultSet(ResultSet rs) throws SQLException {
 		TaiBan model = new TaiBan();
 		model.setId(rs.getInt("ID"));
-		int id = rs.getInt("IDSach");
-		Sach s = sd.selectByIdSach(id);
-		model.setIdSach(s);
+		model.setIdSach(rs.getInt("IDSach"));
 		model.setLanTaiBan(rs.getInt("LanTB"));
 		model.setThoiGianTB(rs.getDate("NgayTB"));
 		return model;
@@ -100,5 +97,4 @@ public class TaiBanDao extends QLTVDao<TaiBan, Integer> {
 		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
 	}
 
-	
 }

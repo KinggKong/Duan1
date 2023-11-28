@@ -45,7 +45,8 @@ import com.thuvien.entity.PhieuMuon;
 import com.thuvien.entity.PhieuMuonCT;
 import com.thuvien.entity.PhieuTra;
 import com.thuvien.entity.PhieuTraCT;
-
+import com.thuvien.entity.TacGia;
+import com.thuvien.entity.ViTri;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.ShareHelper;
 import com.thuvien.utils.XDate;
@@ -77,11 +78,9 @@ public class PhieuTraChiTietJPanel extends JPanel {
 	private JButton btnNextEdit;
 	private JButton btnLast;
 	private JLabel lblIndexTrang;
-	private JTextField txtMaPhieuTra;
 	private JComboBox cbxMaPhieuMuon;
 	private JComboBox cbxPhieuMuonChiTiet;
 	private JRadioButton rdoDaTra;
-	private JRadioButton rdoChuaTra;
 	private JTextArea txtGhiChu;
 	Date ngayHienTai = new Date();
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -127,7 +126,7 @@ public class PhieuTraChiTietJPanel extends JPanel {
 			}
 		});
 		scrollPane.setViewportView(table);
-		String[] columns = { "ID", "ID Phiếu Trả", "ID Phiếu Mượn CT", "Tình Trạng ", "Ghi Chú" };
+		String[] columns = { "ID", "Thành Viên", "Quyển Sách", "Tình Trạng ", "Ghi Chú" };
 		Object[][] rows = {
 
 		};
@@ -188,7 +187,7 @@ public class PhieuTraChiTietJPanel extends JPanel {
 		btnInsert = new JButton("Insert");
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				insert(phieuTra);
 			}
 		});
 		pnlButton1.add(btnInsert);
@@ -271,45 +270,30 @@ public class PhieuTraChiTietJPanel extends JPanel {
 				loadTable(idPhieuMuon);
 			}
 		});
-		cbxMaPhieuMuon.setBounds(10, 49, 203, 21);
+		cbxMaPhieuMuon.setBounds(10, 41, 203, 29);
 		panel.add(cbxMaPhieuMuon);
 		cbxMaPhieuMuon.setModel(modelPhieuMuon);
 
 		cbxPhieuMuonChiTiet = new JComboBox();
-		cbxPhieuMuonChiTiet.setBounds(265, 49, 224, 21);
+		cbxPhieuMuonChiTiet.setBounds(10, 111, 479, 29);
 		panel.add(cbxPhieuMuonChiTiet);
 		cbxPhieuMuonChiTiet.setModel(modelPhieuMuonCT);
 
 		JLabel lblPhiuMnChi = new JLabel("Phiếu Mượn Chi Tiết");
 		lblPhiuMnChi.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblPhiuMnChi.setBounds(265, 10, 224, 29);
+		lblPhiuMnChi.setBounds(10, 72, 224, 29);
 		panel.add(lblPhiuMnChi);
-
-		JLabel lblMPhiuTr = new JLabel("Mã Phiếu Trả");
-		lblMPhiuTr.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblMPhiuTr.setBounds(10, 104, 144, 29);
-		panel.add(lblMPhiuTr);
-
-		txtMaPhieuTra = new JTextField();
-		txtMaPhieuTra.setBounds(10, 136, 192, 19);
-		panel.add(txtMaPhieuTra);
-		txtMaPhieuTra.setColumns(10);
 
 		JLabel lblNewLabel_2_1 = new JLabel("Tình Trạng");
 		lblNewLabel_2_1.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblNewLabel_2_1.setBounds(265, 104, 144, 29);
+		lblNewLabel_2_1.setBounds(299, 10, 144, 29);
 		panel.add(lblNewLabel_2_1);
 
 		rdoDaTra = new JRadioButton("Đã Trả");
 		rdoDaTra.setSelected(true);
 		buttonGroup.add(rdoDaTra);
-		rdoDaTra.setBounds(265, 135, 103, 21);
+		rdoDaTra.setBounds(299, 49, 103, 21);
 		panel.add(rdoDaTra);
-
-		rdoChuaTra = new JRadioButton("Chưa Trả");
-		buttonGroup.add(rdoChuaTra);
-		rdoChuaTra.setBounds(390, 135, 89, 21);
-		panel.add(rdoChuaTra);
 
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -319,6 +303,11 @@ public class PhieuTraChiTietJPanel extends JPanel {
 
 		txtGhiChu = new JTextArea();
 		scrollPane_1.setViewportView(txtGhiChu);
+
+		JLabel lblGhiChu = new JLabel("Ghi Chú");
+		lblGhiChu.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblGhiChu.setBounds(10, 165, 144, 29);
+		panel.add(lblGhiChu);
 
 		lblNewLabel_2 = new JLabel("Phiếu Trả Chi Tiết Của :");
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 13));
@@ -454,32 +443,38 @@ public class PhieuTraChiTietJPanel extends JPanel {
 
 		};
 		worker.execute();
+		fillCbxPhieuMuonCT(idPhieuMuon);
 	}
-//
-//	int insert(PhieuMuon pm, QuyenSach qs) {
-//		int kq = 0;
-//		try {
-//			int choose = JOptionPane.showConfirmDialog(this,
-//					"Bạn có chắc chắn muốn thêm " + qs.getTenQS() + " vào không ? ", "Thêm Sách Mượn",
-//					JOptionPane.YES_NO_OPTION);
-//			if (choose == JOptionPane.YES_OPTION) {
-//				PhieuMuonCT pmct = new PhieuMuonCT(pm, qs);
-//				if (pmct != null) {
-//					pmctd.insert(pmct);
-//					loadTable(pm);
-//					clear();
-//					DialogHelper.alert(this, "Insert Successful");
-//					kq = 1;
-//				}
-//			}
-//		} catch (Exception e) {
-//			DialogHelper.alert(this, "Insert Failed");
-//		}
-//		return kq;
-//	}
+
+	void insert(PhieuTra phieuTra) {
+		try {
+			PhieuTraCT ptct = getForm(phieuTra);
+			if (ptct != null) {
+				ptctd.insert(ptct);
+				PhieuMuon phieuMuon = (PhieuMuon) cbxMaPhieuMuon.getSelectedItem();
+				loadTable(phieuMuon.getId());
+				clear();
+				DialogHelper.alert(this, "Insert Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Insert Failed");
+			e.printStackTrace();
+		}
+	}
 
 	void delete() {
-
+		try {
+			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
+				int idPhieuMuonCT = (int) table.getValueAt(this.index, 0);
+				pmctd.delete(idPhieuMuonCT);
+				PhieuMuon phieuMuon = (PhieuMuon) cbxMaPhieuMuon.getSelectedItem();
+				loadTable(phieuMuon.getId());
+				clear();
+				DialogHelper.alert(this, "Delete Successful");
+			}
+		} catch (Exception e) {
+			DialogHelper.alert(this, "Delete Failed");
+		}
 	}
 
 	void update() {
@@ -495,9 +490,14 @@ public class PhieuTraChiTietJPanel extends JPanel {
 
 	}
 
-	PhieuTra getForm() {
-
-		return null;
+	PhieuTraCT getForm(PhieuTra phieutra) {
+		PhieuTraCT ptct = new PhieuTraCT();
+		ptct.setIdPhieuTra(phieutra);
+		PhieuMuonCT pmct = (PhieuMuonCT) cbxPhieuMuonChiTiet.getSelectedItem();
+		ptct.setIdPhieuMuonCT(pmct);
+		ptct.setTinhTrangSach(rdoDaTra.isSelected() == true ? true : false);
+		ptct.setGhiChu(txtGhiChu.getText());
+		return ptct;
 	}
 
 	void edit() {

@@ -172,7 +172,7 @@ public class PhieuTraJPanel extends JPanel {
 		pnlThongTinTG.add(rdoChuaHoanThanh);
 
 		cbxThanhVien = new JComboBox();
-		cbxThanhVien.setBounds(10, 38, 218, 21);
+		cbxThanhVien.setBounds(10, 38, 218, 29);
 		pnlThongTinTG.add(cbxThanhVien);
 		cbxThanhVien.setModel(modelThanhVien);
 

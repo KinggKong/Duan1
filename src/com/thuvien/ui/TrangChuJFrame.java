@@ -184,11 +184,24 @@ public class TrangChuJFrame extends JFrame {
 		JMenu mnuThongKe = new JMenu("Thống Kê");
 		menuBar.add(mnuThongKe);
 
-		JMenuItem mntmNewMenuItem = new JMenuItem("Số Lượng Sách");
-		mntmNewMenuItem.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Bar chart.png")));
+		JMenuItem mntmNewMenuItem = new JMenuItem("Doanh Thu Theo Tháng");
+		mntmNewMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jpanel = new ThongKeDoanhThuJPanel();
+				changePanel(jpanel);
+
+			}
+		});
+		mntmNewMenuItem.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Dollar.png")));
 		mnuThongKe.add(mntmNewMenuItem);
 
-		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Số Lượng Mượn Của Từng Sách");
+		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Top Sách Mượn");
+		mntmNewMenuItem_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ThongKeTopSachJPanel thongKeTopSachJPanel = new ThongKeTopSachJPanel();
+				changePanel(thongKeTopSachJPanel);
+			}
+		});
 		mntmNewMenuItem_2.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Best.png")));
 		mnuThongKe.add(mntmNewMenuItem_2);
 

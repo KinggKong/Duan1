@@ -1,5 +1,7 @@
 package com.thuvien.entity;
 
+import com.thuvien.dao.QuyenSachDao;
+
 public class PhieuMuonCT {
 	private int id;
 	private PhieuMuon idPhieuMuon;
@@ -37,7 +39,7 @@ public class PhieuMuonCT {
 
 	@Override
 	public String toString() {
-		return "PhieuMuonCT [idPhieuMuon=" + idPhieuMuon + ", maQuyenSach=" + idQuyenSach + "]";
+		return idQuyenSach.getMaQS() + " " + idQuyenSach.getTenQS();
 	}
 
 	public int getId() {

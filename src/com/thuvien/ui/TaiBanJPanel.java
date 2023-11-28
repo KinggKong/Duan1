@@ -66,6 +66,7 @@ public class TaiBanJPanel extends JPanel {
 	private JLabel lblIndexTrang;
 	private JTextField txtThoiGianTB;
 	private JComboBox cbxSach;
+
 	SachDao sd = new SachDao();
 
 	DefaultComboBoxModel<Sach> modelSach = new DefaultComboBoxModel<>();
@@ -340,7 +341,7 @@ public class TaiBanJPanel extends JPanel {
 					List<TaiBan> list = get();
 					model.setRowCount(0);
 					for (TaiBan tb : list) {
-						Object[] row = { tb.getId(), tb.getIdSach().getTenSach(), tb.getLanTaiBan(),
+						Object[] row = { tb.getId(), sd.selectByIdSach(tb.getIdSach()).getTenSach(), tb.getLanTaiBan(),
 								tb.getThoiGianTB() };
 						model.addRow(row);
 					}
@@ -406,7 +407,7 @@ public class TaiBanJPanel extends JPanel {
 	}
 
 	void setForm(TaiBan tl) {
-		cbxSach.setSelectedItem(tl.getIdSach());
+		cbxSach.setSelectedItem(sd.selectByIdSach(tl.getId()));
 		txtThoiGianTB.setText(tl.getThoiGianTB() + "");
 		txLanTB.setText(tl.getLanTaiBan() + "");
 	}
@@ -416,7 +417,7 @@ public class TaiBanJPanel extends JPanel {
 		int id = (int) table.getValueAt(this.index, 0);
 		Sach s = (Sach) cbxSach.getSelectedItem();
 		tb.setId(id);
-		tb.setIdSach(s);
+		tb.setIdSach(s.getId());
 		tb.setLanTaiBan(Integer.parseInt(txLanTB.getText()));
 		tb.setThoiGianTB(XDate.toDate(txtThoiGianTB.getText(), "yyyy-MM-dd"));
 		return tb;
@@ -425,7 +426,7 @@ public class TaiBanJPanel extends JPanel {
 	TaiBan getFormInsert() {
 		TaiBan tb = new TaiBan();
 		Sach s = (Sach) cbxSach.getSelectedItem();
-		tb.setIdSach(s);
+		tb.setIdSach(s.getId());
 		tb.setLanTaiBan(Integer.parseInt(txLanTB.getText()));
 		tb.setThoiGianTB(XDate.toDate(txtThoiGianTB.getText(), "yyyy-MM-dd"));
 		return tb;

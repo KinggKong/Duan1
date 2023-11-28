@@ -64,7 +64,7 @@ public class PhieuMuonChiTietDao extends QLTVDao<PhieuMuonCT, Integer> {
 	public List<PhieuMuonCT> selectPhieuMuonCTChuaTra(int key) {
 		String sql = "select PMCT.* from PhieuMuonCT PMCT\r\n"
 				+ "inner join PhieuMuon PM on PM.ID = PMCT.IDPhieuMuon\r\n"
-				+ "inner join PhieuTraCT PTCT on PTCT.IDPhieuMuonCT = PMCT.ID where PTCT.TinhTrang = 0 and PM.ID = ?";
+				+ "where  PM.ID = ? and PMCT.ID not in (select PhieuTraCT.IDPhieuMuonCT from PhieuTraCT)";
 		return select(sql, key);
 	}
 

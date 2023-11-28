@@ -21,7 +21,10 @@ public class PhieuTraChiTietDao extends QLTVDao<PhieuTraCT, Integer> {
 
 	@Override
 	public void insert(PhieuTraCT entity) {
-
+		String sql = "INSERT INTO PhieuTraCT\r\n"
+				+ "                  (IDPhieuMuonCT, IDPhieuTra, TinhTrang, GhiChu)\r\n" + "VALUES (?,?,?,?)";
+		JDBCHelper.executeUpdate(sql, entity.getIdPhieuMuonCT().getId(), entity.getIdPhieuTra().getId(),
+				entity.isTinhTrangSach(), entity.getGhiChu());
 	}
 
 	@Override
@@ -31,7 +34,8 @@ public class PhieuTraChiTietDao extends QLTVDao<PhieuTraCT, Integer> {
 
 	@Override
 	public void delete(Integer key) {
-
+		String sql = "delete from PhieuTraCT where id = ?";
+		JDBCHelper.executeUpdate(sql, key);
 	}
 
 	@Override

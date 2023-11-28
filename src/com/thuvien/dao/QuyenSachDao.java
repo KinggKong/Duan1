@@ -18,14 +18,14 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 	public void insert(QuyenSach entity) {
 		String sql = "INSERT INTO QuyenSach\r\n" + "                  (MaQS, TenQS, TinhTrang, IDTaiBan, GhiChu)\r\n"
 				+ "VALUES (?,?,?,?,?,?)";
-		JDBCHelper.executeUpdate(sql, entity.getMaQS(), entity.getTenQS(), entity.getTinhTrang(),
-				entity.getIdTaiBan().getId(), entity.getGhiChu());
+		JDBCHelper.executeUpdate(sql, entity.getMaQS(), entity.getTenQS(), entity.getTinhTrang(), entity.getIdTaiBan(),
+				entity.getGhiChu());
 	}
 
 	@Override
 	public void update(QuyenSach entity) {
 		String sql = "UPDATE QuyenSach SET TenQS =?, IDTaiBan =?, TinhTrang =?, GhiChu =?  where MaQS =?";
-		JDBCHelper.executeUpdate(sql, entity.getTenQS(), entity.getIdTaiBan().getId(), entity.getTinhTrang(),
+		JDBCHelper.executeUpdate(sql, entity.getTenQS(), entity.getIdTaiBan(), entity.getTinhTrang(),
 				entity.getGhiChu(), entity.getMaQS());
 	}
 
@@ -114,9 +114,9 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 		qs.setId(rs.getInt("ID"));
 		qs.setMaQS(rs.getString("MaQS"));
 		qs.setTenQS(rs.getString("TenQS"));
-		int id = rs.getInt("IDTaiBan");
-		TaiBan tb = tbd.selectById(id);
-		qs.setIdTaiBan(tb);
+//		int id = rs.getInt("IDTaiBan");
+//		TaiBan tb = tbd.selectById(id);
+		qs.setIdTaiBan(rs.getInt("IDTaiBan"));
 		qs.setTinhTrang(rs.getInt("TinhTrang"));
 		qs.setGhiChu(rs.getString("GhiChu"));
 		return qs;
