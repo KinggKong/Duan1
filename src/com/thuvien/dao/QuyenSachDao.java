@@ -16,9 +16,9 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 
 	@Override
 	public void insert(QuyenSach entity) {
-		String sql = "INSERT INTO QuyenSach\r\n" + "                  (MaQS, TenQS, TinhTrang, IDTaiBan, GhiChu)\r\n"
-				+ "VALUES (?,?,?,?,?,?)";
-		JDBCHelper.executeUpdate(sql, entity.getMaQS(), entity.getTenQS(), entity.getTinhTrang(), entity.getIdTaiBan(),
+		String sql = "INSERT INTO QuyenSach\r\n" + "                  (MaQS, TenQS,IDTaiBan, TinhTrang , GhiChu)\r\n"
+				+ "VALUES (?,?,?,?,?)";
+		JDBCHelper.executeUpdate(sql, entity.getMaQS(), entity.getTenQS(), entity.getIdTaiBan(), entity.getTinhTrang(),
 				entity.getGhiChu());
 	}
 

@@ -5,15 +5,27 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -25,26 +37,26 @@ import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.thuvien.dao.QuyenSachDao;
 import com.thuvien.dao.QuyenSachTimDao;
 import com.thuvien.dao.SachDao;
 import com.thuvien.dao.TaiBanDao;
-import com.thuvien.dao.ViTriDao;
 import com.thuvien.entity.QuyenSach;
 import com.thuvien.entity.QuyenSachTim;
 import com.thuvien.entity.Sach;
-import com.thuvien.entity.TacGia;
 import com.thuvien.entity.TaiBan;
 import com.thuvien.entity.ViTri;
 import com.thuvien.utils.DialogHelper;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 
 public class QuyenSachJPanel extends JPanel {
 
@@ -359,6 +371,24 @@ public class QuyenSachJPanel extends JPanel {
 		lblIndexTrang = new JLabel("1");
 		lblIndexTrang.setBounds(941, 493, 39, 13);
 		add(lblIndexTrang);
+
+		JButton btnImport = new JButton("Import");
+		btnImport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				importExcel();
+			}
+		});
+		btnImport.setBounds(549, 485, 85, 21);
+		add(btnImport);
+
+		JButton btnExport = new JButton("Export");
+		btnExport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportExcel();
+			}
+		});
+		btnExport.setBounds(652, 485, 85, 21);
+		add(btnExport);
 		SwingWorker<Void, Void> wk = new SwingWorker<Void, Void>() {
 
 			@Override
@@ -544,12 +574,13 @@ public class QuyenSachJPanel extends JPanel {
 	QuyenSach getForm() {
 		QuyenSach qs = new QuyenSach();
 
-		if (txtMaQS.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống mã quyển sách ");
-			return null;
-		} else {
-			qs.setMaQS(txtMaQS.getText());
-		}
+//		if (txtMaQS.getText().isEmpty()) {
+//			DialogHelper.alert(this, "Không để trống mã quyển sách ");
+//			return null;
+//		} else {
+//			qs.setMaQS(txtMaQS.getText());
+//		}
+		qs.setMaQS(null);
 
 		qs.setTenQS(cbxSach.getSelectedItem().toString());
 		TaiBan tb = (TaiBan) cbxTaiBan.getSelectedItem();
@@ -613,4 +644,133 @@ public class QuyenSachJPanel extends JPanel {
 		int booksPerPage = 15;
 		return (int) Math.ceil(totalBooks / booksPerPage);
 	}
+
+	private void importExcel() {
+		File selectedFile;
+		FileInputStream excelFIS = null;
+		BufferedInputStream excelBuffer = null;
+		XSSFWorkbook excelImportTable;
+
+		// Đặt thư mục mặc định
+		String defaultDirectory = "H:\\Excel";
+
+		// Tạo một thể hiện JFileChooser
+		JFileChooser excelFileChooser = new JFileChooser(defaultDirectory);
+
+		// Mở hộp thoại chọn tệp
+		int excelChoose = excelFileChooser.showDialog(this, "Chọn file Excel");
+
+		// Kiểm tra xem đã chọn tệp chưa
+		if (excelChoose == JFileChooser.APPROVE_OPTION) {
+			try {
+				// Lấy tệp đã chọn
+				selectedFile = excelFileChooser.getSelectedFile();
+
+				// Mở luồng đầu vào cho tệp đã chọn
+				excelFIS = new FileInputStream(selectedFile);
+
+				// Tạo luồng đầu vào được đệm
+				excelBuffer = new BufferedInputStream(excelFIS);
+
+				// Tạo một thể hiện XSSFWorkbook
+				excelImportTable = new XSSFWorkbook(excelBuffer);
+
+				// Lấy sheet đầu tiên trong workbook
+				XSSFSheet excelSheet = excelImportTable.getSheetAt(0);
+
+				// Lặp qua các hàng và ô của bảng tính
+				for (int rowNum = 0; rowNum <= excelSheet.getLastRowNum(); rowNum++) {
+					XSSFRow excelRow = excelSheet.getRow(rowNum);
+
+					if (excelRow != null) {
+						// Tạo đối tượng quyển sách
+						QuyenSach quyenSach = new QuyenSach();
+
+						// Đọc giá trị từ các ô và tạo đối tượng quyển sách
+						String maQS = excelRow.getCell(0).getStringCellValue();
+						if (maQS != null) {
+							quyenSach.setMaQS(maQS);
+						} else {
+							maQS = null;
+							quyenSach.setMaQS(maQS);
+						}
+						String tenQS = excelRow.getCell(1).getStringCellValue();
+						quyenSach.setTenQS(tenQS);
+						int idTaiBan = (int) excelRow.getCell(2).getNumericCellValue();
+						quyenSach.setIdTaiBan(idTaiBan);
+						int tinhTrang = (int) excelRow.getCell(3).getNumericCellValue();
+						quyenSach.setTinhTrang(tinhTrang);
+						String ghiChu = excelRow.getCell(4).getStringCellValue();
+						quyenSach.setGhiChu(ghiChu);
+						quyenSachDao.insert(quyenSach);
+					}
+				}
+				JOptionPane.showMessageDialog(this, "Đã đọc xong dữ liệu từ Excel và chèn vào cơ sở dữ liệu.",
+						"Thành công", JOptionPane.INFORMATION_MESSAGE);
+			} catch (Exception e) {
+				// Xử lý bất kỳ ngoại lệ nào xảy ra
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void exportExcel() {
+		try {
+			// Tạo một workbook mới
+			XSSFWorkbook workbook = new XSSFWorkbook();
+
+			// Tạo một sheet mới trong workbook
+			XSSFSheet sheet = workbook.createSheet("QuyenSachData");
+
+			// Tạo hàng đầu tiên (tiêu đề)
+			Row headerRow = sheet.createRow(0);
+
+			// Tạo các ô tiêu đề
+			String[] headers = { "Mã Sách", "Tên Sách", "Lần TB", "Ghi Chú", "Trạng Thái" };
+			for (int i = 0; i < headers.length; i++) {
+				Cell cell = headerRow.createCell(i);
+				cell.setCellValue(headers[i]);
+			}
+
+			// Thêm dữ liệu từ bảng vào sheet
+			for (int i = 0; i < model.getRowCount(); i++) {
+				Row row = sheet.createRow(i + 1); // Bắt đầu từ hàng thứ 2 vì hàng đầu tiên là tiêu đề
+
+				for (int j = 0; j < model.getColumnCount(); j++) {
+					Cell cell = row.createCell(j);
+					cell.setCellValue(String.valueOf(model.getValueAt(i, j)));
+				}
+			}
+
+			// Sử dụng JFileChooser để chọn nơi lưu file
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setDialogTitle("Chọn nơi lưu file Excel");
+			fileChooser.setFileFilter(new FileNameExtensionFilter("Excel Files", "xlsx"));
+			int userSelection = fileChooser.showSaveDialog(this);
+
+			if (userSelection == JFileChooser.APPROVE_OPTION) {
+				// Lấy đường dẫn được chọn
+				File fileToSave = fileChooser.getSelectedFile();
+				String filePath = fileToSave.getAbsolutePath();
+
+				// Nếu không có phần mở rộng .xlsx, thêm nó vào
+				if (!filePath.toLowerCase().endsWith(".xlsx")) {
+					filePath += ".xlsx";
+				}
+
+				try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+					workbook.write(outputStream);
+					JOptionPane.showMessageDialog(this, "Dữ liệu đã được xuất thành công vào tệp Excel.", "Thành công",
+							JOptionPane.INFORMATION_MESSAGE);
+				} catch (IOException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(this, "Xuất Excel thất bại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Xuất Excel thất bại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
 }
