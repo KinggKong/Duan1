@@ -54,6 +54,7 @@ public class TrangChuJFrame extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLocationRelativeTo(null);
+		setTitle("Ứng dụng quản lý thư viện ");
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -237,6 +238,7 @@ public class TrangChuJFrame extends JFrame {
 		JButton btnNewButton = new JButton("Quyển Sách");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
 				jpanel = new QuyenSachJPanel();
 				changePanel(jpanel);
 			}

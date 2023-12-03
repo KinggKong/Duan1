@@ -9,7 +9,14 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -27,16 +34,26 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.thuvien.dao.TacGiaDao;
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamException;
+import com.github.sarxos.webcam.WebcamPanel;
+import com.github.sarxos.webcam.WebcamResolution;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.LuminanceSource;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
+import com.google.zxing.Result;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
 import com.thuvien.dao.ThanhVienDao;
-import com.thuvien.entity.TacGia;
 import com.thuvien.entity.ThanhVien;
 import com.thuvien.utils.DialogHelper;
+import com.thuvien.utils.ShareHelper;
 import com.thuvien.utils.XDate;
-import java.util.ArrayList;
-import java.util.Date;
+import javax.swing.event.AncestorListener;
+import javax.swing.event.AncestorEvent;
 
-public class ThanhVienJPanel extends JPanel {
+public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 
 	private static final long serialVersionUID = 1L;
 	private JTextField txtMaTV;
@@ -65,18 +82,34 @@ public class ThanhVienJPanel extends JPanel {
 	private JTextField txtNgayDangKy;
 	private JTextField txtCCCD;
 	private JTextArea txtDiaChi;
+	private JPanel panel2;
+	private WebcamPanel panel = null;
+	private Webcam webcam = null;
+	private Executor executor = Executors.newSingleThreadExecutor(this);
+	private JButton btnTat;
 
 	public ThanhVienJPanel() {
+		addAncestorListener(new AncestorListener() {
+			public void ancestorAdded(AncestorEvent event) {
+			}
+
+			public void ancestorMoved(AncestorEvent event) {
+			}
+
+			public void ancestorRemoved(AncestorEvent event) {
+				closeWebcam();
+			}
+		});
 		setLayout(null);
 		JLabel lblTitle = new JLabel("Quản Lý Thành Viên");
 		lblTitle.setForeground(Color.BLUE);
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblTitle.setBounds(495, 10, 327, 37);
+		lblTitle.setBounds(763, 10, 327, 37);
 		add(lblTitle);
 
 		JPanel pnlThongTinTG = new JPanel();
 		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		pnlThongTinTG.setBounds(34, 81, 474, 317);
+		pnlThongTinTG.setBounds(32, 191, 474, 317);
 		add(pnlThongTinTG);
 		pnlThongTinTG.setLayout(null);
 
@@ -170,7 +203,7 @@ public class ThanhVienJPanel extends JPanel {
 		pnlDanhSach.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
 				"Danh S\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		pnlDanhSach.setBounds(554, 81, 747, 378);
+		pnlDanhSach.setBounds(554, 81, 747, 382);
 		add(pnlDanhSach);
 
 		JLabel lblTimKiem = new JLabel("Tìm Kiếm");
@@ -208,7 +241,7 @@ public class ThanhVienJPanel extends JPanel {
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 61, 727, 307);
+		scrollPane.setBounds(10, 61, 727, 311);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -229,7 +262,7 @@ public class ThanhVienJPanel extends JPanel {
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(95, 487, 350, 30);
+		pnlButton2.setBounds(783, 521, 350, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -274,7 +307,7 @@ public class ThanhVienJPanel extends JPanel {
 		pnlButton2.add(btnLast);
 
 		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(95, 429, 350, 30);
+		pnlButton1.setBounds(95, 521, 350, 30);
 		add(pnlButton1);
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -349,10 +382,38 @@ public class ThanhVienJPanel extends JPanel {
 		lblIndexTrang = new JLabel("1");
 		lblIndexTrang.setBounds(951, 492, 39, 13);
 		add(lblIndexTrang);
+
+		panel2 = new JPanel();
+		panel2.setBounds(72, 10, 400, 171);
+		add(panel2);
+		panel2.setLayout(null);
+
+		JButton btnQuetQR = new JButton("Quét");
+		btnQuetQR.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				initWebCam();
+			}
+		});
+		btnQuetQR.setBounds(565, 530, 85, 21);
+		add(btnQuetQR);
+
+		btnTat = new JButton("Tắt");
+		btnTat.setEnabled(false);
+		btnTat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (webcam != null) {
+					closeWebcam();
+				}
+
+			}
+		});
+		btnTat.setBounds(660, 530, 85, 21);
+		add(btnTat);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
 				load(indexTrang);
+				initWebCam();
 				return null;
 			}
 
@@ -550,5 +611,73 @@ public class ThanhVienJPanel extends JPanel {
 
 	void search() {
 
+	}
+
+	public void initWebCam() {
+		try {
+			java.awt.Dimension size = WebcamResolution.QVGA.getSize();
+			webcam = Webcam.getWebcams().get(0);
+			webcam.setViewSize(size);
+
+			panel = new WebcamPanel(webcam);
+			panel.setPreferredSize(size);
+			panel.setFPSDisplayed(true);
+			panel.setBounds(0, 0, 400, 171);
+			panel2.add(panel);
+			executor.execute(this);
+			btnTat.setEnabled(true);
+		} catch (WebcamException e) {
+			e.printStackTrace();
+			closeWebcam();
+		}
+	}
+
+	@Override
+	public void run() {
+		do {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException ex) {
+				Logger.getLogger(ThanhVienJPanel.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			Result result = null;
+			BufferedImage image = null;
+			if (webcam.isOpen()) {
+				if ((image = webcam.getImage()) == null) {
+					continue;
+				}
+			}
+			LuminanceSource source = new BufferedImageLuminanceSource(image);
+			BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+			try {
+				result = new MultiFormatReader().decode(bitmap);
+			} catch (NotFoundException ex) {
+				Logger.getLogger(ThanhVienJPanel.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			if (result != null) {
+				System.out.println(result);
+				String[] cccd = result.getText().split("\\|");
+				txtHoTen.setText(cccd[2]);
+				txtCCCD.setText(cccd[0]);
+				txtDiaChi.setText(cccd[5]);
+				closeWebcam();
+				break; //
+
+			}
+		} while (true);
+	}
+
+	@Override
+	public Thread newThread(Runnable r) {
+		Thread t = new Thread(r, "My Thread");
+		t.setDaemon(true);
+		return t;
+	}
+
+	public void closeWebcam() {
+		if (webcam.isOpen()) {
+			btnTat.setEnabled(false);
+			webcam.close();
+		}
 	}
 }

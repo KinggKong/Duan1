@@ -102,5 +102,6 @@ public class HangTheThanhVienDao extends QLTVDao<HangThanhVien, Integer> {
 		String sql = "SELECT * FROM HangThanhVien WHERE MaTG LIKE ? or TenTG LIKE ?";
 		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
 	}
+	
 
 }

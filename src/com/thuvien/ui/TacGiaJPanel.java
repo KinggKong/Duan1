@@ -57,6 +57,7 @@ public class TacGiaJPanel extends JPanel {
 	private JButton btnNextEdit;
 	private JButton btnLast;
 	private JLabel lblIndexTrang;
+	String regexMaTG = "^TG\\d{3}$";
 
 	public TacGiaJPanel() {
 		setLayout(null);
@@ -399,11 +400,16 @@ public class TacGiaJPanel extends JPanel {
 	void insert() {
 		try {
 			TacGia tg = getForm();
+			TacGia tacGiaCheck = tgd.selectById(tg.getMaTG());
 			if (tg != null) {
-				tgd.insert(tg);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Insert Successful");
+				if (tacGiaCheck == null) {
+					tgd.insert(tg);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Insert Successful");
+				} else {
+					DialogHelper.alert(this, "Mã tác giả đã tồn tại");
+				}
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Insert Failed");
@@ -461,16 +467,28 @@ public class TacGiaJPanel extends JPanel {
 		TacGia tg = new TacGia();
 		if (txtMaTG.getText().isEmpty()) {
 			DialogHelper.alert(this, "Không để trống mã tác giả");
-			return tg = null;
+			return null;
 		} else {
-			tg.setMaTG(txtMaTG.getText());
+			if (txtMaTG.getText().matches(regexMaTG)) {
+				tg.setMaTG(txtMaTG.getText());
+			} else {
+				DialogHelper.alert(this, "Vui lòng nhập đúng định dạng mã tác giả");
+				return null;
+			}
+
 		}
 
 		if (txtHoTen.getText().isEmpty()) {
 			DialogHelper.alert(this, "Không để trống họ tên tác giả");
 			return null;
 		} else {
-			tg.setHoTen(txtHoTen.getText());
+			if (txtHoTen.getText().length() > 8) {
+				tg.setHoTen(txtHoTen.getText());
+			} else {
+				DialogHelper.alert(this, "Nhập đồ dài tên trên 8 ");
+				return null;
+			}
+
 		}
 
 		if (txtQuocTich.getText().isEmpty()) {

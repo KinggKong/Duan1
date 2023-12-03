@@ -29,6 +29,7 @@ public class ViTriTimSachJDialog extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		setLocationRelativeTo(null);
+		setTitle("Vị Trí Cụ Thể Của Quyển Sách");
 
 		JLabel lblNewLabel = new JLabel("Vị Trí Chi Tiết");
 		lblNewLabel.setForeground(Color.BLUE);

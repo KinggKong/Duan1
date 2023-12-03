@@ -33,7 +33,7 @@ public class DangNhapJDialog extends JDialog {
 		setBounds(100, 100, 598, 358);
 		getContentPane().setLayout(null);
 		setLocationRelativeTo(null);
-		setTitle("Hệ Thống Quản Lý Thư Viện");
+		setTitle("Ứng dụng Quản Lý Thư Viện");
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		{
 			JPanel panel = new JPanel();

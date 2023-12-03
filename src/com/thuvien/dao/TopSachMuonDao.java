@@ -11,15 +11,18 @@ import com.thuvien.entity.SachTopLuotMuon;
 import com.thuvien.utils.JDBCHelper;
 
 public class TopSachMuonDao {
-	public List<SachTopLuotMuon> getTopSachLuotMuon() {
+	public List<SachTopLuotMuon> getTopSachLuotMuon(Integer key) {
 		List<SachTopLuotMuon> listTopSachMuon = new ArrayList<>();
 		try {
 			Connection con = JDBCHelper.getConnection();
 			String sql = "select top(10) QS.TenQS,COUNT(QS.TenQS) as 'LuotMuon' from Sach S \r\n"
 					+ "inner join TaiBan TB on TB.IDSach = S.ID\r\n"
 					+ "inner join QuyenSach QS on QS.IDTaiBan = TB.ID\r\n"
-					+ "inner join PhieuMuonCT PMCT on PMCT.IDQuyenSach = QS.ID group by  QS.TenQS order by COUNT(QS.TenQS) desc";
+					+ "inner join PhieuMuonCT PMCT on PMCT.IDQuyenSach = QS.ID\r\n"
+					+ "inner join PhieuMuon PM on PM.ID = PMCT.IDPhieuMuon \r\n" + "where Year(PM.NgayMuon ) = ?\r\n"
+					+ "group by  QS.TenQS order by COUNT(QS.TenQS) desc";
 			PreparedStatement pst = con.prepareStatement(sql);
+			pst.setInt(1, key);
 			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
 				SachTopLuotMuon sachTopLuotMuon = new SachTopLuotMuon();

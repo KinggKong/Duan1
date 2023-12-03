@@ -91,4 +91,21 @@ public class ThongKeDao {
 		return listMonth;
 	}
 
+	public List<Integer> getAllYear2() {
+		List<Integer> listYear = new ArrayList<>();
+		try {
+			Connection con = JDBCHelper.getConnection();
+			String sql = "select DISTINCT YEAR(NgayMuon) as 'Year' from PhieuMuon ";
+			PreparedStatement pst = con.prepareStatement(sql);
+			ResultSet rs = pst.executeQuery();
+			while (rs.next()) {
+				Integer year = rs.getInt(1);
+				listYear.add(year);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return listYear;
+	}
 }

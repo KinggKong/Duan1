@@ -29,6 +29,8 @@ import javax.swing.table.DefaultTableModel;
 import com.thuvien.dao.HangTheThanhVienDao;
 import com.thuvien.entity.HangThanhVien;
 import com.thuvien.utils.DialogHelper;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class HangThanhVienJPanel extends JPanel {
 
@@ -53,11 +55,12 @@ public class HangThanhVienJPanel extends JPanel {
 	private JButton btnLast;
 	private JLabel lblIndexTrang;
 	private JTextField txtPhiThueSach;
-	private JTextField txtThoiGianHieuLuc;
 	private JTextField txtTuoiMin;
 	private JTextField txtTuoiMax;
 	HangTheThanhVienDao htvd = new HangTheThanhVienDao();
 	private JTextField textField;
+	private JComboBox cbxThoiGianHieuLuc;
+	String regexMaHTV = "^H\\d{3}$";
 
 	public HangThanhVienJPanel() {
 		setLayout(null);
@@ -163,11 +166,6 @@ public class HangThanhVienJPanel extends JPanel {
 		lblThoiGianHieuLuc.setBounds(10, 223, 180, 19);
 		pnlThongTinTG.add(lblThoiGianHieuLuc);
 
-		txtThoiGianHieuLuc = new JTextField();
-		txtThoiGianHieuLuc.setColumns(10);
-		txtThoiGianHieuLuc.setBounds(10, 252, 235, 19);
-		pnlThongTinTG.add(txtThoiGianHieuLuc);
-
 		JLabel lblTuoiMin = new JLabel("Tuổi Min");
 		lblTuoiMin.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblTuoiMin.setBounds(281, 16, 104, 19);
@@ -187,6 +185,11 @@ public class HangThanhVienJPanel extends JPanel {
 		txtTuoiMax.setColumns(10);
 		txtTuoiMax.setBounds(278, 90, 165, 19);
 		pnlThongTinTG.add(txtTuoiMax);
+
+		cbxThoiGianHieuLuc = new JComboBox();
+		cbxThoiGianHieuLuc.setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4" }));
+		cbxThoiGianHieuLuc.setBounds(10, 258, 235, 21);
+		pnlThongTinTG.add(cbxThoiGianHieuLuc);
 
 		JPanel pnlDanhSach = new JPanel();
 		pnlDanhSach.setLayout(null);
@@ -413,6 +416,7 @@ public class HangThanhVienJPanel extends JPanel {
 				DialogHelper.alert(this, "Insert Successful");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			DialogHelper.alert(this, "Insert Failed");
 		}
 	}
@@ -427,6 +431,7 @@ public class HangThanhVienJPanel extends JPanel {
 				DialogHelper.alert(this, "Delete Successful");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			DialogHelper.alert(this, "Delete Failed");
 		}
 	}
@@ -435,12 +440,15 @@ public class HangThanhVienJPanel extends JPanel {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
 				HangThanhVien htv = getForm();
-				htvd.update(htv);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Update Successful");
+				if (htv != null) {
+					htvd.update(htv);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Update Successful");
+				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			DialogHelper.alert(this, "Update Failed");
 		}
 
@@ -451,7 +459,7 @@ public class HangThanhVienJPanel extends JPanel {
 		txtTenHang.setText("");
 		txtDonGia.setText("");
 		txtPhiThueSach.setText("");
-		txtThoiGianHieuLuc.setText("");
+		cbxThoiGianHieuLuc.setSelectedIndex(0);
 		txtTuoiMin.setText("");
 		txtTuoiMax.setText("");
 		setStatus(true);
@@ -462,63 +470,140 @@ public class HangThanhVienJPanel extends JPanel {
 		txtTenHang.setText(htv.getTenHang());
 		txtDonGia.setText(htv.getDonGia() + "");
 		txtPhiThueSach.setText(htv.getPhiThueSach() + "");
-		txtThoiGianHieuLuc.setText(htv.getSoThangHieuLuc() + "");
+		setCbxThangHieuLuc(htv.getSoThangHieuLuc());
 		txtTuoiMin.setText(htv.getTuoiMin() + "");
 		txtTuoiMax.setText(htv.getTuoiMax() + "");
+	}
+
+	void setCbxThangHieuLuc(int soThang) {
+		switch (soThang) {
+		case 1:
+			cbxThoiGianHieuLuc.setSelectedIndex(0);
+			break;
+
+		case 2:
+			cbxThoiGianHieuLuc.setSelectedIndex(1);
+			break;
+
+		case 3:
+			cbxThoiGianHieuLuc.setSelectedIndex(2);
+			break;
+
+		case 4:
+			cbxThoiGianHieuLuc.setSelectedIndex(3);
+			break;
+		}
+
 	}
 
 	HangThanhVien getForm() {
 		HangThanhVien htv = new HangThanhVien();
 		if (txtMaHTV.getText().isEmpty()) {
-
+			DialogHelper.alert(this, "Không để trống mã hạng thành viên");
+			return null;
 		} else {
-			htv.setMaHTV(txtMaHTV.getText());
+			if (txtMaHTV.getText().matches(regexMaHTV)) {
+				htv.setMaHTV(txtMaHTV.getText());
+			} else {
+				DialogHelper.alert(this, "Nhập đúng định dạng mã hạng thành viên");
+				return null;
+			}
 		}
 
 		if (txtTenHang.getText().isEmpty()) {
-
+			DialogHelper.alert(this, "Không để trống tên hạng thành viên");
+			return null;
 		} else {
-			htv.setTenHang(txtTenHang.getText());
+			if (txtTenHang.getText().length() > 1) {
+				htv.setTenHang(txtTenHang.getText());
+			} else {
+				DialogHelper.alert(this, "Độ dài tên hạng không hợp lệ");
+				return null;
+			}
+
 		}
 
 		if (txtDonGia.getText().isEmpty()) {
-
+			DialogHelper.alert(this, "Không để trống đơn giá");
+			return null;
 		} else {
 			try {
 				float donGia = Float.valueOf(txtDonGia.getText());
-				htv.setDonGia(donGia);
+				if (donGia <= 0) {
+					DialogHelper.alert(this, "Đơn giá không được bé hơn 0");
+					return null;
+				} else {
+					htv.setDonGia(donGia);
+				}
+
 			} catch (Exception e) {
-				// TODO: handle exception
+				DialogHelper.alert(this, "Chỉ nhập số cho đơn giá");
+				return null;
 			}
 		}
 
 		if (txtPhiThueSach.getText().isEmpty()) {
-
+			DialogHelper.alert(this, "Không để trống phí thuê sách");
+			return null;
 		} else {
-			float donGia2 = Float.valueOf(txtPhiThueSach.getText());
-			htv.setPhiThueSach(donGia2);
-		}
+			try {
+				float donGia2 = Float.valueOf(txtPhiThueSach.getText());
+				if (donGia2 <= 0) {
+					DialogHelper.alert(this, "Phí thuê sách không được bé hơn 0");
+					return null;
+				} else {
+					htv.setPhiThueSach(donGia2);
+				}
 
-		if (txtThoiGianHieuLuc.getText().isEmpty()) {
+			} catch (Exception e) {
+				DialogHelper.alert(this, "Chỉ nhập số cho phí thuê sách");
+				return null;
+			}
 
-		} else {
-			int tg = Integer.valueOf(txtThoiGianHieuLuc.getText());
-			htv.setSoThangHieuLuc(tg);
 		}
 
 		if (txtTuoiMin.getText().isEmpty()) {
-
+			DialogHelper.alert(this, "Không để trống tuổi min");
+			return null;
 		} else {
-			int tuoiMin = Integer.valueOf(txtTuoiMin.getText());
-			htv.setTuoiMin(tuoiMin);
+			try {
+				int tuoiMin = Integer.valueOf(txtTuoiMin.getText());
+				if (tuoiMin <= 4 | tuoiMin >= 70) {
+					DialogHelper.alert(this, "Tuổi min cần lớn hơn 4");
+					return null;
+				} else {
+					htv.setTuoiMin(tuoiMin);
+				}
+
+			} catch (Exception e) {
+				DialogHelper.alert(this, "Chỉ nhập số cho tuổi min");
+				return null;
+			}
+
 		}
 
 		if (txtTuoiMax.getText().isEmpty()) {
-
+			DialogHelper.alert(this, "Không để trống tuổi max");
+			return null;
 		} else {
-			int tuoiMax = Integer.valueOf(txtTuoiMax.getText());
-			htv.setTuoiMax(tuoiMax);
+			try {
+				int tuoiMax = Integer.valueOf(txtTuoiMax.getText());
+				if (tuoiMax > 70 | tuoiMax < 4) {
+					DialogHelper.alert(this, "Tuổi max cần bé hơn 70 và lớn hơn 4");
+					return null;
+				} else {
+					htv.setTuoiMax(tuoiMax);
+				}
+
+			} catch (Exception e) {
+				DialogHelper.alert(this, "Chỉ nhập số cho tuổi max");
+				return null;
+			}
+
 		}
+
+		int thangHieuLuc = Integer.parseInt(cbxThoiGianHieuLuc.getSelectedItem().toString());
+		htv.setSoThangHieuLuc(thangHieuLuc);
 		return htv;
 	}
 
