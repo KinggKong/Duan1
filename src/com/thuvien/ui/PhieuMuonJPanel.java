@@ -18,13 +18,12 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
@@ -34,18 +33,13 @@ import javax.swing.table.DefaultTableModel;
 
 import com.thuvien.dao.NhanVienDao;
 import com.thuvien.dao.PhieuMuonDao;
-import com.thuvien.dao.TacGiaDao;
 import com.thuvien.dao.ThanhVienDao;
 import com.thuvien.entity.NhanVien;
 import com.thuvien.entity.PhieuMuon;
-import com.thuvien.entity.TacGia;
 import com.thuvien.entity.ThanhVien;
-import com.thuvien.entity.TheThanhVien;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.ShareHelper;
 import com.thuvien.utils.XDate;
-
-import javax.swing.JComboBox;
 
 public class PhieuMuonJPanel extends JPanel {
 

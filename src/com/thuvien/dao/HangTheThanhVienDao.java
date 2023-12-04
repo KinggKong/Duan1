@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.thuvien.entity.HangThanhVien;
-import com.thuvien.entity.TacGia;
-import com.thuvien.ui.HangThanhVienJPanel;
 import com.thuvien.utils.JDBCHelper;
 
 public class HangTheThanhVienDao extends QLTVDao<HangThanhVien, Integer> {

@@ -1,19 +1,15 @@
 
 package com.thuvien.dao;
 
-import com.thuvien.entity.NhanVien;
-import com.thuvien.entity.PhieuMuon;
-import com.thuvien.entity.PhieuMuonCT;
-import com.thuvien.entity.PhieuTra;
-import com.thuvien.entity.PhieuTraCT;
-import com.thuvien.entity.QuyenSach;
-import com.thuvien.entity.ThanhVien;
-import com.thuvien.entity.ViTri;
-import com.thuvien.utils.JDBCHelper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.thuvien.entity.PhieuMuonCT;
+import com.thuvien.entity.PhieuTra;
+import com.thuvien.entity.PhieuTraCT;
+import com.thuvien.utils.JDBCHelper;
 
 public class PhieuTraChiTietDao extends QLTVDao<PhieuTraCT, Integer> {
 	PhieuTraDao ptd = new PhieuTraDao();

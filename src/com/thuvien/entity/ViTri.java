@@ -1,7 +1,5 @@
 package com.thuvien.entity;
 
-import java.util.Objects;
-
 public class ViTri {
 
 	private int idDay;

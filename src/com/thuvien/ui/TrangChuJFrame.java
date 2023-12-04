@@ -20,7 +20,6 @@ import javax.swing.JToolBar;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
-import com.thuvien.utils.Auth;
 import com.thuvien.utils.ShareHelper;
 
 public class TrangChuJFrame extends JFrame {
@@ -300,13 +299,15 @@ public class TrangChuJFrame extends JFrame {
 		lblTaiKhoanDangDung = new JLabel("");
 		lblTaiKhoanDangDung.setBounds(1114, 33, 111, 34);
 		contentPane.add(lblTaiKhoanDangDung);
-		lblTaiKhoanDangDung.setText(ShareHelper.USER.getTenNV());
 
 		lblThoiGian = new JLabel((String) null);
 		lblThoiGian.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Clock.png")));
 		lblThoiGian.setBounds(1225, 33, 111, 34);
 		contentPane.add(lblThoiGian);
 		thoiGian();
+		if (ShareHelper.authenticated()) {
+			setTenNguoiDung();
+		}
 	}
 
 	private void changePanel(JPanel p) {
@@ -345,6 +346,10 @@ public class TrangChuJFrame extends JFrame {
 	public void logoff() {
 		ShareHelper.logoff();
 		this.openLogin();
+	}
+
+	void setTenNguoiDung() {
+		lblTaiKhoanDangDung.setText(ShareHelper.USER.getTenNV());
 	}
 
 }

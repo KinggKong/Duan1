@@ -3,7 +3,6 @@ package com.thuvien.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Frame;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;

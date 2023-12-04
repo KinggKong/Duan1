@@ -4,14 +4,13 @@
  */
 package com.thuvien.dao;
 
-import com.thuvien.entity.TacGia;
-import com.thuvien.entity.ThanhVien;
-import com.thuvien.entity.TheLoai;
-import com.thuvien.utils.JDBCHelper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.thuvien.entity.TheLoai;
+import com.thuvien.utils.JDBCHelper;
 
 /**
  *

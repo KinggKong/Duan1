@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,8 +31,6 @@ import javax.swing.table.DefaultTableModel;
 import com.thuvien.dao.HangTheThanhVienDao;
 import com.thuvien.entity.HangThanhVien;
 import com.thuvien.utils.DialogHelper;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
 
 public class HangThanhVienJPanel extends JPanel {
 

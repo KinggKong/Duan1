@@ -32,6 +32,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.table.DefaultTableModel;
 
 import com.github.sarxos.webcam.Webcam;
@@ -48,10 +50,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.thuvien.dao.ThanhVienDao;
 import com.thuvien.entity.ThanhVien;
 import com.thuvien.utils.DialogHelper;
-import com.thuvien.utils.ShareHelper;
 import com.thuvien.utils.XDate;
-import javax.swing.event.AncestorListener;
-import javax.swing.event.AncestorEvent;
 
 public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 

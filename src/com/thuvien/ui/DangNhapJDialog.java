@@ -1,27 +1,27 @@
 package com.thuvien.ui;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import com.thuvien.dao.NhanVienDao;
 import com.thuvien.entity.NhanVien;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.ShareHelper;
-
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Color;
-import javax.swing.ImageIcon;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class DangNhapJDialog extends JDialog {
 	private JTextField txtUsername;
@@ -94,6 +94,20 @@ public class DangNhapJDialog extends JDialog {
 		});
 		btnKtThc.setBounds(428, 253, 104, 21);
 		getContentPane().add(btnKtThc);
+
+		JLabel lblNewLabel = new JLabel("Quên Mật Khẩu ?");
+		lblNewLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				QuenMatKhauJFrame quenMatKhauJFrame = new QuenMatKhauJFrame();
+				quenMatKhauJFrame.setVisible(true);
+
+			}
+		});
+		lblNewLabel.setForeground(Color.BLUE);
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblNewLabel.setBounds(365, 215, 192, 13);
+		getContentPane().add(lblNewLabel);
 	}
 
 	void login() {
@@ -123,4 +137,13 @@ public class DangNhapJDialog extends JDialog {
 			System.exit(0);
 		}
 	}
+
+	private void showQuenMatKhauDialog() {
+		Thread quenMatKhauThread = new Thread(() -> {
+			QuenMatKhauJFrame quenMatKhauJFrame = new QuenMatKhauJFrame();
+			quenMatKhauJFrame.setVisible(true);
+		});
+		quenMatKhauThread.start();
+	}
+
 }

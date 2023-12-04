@@ -13,13 +13,12 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
@@ -28,19 +27,11 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.thuvien.dao.SachDao;
-import com.thuvien.dao.TacGiaDao;
 import com.thuvien.dao.TaiBanDao;
-import com.thuvien.dao.TheLoaiDao;
 import com.thuvien.entity.Sach;
-import com.thuvien.entity.TacGia;
 import com.thuvien.entity.TaiBan;
-import com.thuvien.entity.TheLoai;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.XDate;
-
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import javax.swing.JComboBox;
 
 public class TaiBanJPanel extends JPanel {
 

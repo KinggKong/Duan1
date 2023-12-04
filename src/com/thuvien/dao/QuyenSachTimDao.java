@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.thuvien.entity.QuyenSach;
 import com.thuvien.entity.QuyenSachTim;
-
 import com.thuvien.utils.JDBCHelper;
 
 public class QuyenSachTimDao extends QLTVDao<QuyenSachTim, String> {

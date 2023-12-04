@@ -1,17 +1,15 @@
 package com.thuvien.ui;
 
-import java.awt.EventQueue;
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.ImageIcon;
 import javax.swing.JProgressBar;
 import javax.swing.Timer;
-
-import java.awt.Color;
 
 public class ChaoJDialog extends JDialog {
 

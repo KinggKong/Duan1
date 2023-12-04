@@ -6,36 +6,30 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import com.thuvien.dao.PhieuMuonChiTietDao;
@@ -45,20 +39,7 @@ import com.thuvien.entity.PhieuMuon;
 import com.thuvien.entity.PhieuMuonCT;
 import com.thuvien.entity.PhieuTra;
 import com.thuvien.entity.PhieuTraCT;
-import com.thuvien.entity.TacGia;
-import com.thuvien.entity.ViTri;
 import com.thuvien.utils.DialogHelper;
-import com.thuvien.utils.ShareHelper;
-import com.thuvien.utils.XDate;
-
-import javax.swing.JComboBox;
-import javax.swing.JLayeredPane;
-import javax.swing.ImageIcon;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
 public class PhieuTraChiTietJPanel extends JPanel {
 

@@ -16,13 +16,14 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
@@ -35,15 +36,11 @@ import com.thuvien.dao.PhieuTraChiTietDao;
 import com.thuvien.dao.PhieuTraDao;
 import com.thuvien.dao.ThanhVienDao;
 import com.thuvien.entity.NhanVien;
-import com.thuvien.entity.PhieuMuon;
 import com.thuvien.entity.PhieuTra;
 import com.thuvien.entity.ThanhVien;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.ShareHelper;
 import com.thuvien.utils.XDate;
-
-import javax.swing.JRadioButton;
-import javax.swing.JComboBox;
 
 public class PhieuTraJPanel extends JPanel {
 

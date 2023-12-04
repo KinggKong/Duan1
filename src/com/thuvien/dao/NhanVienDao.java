@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.thuvien.entity.NhanVien;
-import com.thuvien.entity.TacGia;
 import com.thuvien.utils.JDBCHelper;
 
 public class NhanVienDao extends QLTVDao<NhanVien, String> {
@@ -79,6 +78,16 @@ public class NhanVienDao extends QLTVDao<NhanVien, String> {
 			throw new RuntimeException(ex);
 		}
 		return list;
+	}
+
+	public NhanVien checkTonTai(String username) {
+		String sql = "select * from nhanvien where UserName = ?";
+		List<NhanVien> listNhanVien = select(sql, username);
+		if (username.equalsIgnoreCase(listNhanVien.get(0).getUserName())) {
+			return listNhanVien.get(0);
+		} else {
+			return null;
+		}
 	}
 
 	private NhanVien readFromResultSet(ResultSet rs) throws SQLException {

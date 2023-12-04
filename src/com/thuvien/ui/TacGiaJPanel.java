@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -17,7 +19,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
@@ -28,8 +29,6 @@ import javax.swing.table.DefaultTableModel;
 import com.thuvien.dao.TacGiaDao;
 import com.thuvien.entity.TacGia;
 import com.thuvien.utils.DialogHelper;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 
 public class TacGiaJPanel extends JPanel {
 

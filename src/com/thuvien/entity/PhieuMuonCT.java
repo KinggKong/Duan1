@@ -1,7 +1,5 @@
 package com.thuvien.entity;
 
-import com.thuvien.dao.QuyenSachDao;
-
 public class PhieuMuonCT {
 	private int id;
 	private PhieuMuon idPhieuMuon;

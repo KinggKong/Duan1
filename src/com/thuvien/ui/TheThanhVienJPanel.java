@@ -9,10 +9,11 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.*;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -31,13 +32,10 @@ import com.thuvien.dao.HangTheThanhVienDao;
 import com.thuvien.dao.ThanhVienDao;
 import com.thuvien.dao.TheThanhVienDao;
 import com.thuvien.entity.HangThanhVien;
-import com.thuvien.entity.TacGia;
 import com.thuvien.entity.ThanhVien;
 import com.thuvien.entity.TheThanhVien;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.XDate;
-
-import javax.swing.DefaultComboBoxModel;
 
 public class TheThanhVienJPanel extends JPanel {
 

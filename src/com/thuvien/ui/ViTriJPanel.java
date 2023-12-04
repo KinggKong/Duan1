@@ -2,11 +2,10 @@ package com.thuvien.ui;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -15,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -27,20 +27,13 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.thuvien.dao.TacGiaDao;
 import com.thuvien.dao.ViTriDao;
 import com.thuvien.entity.Day;
-import com.thuvien.entity.NXB;
 import com.thuvien.entity.Ngan;
 import com.thuvien.entity.OSoChiTiet;
 import com.thuvien.entity.QuyenSach;
-import com.thuvien.entity.TacGia;
 import com.thuvien.entity.ViTri;
 import com.thuvien.utils.DialogHelper;
-import java.util.HashSet;
-import javax.swing.JComboBox;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
 public class ViTriJPanel extends JPanel {
 

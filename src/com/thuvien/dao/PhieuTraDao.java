@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.thuvien.entity.NhanVien;
-import com.thuvien.entity.PhieuMuon;
 import com.thuvien.entity.PhieuTra;
 import com.thuvien.entity.ThanhVien;
 import com.thuvien.utils.JDBCHelper;

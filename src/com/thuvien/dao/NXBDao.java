@@ -1,15 +1,12 @@
 package com.thuvien.dao;
 
-import com.thuvien.dao.QLTVDao;
-import java.util.List;
-
-import com.thuvien.entity.NXB;
-import com.thuvien.entity.TacGia;
-import com.thuvien.utils.JDBCHelper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import javax.swing.table.DefaultTableModel;
+import java.util.List;
+
+import com.thuvien.entity.NXB;
+import com.thuvien.utils.JDBCHelper;
 
 public class NXBDao extends QLTVDao<NXB, Integer> {
 

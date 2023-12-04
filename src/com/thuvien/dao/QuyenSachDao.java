@@ -5,9 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.thuvien.entity.PhieuMuonCT;
 import com.thuvien.entity.QuyenSach;
-import com.thuvien.entity.TaiBan;
 import com.thuvien.utils.JDBCHelper;
 
 public class QuyenSachDao extends QLTVDao<QuyenSach, String> {

@@ -1,20 +1,12 @@
 package com.thuvien.dao;
 
-import com.thuvien.entity.Sach;
-import com.thuvien.entity.TacGia;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import javax.swing.SwingWorker;
 
 import com.thuvien.entity.TaiBan;
 import com.thuvien.utils.JDBCHelper;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class TaiBanDao extends QLTVDao<TaiBan, Integer> {
 	SachDao sd = new SachDao();

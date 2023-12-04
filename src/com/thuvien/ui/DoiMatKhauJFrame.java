@@ -1,21 +1,20 @@
 package com.thuvien.ui;
 
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import java.awt.Font;
-import java.awt.Color;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import com.thuvien.dao.NhanVienDao;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.ShareHelper;
-
-import javax.swing.JButton;
-import javax.swing.JPasswordField;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class DoiMatKhauJFrame extends JFrame {
 	private JTextField txtMaNV;

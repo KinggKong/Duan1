@@ -1,6 +1,6 @@
 package com.thuvien.entity;
 
-import java.util.*;
+import java.util.Date;
 
 public class TheThanhVien {
 	private int id;
