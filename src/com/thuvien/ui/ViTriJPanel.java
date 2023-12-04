@@ -10,8 +10,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,33 +29,37 @@ import javax.swing.table.DefaultTableModel;
 
 import com.thuvien.dao.TacGiaDao;
 import com.thuvien.dao.ViTriDao;
+import com.thuvien.entity.Day;
 import com.thuvien.entity.NXB;
+import com.thuvien.entity.Ngan;
+import com.thuvien.entity.OSoChiTiet;
+import com.thuvien.entity.QuyenSach;
 import com.thuvien.entity.TacGia;
 import com.thuvien.entity.ViTri;
 import com.thuvien.utils.DialogHelper;
 import java.util.HashSet;
+import javax.swing.JComboBox;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class ViTriJPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField txtDay;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTable table;
 	DefaultTableModel model;
-	private JButton btnInsert;
-	private JButton btnDelete;
 	private JButton btnUpdate;
-	private JButton btnClear;
-	private JButton btnPrevList;
-	private JButton btnNextList;
 	ViTriDao vtdao = new ViTriDao();
 	int indexTrang = 1;
 	int index = 0;
-	private JButton btnFirst;
-	private JButton btnPrevEdit;
-	private JButton btnNextEdit;
-	private JButton btnLast;
-	private JLabel lblIndexTrang;
+
+	DefaultComboBoxModel<Day> modelCbxDay = new DefaultComboBoxModel<>();
+	DefaultComboBoxModel<Ngan> modelNgan = new DefaultComboBoxModel<>();
+	DefaultComboBoxModel<QuyenSach> modelCbxQuyenSach = new DefaultComboBoxModel<>();
+	private JComboBox cbxDay;
+	private JComboBox cbxNgan;
+	private JTextField txtO;
+	private JComboBox cbxQuyenSach;
 
 	public ViTriJPanel() {
 		setLayout(null);
@@ -64,36 +70,62 @@ public class ViTriJPanel extends JPanel {
 		add(lblTitle);
 
 		JPanel pnlThongTinTG = new JPanel();
-		pnlThongTinTG.setBounds(57, 174, 429, 105);
+		pnlThongTinTG.setBounds(57, 78, 429, 315);
 		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		add(pnlThongTinTG);
 		pnlThongTinTG.setLayout(null);
 
-		JLabel lblDay = new JLabel("Vị Trí Dãy");
+		JLabel lblDay = new JLabel("Dãy");
 		lblDay.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblDay.setBounds(10, 16, 104, 19);
 		pnlThongTinTG.add(lblDay);
 
-		txtDay = new JTextField();
-		txtDay.setText("VD: 1");
-		txtDay.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				if (txtDay.getText().equals("VD: 1")) {
-					txtDay.setText("");
-				}
-			}
+		cbxDay = new JComboBox();
+		cbxDay.setBounds(10, 45, 279, 21);
+		pnlThongTinTG.add(cbxDay);
+		cbxDay.setModel(modelCbxDay);
+		cbxDay.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				Day day = (Day) cbxDay.getSelectedItem();
+				fillNgan(day.getIdDay());
 
-			@Override
-			public void focusLost(FocusEvent e) {
-				if (txtDay.getText().isEmpty()) {
-					txtDay.setText("VD: 1");
-				}
 			}
 		});
-		txtDay.setColumns(10);
-		txtDay.setBounds(10, 45, 296, 19);
-		pnlThongTinTG.add(txtDay);
+
+		JLabel lblNgn = new JLabel("Ngăn ");
+		lblNgn.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblNgn.setBounds(10, 91, 104, 19);
+		pnlThongTinTG.add(lblNgn);
+
+		cbxNgan = new JComboBox();
+		cbxNgan.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+
+			}
+		});
+		cbxNgan.setBounds(10, 120, 279, 21);
+		pnlThongTinTG.add(cbxNgan);
+		cbxNgan.setModel(modelNgan);
+
+		JLabel lblQuynSch = new JLabel("Quyển Sách");
+		lblQuynSch.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblQuynSch.setBounds(10, 237, 164, 19);
+		pnlThongTinTG.add(lblQuynSch);
+
+		cbxQuyenSach = new JComboBox();
+		cbxQuyenSach.setBounds(10, 266, 279, 21);
+		pnlThongTinTG.add(cbxQuyenSach);
+		cbxQuyenSach.setModel(modelCbxQuyenSach);
+
+		txtO = new JTextField();
+		txtO.setBounds(10, 191, 279, 19);
+		pnlThongTinTG.add(txtO);
+		txtO.setColumns(10);
+
+		JLabel lblId = new JLabel("ID Ô");
+		lblId.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblId.setBounds(10, 162, 104, 19);
+		pnlThongTinTG.add(lblId);
 
 		JPanel pnlDanhSach = new JPanel();
 		pnlDanhSach.setBounds(605, 94, 662, 345);
@@ -112,143 +144,40 @@ public class ViTriJPanel extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				index = table.rowAtPoint(e.getPoint());
-				if (index >= 0) {
-					edit();
-				}
-
+				String idO = (String) table.getValueAt(index, 0);
+				txtO.setText(idO);
 			}
 		});
 		scrollPane.setViewportView(table);
-		String[] columns = { "ID", "Vị Trí Dãy" };
+		String[] columns = { "ID Ô", "Tên Ô", "Parent_ID", "Mã Quyển Sách" };
 		Object[][] rows = {};
 		model = new DefaultTableModel(rows, columns);
 		table.setModel(model);
 
-		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(100, 381, 350, 30);
-		add(pnlButton2);
-		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
-
-		btnFirst = new JButton("First");
-		btnFirst.addActionListener(new ActionListener() {
+		JButton btnNewButton = new JButton("Xem");
+		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				index = 0;
-				table.setRowSelectionInterval(index, index);
-				edit();
+				Ngan ngan = (Ngan) cbxNgan.getSelectedItem();
+				load(ngan.getIdNgan());
 			}
 		});
-		pnlButton2.add(btnFirst);
-
-		btnPrevEdit = new JButton("Prev");
-		btnPrevEdit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				index--;
-				table.setRowSelectionInterval(index, index);
-				edit();
-			}
-		});
-		pnlButton2.add(btnPrevEdit);
-
-		btnNextEdit = new JButton("Next");
-		btnNextEdit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				index++;
-				table.setRowSelectionInterval(index, index);
-				edit();
-			}
-		});
-		pnlButton2.add(btnNextEdit);
-
-		btnLast = new JButton("Last");
-		btnLast.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				index = model.getRowCount() - 1;
-				table.setRowSelectionInterval(index, index);
-				edit();
-			}
-		});
-		pnlButton2.add(btnLast);
-
-		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(100, 321, 350, 30);
-		add(pnlButton1);
-		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
-
-		btnInsert = new JButton("Insert");
-		btnInsert.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				insert();
-			}
-		});
-		pnlButton1.add(btnInsert);
-
-		btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				delete();
-			}
-		});
-		pnlButton1.add(btnDelete);
+		btnNewButton.setBounds(296, 449, 98, 30);
+		add(btnNewButton);
 
 		btnUpdate = new JButton("Update");
+		btnUpdate.setBounds(134, 449, 110, 30);
+		add(btnUpdate);
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				update();
+				QuyenSach qs = (QuyenSach) cbxQuyenSach.getSelectedItem();
+				update(qs.getMaQS());
 			}
 		});
-		pnlButton1.add(btnUpdate);
-
-		btnClear = new JButton("Clear");
-		btnClear.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				clear();
-			}
-		});
-		pnlButton1.add(btnClear);
-
-		btnPrevList = new JButton("Prev");
-		btnPrevList.setBounds(777, 487, 85, 21);
-		btnPrevList.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				indexTrang--;
-				if (indexTrang == 0) {
-					DialogHelper.alert(null, "Đây là trang đầu tiên !");
-					indexTrang++;
-				} else {
-					load(indexTrang);
-					lblIndexTrang.setText(indexTrang + "");
-				}
-			}
-		});
-		add(btnPrevList);
-
-		btnNextList = new JButton("Next");
-		btnNextList.setBounds(1049, 487, 85, 21);
-		btnNextList.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				indexTrang++;
-
-				if (indexTrang > (Math.ceil(vtdao.selectAll().size() * 1.0 / 5))) {
-					DialogHelper.alert(null, "Đây là trang cuối cùng !");
-					indexTrang--;
-				} else {
-
-					load(indexTrang);
-					lblIndexTrang.setText(indexTrang + "");
-				}
-			}
-		});
-		add(btnNextList);
-
-		setStatus(true);
-
-		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(950, 491, 56, 13);
-		add(lblIndexTrang);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				load(indexTrang);
+				fillDay();
+				fillCbxQuyenSach();
 				return null;
 			}
 
@@ -262,81 +191,134 @@ public class ViTriJPanel extends JPanel {
 		worker.execute();
 	}
 
-//	void load(int soTrang) {
-//		SwingUtilities.invokeLater(() -> {
-//			List<TacGia> list = tgd.loadTrang((soTrang - 1) * 5, 5);
-//			model.setRowCount(0);
-//			for (TacGia tg : list) {
-//				Object[] row = { tg.getMaTG(), tg.getHoTen(), tg.getQuocTich(), tg.isGioiTinh() ? "Nam" : "Nữ" };
-//				model.addRow(row);
-//			}
-//		});
-//	}
-	void load(int soTrang) {
-		SwingWorker<List<ViTri>, Void> worker = new SwingWorker<List<ViTri>, Void>() {
+	void fillDay() {
+		SwingWorker<List<Day>, Void> worker = new SwingWorker<List<Day>, Void>() {
+
 			@Override
-			protected List<ViTri> doInBackground() throws Exception {
-				return vtdao.loadTrang((soTrang - 1) * 5, 5);
+			protected List<Day> doInBackground() throws Exception {
+				List<Day> listDay = vtdao.getAllDay();
+				return listDay;
 			}
 
 			@Override
 			protected void done() {
 				try {
-					List<ViTri> list = get();
+					List<Day> listDay = get();
+					modelCbxDay.removeAllElements();
+					for (Day d : listDay) {
+						modelCbxDay.addElement(d);
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		};
+		worker.execute();
+	}
+
+	void fillNgan(String idDay) {
+		SwingWorker<List<Ngan>, Void> worker = new SwingWorker<List<Ngan>, Void>() {
+
+			@Override
+			protected List<Ngan> doInBackground() throws Exception {
+				List<Ngan> listDay = vtdao.getAllNgan(idDay);
+				return listDay;
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<Ngan> listDay = get();
+					modelNgan.removeAllElements();
+					for (Ngan d : listDay) {
+						modelNgan.addElement(d);
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		};
+		worker.execute();
+	}
+
+	void load(String IDngan) {
+		SwingWorker<List<OSoChiTiet>, Void> worker = new SwingWorker<List<OSoChiTiet>, Void>() {
+
+			@Override
+			protected List<OSoChiTiet> doInBackground() throws Exception {
+				List<OSoChiTiet> listO = vtdao.getAllO(IDngan);
+				return listO;
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<OSoChiTiet> listO = get();
 					model.setRowCount(0);
-					for (ViTri nxb : list) {
-						Object[] row = { nxb.getID(), nxb.getDay() };
+					for (OSoChiTiet o : listO) {
+						Object[] row = { o.getIdO(), o.getTenO(), o.getParent_ID(), o.getMaQS() };
 						model.addRow(row);
 					}
-				} catch (Exception e) {
-					DialogHelper.alert(ViTriJPanel.this, "Lỗi truy vấn dữ liệu!");
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		};
+		worker.execute();
+	}
+
+	void fillCbxQuyenSach() {
+		SwingWorker<List<QuyenSach>, Void> worker = new SwingWorker<List<QuyenSach>, Void>() {
+
+			@Override
+			protected List<QuyenSach> doInBackground() throws Exception {
+				List<QuyenSach> listQS = vtdao.getQuyenSachChuaCoO();
+				return listQS;
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<QuyenSach> listQS = get();
+					modelCbxQuyenSach.removeAllElements();
+					for (QuyenSach qs : listQS) {
+						modelCbxQuyenSach.addElement(qs);
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		};
-
 		worker.execute();
-
 	}
 
-	void insert() {
-		try {
-			ViTri nxb = getForminsert();
-			if (nxb != null) {
-				vtdao.insert(nxb);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Insert Successful");
-			}
-		} catch (Exception e) {
-			DialogHelper.alert(this, "Insert Failed");
-			e.printStackTrace();
-		}
-
-	}
-
-	void delete() {
-		try {
-			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
-				ViTri vtd = getForm();
-				vtdao.delete(vtd.getID());
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Delete Successful");
-			}
-		} catch (Exception e) {
-			DialogHelper.alert(this, "Delete Failed");
-		}
-
-	}
-
-	void update() {
+	void update(String maQS) {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
-				ViTri vtd = getForm();
-				vtdao.update(vtd);
-				load(indexTrang);
-				clear();
+
+				String idO = txtO.getText();
+				vtdao.update(idO, maQS);
 				DialogHelper.alert(this, "Update Successful");
+				fillCbxQuyenSach();
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Update Failed");
@@ -346,45 +328,21 @@ public class ViTriJPanel extends JPanel {
 	}
 
 	void clear() {
-		txtDay.setText("");
-		txtDay.setEditable(true);
-		btnInsert.setEnabled(true);
 
 	}
 
-	void setForm(ViTri vtd) {
-		txtDay.setText(vtd.getDay() + "");
-
+	void setForm(OSoChiTiet oSo) {
+		txtO.setText(oSo.getIdO());
 	}
 
-	ViTri getForm() {
-		ViTri nxb = new ViTri();
-		int ID = (int) table.getValueAt(this.index, 0);
-		nxb.setID(ID);
-		nxb.setDay(txtDay.getText());
-		if (txtDay.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống dãy");
-			return null;
-		} else {
-			nxb.setDay(txtDay.getText());
-		}
+	OSoChiTiet getForm() {
 
-		return nxb;
-
+		return null;
 	}
 
 	ViTri getForminsert() {
 
-		ViTri nxb = new ViTri();
-		nxb.setDay(txtDay.getText());
-		if (txtDay.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống họ tên tác giả");
-			return null;
-		} else {
-			nxb.setDay(txtDay.getText());
-		}
-
-		return nxb;
+		return null;
 	}
 
 //        catch (NumberFormatException e) {
@@ -392,44 +350,11 @@ public class ViTriJPanel extends JPanel {
 //            DialogHelper.alert(this, "Ngày số không hợp lệ. Vui lòng nhập số nguyên.");
 //            return null;
 	void edit() {
-		try {
-			//Kiểm tra giá trị là kiểu dữ liệu gì 
-//			Object value = table.getValueAt(this.index, 0);
-//			System.out.println(value.getClass());
-			int maNxb = (int) table.getValueAt(this.index, 0);
-			ViTri tg = vtdao.selectById(maNxb);
-			if (tg != null) {
-				setForm(tg);
-				setStatus(false);
-			}
-		} catch (Exception e) {
-			DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
-			e.printStackTrace();
-		}
 
-	}
-
-	void setStatus(boolean insertable) {
-		btnInsert.setEnabled(insertable);
-		btnUpdate.setEnabled(!insertable);
-		btnDelete.setEnabled(!insertable);
-		boolean first = this.index > 0;
-		boolean last = this.index < model.getRowCount() - 1;
-		btnFirst.setEnabled(!insertable && first);
-		btnPrevEdit.setEnabled(!insertable && first);
-		btnNextEdit.setEnabled(!insertable && last);
-		btnLast.setEnabled(!insertable && last);
 	}
 
 	private ViTri getInsert() {
-		ViTri nxb = null;
-		if (txtDay.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống họ tên tác giả");
-			return null;
-		} else {
-			nxb.setDay(txtDay.getText());
-		}
 
-		return nxb;
+		return null;
 	}
 }
