@@ -83,7 +83,7 @@ public class SachJPanel extends JPanel {
 
 		JPanel panel = new JPanel();
 		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel.setBounds(23, 108, 495, 215);
+		panel.setBounds(23, 108, 495, 231);
 		add(panel);
 		panel.setLayout(null);
 
@@ -113,7 +113,7 @@ public class SachJPanel extends JPanel {
 		panel.add(lblNamXuatBan);
 
 		txtNamXuatBan = new JTextField();
-		txtNamXuatBan.setBounds(283, 34, 183, 19);
+		txtNamXuatBan.setBounds(283, 34, 202, 19);
 		panel.add(txtNamXuatBan);
 		txtNamXuatBan.setColumns(10);
 
@@ -139,7 +139,7 @@ public class SachJPanel extends JPanel {
 		panel.add(lblNgayNhap);
 
 		txtNgayNhap = new JTextField();
-		txtNgayNhap.setBounds(283, 87, 183, 19);
+		txtNgayNhap.setBounds(283, 87, 202, 19);
 		panel.add(txtNgayNhap);
 		txtNgayNhap.setColumns(10);
 
@@ -154,7 +154,7 @@ public class SachJPanel extends JPanel {
 		panel.add(lblNhaXuatBan);
 
 		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(97, 356, 350, 30);
+		pnlButton1.setBounds(99, 455, 350, 30);
 		add(pnlButton1);
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -194,7 +194,7 @@ public class SachJPanel extends JPanel {
 		pnlButton1.add(btnClear);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(97, 406, 350, 30);
+		pnlButton2.setBounds(764, 520, 377, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -475,6 +475,7 @@ public class SachJPanel extends JPanel {
 	Sach getForm() {
 		Sach model = new Sach();
 		if (txtMaSach.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống mã quyển sách");
 			return null;
 		} else {
 			model.setMaSach(txtMaSach.getText());
@@ -533,37 +534,4 @@ public class SachJPanel extends JPanel {
 		btnNextEdit.setEnabled(!insertable && last);
 		btnLast.setEnabled(!insertable && last);
 	}
-
-//	void search() {
-//		String keyword = txtTimKiem.getText().trim();
-//		// Thực hiện tìm kiếm trong một SwingWorker
-//		SwingWorker<List<Sach>, Void> worker = new SwingWorker<List<Sach>, Void>() {
-//			@Override
-//			protected List<Sach> doInBackground() throws Exception {
-//				return sachDao.selectById(keyword);
-//			}
-//
-//			@Override
-//			protected void done() {
-//				try {
-//					List<TacGia> list = get();
-//					if (list.size() == 0) {
-//						DialogHelper.alert(null, "Không tồn tại ");
-//					} else {
-//						model.setRowCount(0);
-//						for (TacGia tg : list) {
-//							Object[] row = { tg.getMaTG(), tg.getHoTen(), tg.getQuocTich(),
-//									tg.isGioiTinh() ? "Nam" : "Nữ" };
-//							model.addRow(row);
-//						}
-//					}
-//
-//				} catch (Exception e) {
-//					DialogHelper.alert(SachJPanel.this, "Lỗi truy vấn dữ liệu!");
-//				}
-//			}
-//		};
-//
-//		worker.execute();
-//	}
 }

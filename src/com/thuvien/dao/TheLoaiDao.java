@@ -16,37 +16,37 @@ import com.thuvien.utils.JDBCHelper;
  *
  * @author nguye
  */
-public class TheLoaiDao extends QLTVDao<TheLoai, String>{
+public class TheLoaiDao extends QLTVDao<TheLoai, String> {
 
-    @Override
-    public void insert(TheLoai tl) {
-        String sql = "INSERT INTO TheLoai(MaTL,TenTL) VALUES (?,?)";
-        JDBCHelper.executeUpdate(sql, tl.getMaTL(),tl.getTenTL());
-    }
+	@Override
+	public void insert(TheLoai tl) {
+		String sql = "INSERT INTO TheLoai(MaTL,TenTL) VALUES (?,?)";
+		JDBCHelper.executeUpdate(sql, tl.getMaTL(), tl.getTenTL());
+	}
 
-    @Override
-    public void update(TheLoai tl) {
-            String sql = "UPDATE TheLoai SET TenTL =? where MaTL = ?";
-        JDBCHelper.executeUpdate(sql,tl.getTenTL(), tl.getMaTL());
-    }
+	@Override
+	public void update(TheLoai tl) {
+		String sql = "UPDATE TheLoai SET TenTL =? where MaTL = ?";
+		JDBCHelper.executeUpdate(sql, tl.getTenTL(), tl.getMaTL());
+	}
 
-    @Override
-    public void delete(String maTL) {
-        String sql = "DELETE TheLoai where MaTL = ?";
-        JDBCHelper.executeUpdate(sql, maTL);
-    }
+	@Override
+	public void delete(String maTL) {
+		String sql = "DELETE TheLoai where MaTL = ?";
+		JDBCHelper.executeUpdate(sql, maTL);
+	}
 
-    @Override
-    public List<TheLoai> selectAll() {
-        String sql = "SELECT * from TheLoai";
-        return select(sql);
-    }
+	@Override
+	public List<TheLoai> selectAll() {
+		String sql = "SELECT * from TheLoai";
+		return select(sql);
+	}
 
-    @Override
-    public TheLoai selectById(String maTl) {
-        String sql = "Select * from TheLoai where MaTL = ?";
-        TheLoai tl = null;
-        try {
+	@Override
+	public TheLoai selectById(String maTl) {
+		String sql = "Select * from TheLoai where MaTL = ?";
+		TheLoai tl = null;
+		try {
 			ResultSet rs = null;
 			try {
 				rs = JDBCHelper.executeQuery(sql, maTl);
@@ -61,16 +61,61 @@ public class TheLoaiDao extends QLTVDao<TheLoai, String>{
 			throw new RuntimeException(ex);
 		}
 		return tl;
-    }
-    
-    public List<TheLoai> loadTrang(int indexTrang, int limit) {
+	}
+
+	public List<TheLoai> selectAllID() {
+		String sql = "Select * from TheLoai ";
+		List<TheLoai> list = new ArrayList<>();
+		try {
+			ResultSet rs = null;
+			try {
+				rs = JDBCHelper.executeQuery(sql);
+				while (rs.next()) {
+					TheLoai theLoai = new TheLoai();
+					theLoai.setId(rs.getInt("ID"));
+					theLoai.setMaTL(rs.getString("MaTL"));
+					theLoai.setTenTL(rs.getString("TenTL"));
+					list.add(theLoai);
+				}
+			} finally {
+				rs.getStatement().getConnection().close();
+			}
+		} catch (SQLException ex) {
+			throw new RuntimeException(ex);
+		}
+		return list;
+	}
+
+	public TheLoai selectById2(int id) {
+		String sql = "Select * from TheLoai where id = ?";
+		TheLoai tl = null;
+		try {
+			ResultSet rs = null;
+			try {
+				rs = JDBCHelper.executeQuery(sql, id);
+				while (rs.next()) {
+					tl = new TheLoai();
+					tl.setId(rs.getInt("ID"));
+					tl.setMaTL(rs.getString("MaTL"));
+					tl.setTenTL(rs.getString("TenTL"));
+				}
+			} finally {
+				rs.getStatement().getConnection().close();
+			}
+		} catch (SQLException ex) {
+			throw new RuntimeException(ex);
+		}
+		return tl;
+	}
+
+	public List<TheLoai> loadTrang(int indexTrang, int limit) {
 		String sql = "select MaTL,TenTL from TheLoai order by MaTL offset ? rows fetch next ? rows only ";
 		List<TheLoai> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 	}
 
-    private List<TheLoai> select(String sql,Object... args) {
-                List<TheLoai> list = new ArrayList<>();
+	private List<TheLoai> select(String sql, Object... args) {
+		List<TheLoai> list = new ArrayList<>();
 		try {
 			ResultSet rs = null;
 			try {
@@ -86,17 +131,18 @@ public class TheLoaiDao extends QLTVDao<TheLoai, String>{
 			throw new RuntimeException(ex);
 		}
 		return list;
-    }
+	}
 
-    private TheLoai readFromResultSet(ResultSet rs) throws SQLException{
-        TheLoai model = new TheLoai();
+	private TheLoai readFromResultSet(ResultSet rs) throws SQLException {
+		TheLoai model = new TheLoai();
 		model.setMaTL(rs.getString("MaTL"));
 		model.setTenTL(rs.getString("TenTL"));
 		return model;
-    }
-    public List<TheLoai> selectByKeyword(String keyword) {
+	}
+
+	public List<TheLoai> selectByKeyword(String keyword) {
 		String sql = "SELECT * FROM TheLoai WHERE MaTL LIKE ? or TenTL LIKE ?";
 		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
 	}
-    
+
 }

@@ -10,6 +10,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -86,6 +89,8 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 	private Webcam webcam = null;
 	private Executor executor = Executors.newSingleThreadExecutor(this);
 	private JButton btnTat;
+	Date ngayHienTai = new Date();
+	String memberIDRegex = "^TV\\d{3}$";
 
 	public ThanhVienJPanel() {
 		addAncestorListener(new AncestorListener() {
@@ -168,9 +173,11 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		pnlThongTinTG.add(lblNgayDangKy);
 
 		txtNgayDangKy = new JTextField();
+		txtNgayDangKy.setEnabled(false);
 		txtNgayDangKy.setColumns(10);
 		txtNgayDangKy.setBounds(271, 38, 193, 19);
 		pnlThongTinTG.add(txtNgayDangKy);
+		txtNgayDangKy.setText(XDate.toString(ngayHienTai, "yyyy-MM-dd"));
 
 		JLabel lblCCCD = new JLabel("CCCD");
 		lblCCCD.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -486,10 +493,12 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
 				ThanhVien tv = getForm();
-				tvd.update(tv);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Update Successful");
+				if (tv != null) {
+					tvd.update(tv);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Update Successful");
+				}
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Update Failed");
@@ -504,9 +513,10 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		txtDiaChi.setText("");
 		txtEmail.setText("");
 		txtCCCD.setText("");
-		txtNgayDangKy.setText("");
+		txtNgayDangKy.setText(XDate.toString(ngayHienTai, "yyyy-MM-dd"));
 		txtNgaySinh.setText("");
 		setStatus(true);
+		table.clearSelection();
 	}
 
 	void setForm(ThanhVien tv) {
@@ -524,28 +534,46 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 	ThanhVien getForm() {
 		ThanhVien tv = new ThanhVien();
 		if (txtMaTV.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống mã tác giả");
+			DialogHelper.alert(this, "Không để trống mã thành viên");
 			return tv = null;
 		} else {
-			tv.setMaTV(txtMaTV.getText());
+			if (txtMaTV.getText().matches(memberIDRegex)) {
+				tv.setMaTV(txtMaTV.getText());
+			} else {
+				DialogHelper.alert(this, "Nhập đúng định dạng mã thành viên");
+				return null;
+			}
+
 		}
 
 		if (txtHoTen.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống họ tên thanh vien");
+			DialogHelper.alert(this, "Không để trống họ tên thành viên");
 			return null;
 		} else {
-			tv.setTenTV(txtHoTen.getText());
+			if (txtHoTen.getText().length() > 3) {
+				tv.setTenTV(txtHoTen.getText());
+			} else {
+				DialogHelper.alert(this, "Độ dài tên không hợp lệ !");
+				return null;
+			}
+
 		}
 
 		if (txtSDT.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống so dien thoai");
+			DialogHelper.alert(this, "Không để trống số điện thoại");
 			return null;
 		} else {
-			tv.setSDT(txtSDT.getText());
+			if (isValidPhoneNumber(txtSDT.getText())) {
+				tv.setSDT(txtSDT.getText());
+			} else {
+				DialogHelper.alert(this, "Số điện thoại không hợp lệ ");
+				return null;
+			}
+
 		}
 
 		if (txtDiaChi.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống dia chi");
+			DialogHelper.alert(this, "Không để trống địa chỉ");
 			return null;
 		} else {
 			tv.setDiaChi(txtDiaChi.getText());
@@ -555,18 +583,30 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 			DialogHelper.alert(this, "Không để trống CCCD");
 			return null;
 		} else {
-			tv.setCCCD(txtCCCD.getText());
+			if (isValidCCCD(txtCCCD.getText())) {
+				tv.setCCCD(txtCCCD.getText());
+			} else {
+				DialogHelper.alert(this, "CCCD không hợp lệ !");
+				return null;
+			}
+
 		}
 
 		if (txtEmail.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống so Email");
+			DialogHelper.alert(this, "Không để trống Email");
 			return null;
 		} else {
-			tv.setEmail(txtEmail.getText());
+			if (isValidEmail(txtEmail.getText())) {
+				tv.setEmail(txtEmail.getText());
+			} else {
+				DialogHelper.alert(this, "Định dạng email sai !");
+				return null;
+			}
+
 		}
 
 		if (txtNgayDangKy.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống ngay dang ky");
+			DialogHelper.alert(this, "Không để trống ngày đăng ký");
 			return null;
 		} else {
 			Date nc = XDate.toDate(txtNgayDangKy.getText(), "yyyy-MM-dd");
@@ -574,13 +614,70 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		}
 
 		if (txtNgaySinh.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống ngay sinh");
+			DialogHelper.alert(this, "Không để trống ngày sinh");
 			return null;
 		} else {
-			Date nc = XDate.toDate(txtNgaySinh.getText(), "yyyy-MM-dd");
-			tv.setNgaySinh(nc);
+			if (!isValidDateFormat(txtNgaySinh.getText())) {
+				DialogHelper.alert(this, "Vui lòng nhập đúng định dạng ngày hiệu lực (yyyy-MM-dd)");
+				return null;
+			}
+			Date ngaySinh = XDate.toDate(txtNgaySinh.getText(), "yyyy-MM-dd");
+			if (ngaySinh != null) {
+				tv.setNgaySinh(ngaySinh);
+			}
+
 		}
 		return tv;
+	}
+
+	// Validate phone number
+	private boolean isValidPhoneNumber(String phoneNumber) {
+		// Simple validation using regular expression
+		// Allow only numeric characters, require a specific length (e.g., 10 digits),
+		// and ensure it starts with the digit "0"
+		String phoneRegex = "^0[0-9]{9}$";
+		return phoneNumber.matches(phoneRegex);
+	}
+
+	// Validate email
+	private boolean isValidEmail(String email) {
+		// Simple validation using regular expression
+		// This pattern checks for a basic email format, but it's not foolproof
+		String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$";
+		return email.matches(emailRegex);
+	}
+
+	private boolean isValidCCCD(String CCCD) {
+		// Simple validation using regular expression
+		// This pattern checks for a basic email format, but it's not foolproof
+		String CCCDRegex = "^0[0-9]{11}$";
+		return CCCD.matches(CCCDRegex);
+	}
+
+	private boolean isValidDateFormat(String inputDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		sdf.setLenient(false); // Disable lenient mode
+		try {
+			Date parsedDate = sdf.parse(inputDate);
+			if (parsedDate != null) {
+				// Check the components of the parsed date
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(parsedDate);
+
+				int year = cal.get(Calendar.YEAR);
+				int month = cal.get(Calendar.MONTH) + 1; // Month is 0-based
+				int day = cal.get(Calendar.DAY_OF_MONTH);
+
+				// Additional checks for valid year, month, and day
+				if (year >= 1000 && year <= 9999 && month >= 1 && month <= 12 && day >= 1
+						&& day <= cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+					return true;
+				}
+			}
+			return false;
+		} catch (ParseException e) {
+			return false; // Parsing failed, date is not in the correct format
+		}
 	}
 
 	void edit() {

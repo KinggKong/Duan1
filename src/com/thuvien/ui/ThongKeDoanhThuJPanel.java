@@ -8,7 +8,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
@@ -27,6 +29,9 @@ import org.jfree.data.general.PieDataset;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 //import org.jfree.chart.ChartFactory;
@@ -181,7 +186,8 @@ public class ThongKeDoanhThuJPanel extends JPanel {
 			String pdfFilePath = "H:/PDF/chartExport_" + month + "_" + year + ".pdf";
 
 			// Tạo file PDF và thêm biểu đồ vào nó
-			createPDF(pdfFilePath, "Biểu đồ thống kê doanh thu tháng " + month + "/" + year, tempChartFilePath);
+			createPDF(pdfFilePath, "Doanh thu tháng " + month + "/" + year, tempChartFilePath,
+					thongKeDao.getTienPhat(month, year).getTienPhat(), thongKeDao.getTienThe(month, year).getTienThe());
 
 			// Xoá file tạm thời PNG
 			File tempChartFile = new File(tempChartFilePath);
@@ -194,26 +200,74 @@ public class ThongKeDoanhThuJPanel extends JPanel {
 		}
 	}
 
-	private void createPDF(String pdfFilePath, String title, String chartImagePath) throws Exception {
+//	private void createPDF(String pdfFilePath, String title, String chartImagePath) throws Exception {
+//		Document document = new Document();
+//		PdfWriter.getInstance(document, new FileOutputStream(pdfFilePath));
+//		document.open();
+//
+//		// Thêm tiêu đề vào tài liệu PDF
+//		document.add(new Paragraph(title));
+//
+//		// Lấy kích thước thực của trang PDF
+//		float documentWidth = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
+//		float documentHeight = document.getPageSize().getHeight() - document.topMargin() - document.bottomMargin();
+//
+//		// Tạo đối tượng Image với kích thước đã điều chỉnh
+//		com.itextpdf.text.Image chartImage = com.itextpdf.text.Image.getInstance(chartImagePath);
+//		chartImage.scaleToFit(documentWidth, documentHeight);
+//
+//		// Thêm biểu đồ từ file ảnh vào tài liệu PDF
+//		document.add(chartImage);
+//
+//		// Đóng tài liệu
+//		document.close();
+//	}
+
+	private void createPDF(String pdfFilePath, String title, String chartImagePath, float tienPhat, float tienThe)
+			throws Exception {
+		NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 		Document document = new Document();
 		PdfWriter.getInstance(document, new FileOutputStream(pdfFilePath));
 		document.open();
 
-		// Thêm tiêu đề vào tài liệu PDF
-		document.add(new Paragraph(title));
+		// Add title to the PDF
+		document.add(new Paragraph("Monthly statistics chart: " + title));
 
-		// Lấy kích thước thực của trang PDF
+		// Add a line break
+		document.add(new Paragraph("\n"));
+
+		// Create a table for displaying statistics
+		PdfPTable table = new PdfPTable(2);
+		table.setWidthPercentage(70);
+		table.setSpacingBefore(10f);
+		table.setSpacingAfter(10f);
+
+		// Add headers to the table
+		PdfPCell headerCell1 = new PdfPCell(new Phrase("Revenue Type"));
+		PdfPCell headerCell2 = new PdfPCell(new Phrase("Amount"));
+		table.addCell(headerCell1);
+		table.addCell(headerCell2);
+
+		// Add data to the table
+		table.addCell("Card Amount ");
+		table.addCell(String.valueOf(format.format(tienThe)));
+		table.addCell("Fines");
+		table.addCell(String.valueOf(format.format(tienPhat)));
+
+		// Add the table to the PDF
+		document.add(table);
+
+		// Add a line break
+		document.add(new Paragraph("\n"));
+
+		// Add the chart image to the PDF
 		float documentWidth = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
 		float documentHeight = document.getPageSize().getHeight() - document.topMargin() - document.bottomMargin();
-
-		// Tạo đối tượng Image với kích thước đã điều chỉnh
 		com.itextpdf.text.Image chartImage = com.itextpdf.text.Image.getInstance(chartImagePath);
 		chartImage.scaleToFit(documentWidth, documentHeight);
-
-		// Thêm biểu đồ từ file ảnh vào tài liệu PDF
 		document.add(chartImage);
 
-		// Đóng tài liệu
+		// Close the document
 		document.close();
 	}
 

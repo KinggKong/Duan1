@@ -9,7 +9,9 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
@@ -384,11 +386,13 @@ public class HangThanhVienJPanel extends JPanel {
 			@Override
 			protected void done() {
 				try {
+					NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 					List<HangThanhVien> list = get();
 					model.setRowCount(0);
 					for (HangThanhVien htv : list) {
-						Object[] rows = { htv.getId(), htv.getMaHTV(), htv.getTenHang(), htv.getDonGia(),
-								htv.getPhiThueSach(), htv.getSoThangHieuLuc(), htv.getTuoiMin(), htv.getTuoiMax() };
+						Object[] rows = { htv.getId(), htv.getMaHTV(), htv.getTenHang(), format.format(htv.getDonGia()),
+								format.format(htv.getPhiThueSach()), htv.getSoThangHieuLuc(), htv.getTuoiMin(),
+								htv.getTuoiMax() };
 						model.addRow(rows);
 					}
 
@@ -503,7 +507,13 @@ public class HangThanhVienJPanel extends JPanel {
 			return null;
 		} else {
 			if (txtMaHTV.getText().matches(regexMaHTV)) {
-				htv.setMaHTV(txtMaHTV.getText());
+				if (!isMahangTonTai(txtMaHTV.getText())) {
+					htv.setMaHTV(txtMaHTV.getText());
+				} else {
+					DialogHelper.alert(this, "Mã hạng đã tồn tại");
+					return null;
+				}
+
 			} else {
 				DialogHelper.alert(this, "Nhập đúng định dạng mã hạng thành viên");
 				return null;
@@ -569,7 +579,7 @@ public class HangThanhVienJPanel extends JPanel {
 			try {
 				int tuoiMin = Integer.valueOf(txtTuoiMin.getText());
 				if (tuoiMin <= 4 | tuoiMin >= 70) {
-					DialogHelper.alert(this, "Tuổi min cần lớn hơn 4");
+					DialogHelper.alert(this, "Tuổi min cần lớn hơn 4 và nhở hơn 70");
 					return null;
 				} else {
 					htv.setTuoiMin(tuoiMin);
@@ -605,6 +615,15 @@ public class HangThanhVienJPanel extends JPanel {
 		int thangHieuLuc = Integer.parseInt(cbxThoiGianHieuLuc.getSelectedItem().toString());
 		htv.setSoThangHieuLuc(thangHieuLuc);
 		return htv;
+	}
+
+	boolean isMahangTonTai(String maHangThe) {
+		HangThanhVien hangThanhVien = htvd.selectById2(maHangThe);
+		if (hangThanhVien != null) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	void edit() {

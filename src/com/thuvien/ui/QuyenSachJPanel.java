@@ -41,7 +41,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -120,6 +122,7 @@ public class QuyenSachJPanel extends JPanel {
 		panel.add(lblTenSach);
 
 		txtMaQS = new JTextField();
+		txtMaQS.setEnabled(false);
 		txtMaQS.setColumns(10);
 		txtMaQS.setBounds(10, 104, 264, 19);
 		panel.add(txtMaQS);
@@ -533,8 +536,21 @@ public class QuyenSachJPanel extends JPanel {
 	void update() {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
-				QuyenSach qs = getForm();
+				String maQS = (String) table.getValueAt(this.index, 0);
+				QuyenSach qs = quyenSachDao.selectById(maQS);
 				if (qs != null) {
+					Sach sach = (Sach) cbxSach.getSelectedItem();
+					qs.setTenQS(sach.getTenSach());
+					TaiBan taiBan = (TaiBan) cbxTaiBan.getSelectedItem();
+					qs.setIdTaiBan(taiBan.getId());
+					qs.setGhiChu(txtGhiChu.getText());
+					if (cbxTinhTrang.getSelectedIndex() == 0) {
+						qs.setTinhTrang(0);
+					} else if (cbxTinhTrang.getSelectedIndex() == 1) {
+						qs.setTinhTrang(1);
+					} else {
+						qs.setTinhTrang(2);
+					}
 					quyenSachDao.update(qs);
 					load(indexTrang);
 					clear();
@@ -563,7 +579,8 @@ public class QuyenSachJPanel extends JPanel {
 		cbxSach.setSelectedItem(sd.selectByIdSach(tbd.selectById(qs.getIdTaiBan()).getIdSach()));
 		txtGhiChu.setText(qs.getGhiChu());
 		cbxTinhTrang.setSelectedIndex(qs.getTinhTrang());
-		cbxTaiBan.setSelectedItem(qs.getIdTaiBan());
+		TaiBan taiBan = tbd.selectById(qs.getIdTaiBan());
+		cbxTaiBan.setSelectedItem(taiBan);
 	}
 
 	void setTaiBan() {
@@ -678,39 +695,62 @@ public class QuyenSachJPanel extends JPanel {
 				XSSFSheet excelSheet = excelImportTable.getSheetAt(0);
 
 				// Lặp qua các hàng và ô của bảng tính
-				for (int rowNum = 0; rowNum <= excelSheet.getLastRowNum(); rowNum++) {
+				for (int rowNum = 1; rowNum < excelSheet.getLastRowNum(); rowNum++) {
 					XSSFRow excelRow = excelSheet.getRow(rowNum);
 
 					if (excelRow != null) {
-						// Tạo đối tượng quyển sách
-						QuyenSach quyenSach = new QuyenSach();
+						if (hasData(excelRow)) {
+							// Thực hiện INSERT
+							QuyenSach quyenSach = new QuyenSach();
 
-						// Đọc giá trị từ các ô và tạo đối tượng quyển sách
-						String maQS = excelRow.getCell(0).getStringCellValue();
-						if (maQS != null) {
-							quyenSach.setMaQS(maQS);
-						} else {
-							maQS = null;
-							quyenSach.setMaQS(maQS);
+							// Đọc giá trị từ các ô và tạo đối tượng quyển sách
+//								String maQS = excelRow.getCell(0).getStringCellValue();
+//								if (maQS != null) {
+//									quyenSach.setMaQS(maQS);
+//								} else {
+//									maQS = null;
+//									quyenSach.setMaQS(maQS);
+//								}
+							String maQs = null;
+							quyenSach.setMaQS(maQs);
+							String tenQS = excelRow.getCell(1).getStringCellValue();
+							quyenSach.setTenQS(tenQS);
+							int idTaiBan = (int) excelRow.getCell(2).getNumericCellValue();
+							quyenSach.setIdTaiBan(idTaiBan);
+							int tinhTrang = (int) excelRow.getCell(3).getNumericCellValue();
+							quyenSach.setTinhTrang(tinhTrang);
+							String ghiChu = excelRow.getCell(4).getStringCellValue();
+							quyenSach.setGhiChu(ghiChu);
+							quyenSachDao.insert(quyenSach);
 						}
-						String tenQS = excelRow.getCell(1).getStringCellValue();
-						quyenSach.setTenQS(tenQS);
-						int idTaiBan = (int) excelRow.getCell(2).getNumericCellValue();
-						quyenSach.setIdTaiBan(idTaiBan);
-						int tinhTrang = (int) excelRow.getCell(3).getNumericCellValue();
-						quyenSach.setTinhTrang(tinhTrang);
-						String ghiChu = excelRow.getCell(4).getStringCellValue();
-						quyenSach.setGhiChu(ghiChu);
-						quyenSachDao.insert(quyenSach);
+						// Tạo đối tượng quyển sách
+
 					}
 				}
 				JOptionPane.showMessageDialog(this, "Đã đọc xong dữ liệu từ Excel và chèn vào cơ sở dữ liệu.",
 						"Thành công", JOptionPane.INFORMATION_MESSAGE);
+				load(this.indexTrang);
 			} catch (Exception e) {
 				// Xử lý bất kỳ ngoại lệ nào xảy ra
-				e.printStackTrace();
+//				e.printStackTrace();
+//				System.out.println("Error message: " + e.getMessage());
+				DialogHelper.alert(this, "File excel có lỗi dữ liệu !\nVui lòng thử lại");
 			}
 		}
+	}
+
+	private boolean hasData(XSSFRow row) {
+		if (row == null) {
+			return false;
+		}
+
+		for (int cellNum = 0; cellNum < row.getLastCellNum(); cellNum++) {
+			XSSFCell cell = row.getCell(cellNum);
+			if (cell != null && cell.getCellType() != CellType.BLANK) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void exportExcel() {

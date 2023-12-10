@@ -60,6 +60,7 @@ public class NhanVienJPanel extends JPanel {
 	private JTextField txtPassword;
 	private final ButtonGroup buttonGroup_1 = new ButtonGroup();
 	NhanVienDao nvDao = new NhanVienDao();
+	String regexMaNV = "^NV\\d{3}$";
 
 	public NhanVienJPanel() {
 		setLayout(null);
@@ -434,10 +435,12 @@ public class NhanVienJPanel extends JPanel {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
 				NhanVien tg = getForm();
-				nvDao.update(tg);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Update Successful");
+				if (tg != null) {
+					nvDao.update(tg);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Update Successful");
+				}
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Update Failed");
@@ -454,6 +457,7 @@ public class NhanVienJPanel extends JPanel {
 		raCon.setSelected(true);
 		btnInsert.setEnabled(true);
 		txtMaNV.setEditable(true);
+		table.clearSelection();
 
 	}
 
@@ -483,57 +487,75 @@ public class NhanVienJPanel extends JPanel {
 			DialogHelper.alert(this, "Không để trống mã NhanVien");
 			return tg = null;
 		} else {
-			tg.setMaNV(txtMaNV.getText());
+			if (txtMaNV.getText().matches(regexMaNV)) {
+				tg.setMaNV(txtMaNV.getText());
+			} else {
+				DialogHelper.alert(this, "Nhập đúng định dạng của mã nhân viên");
+				return null;
+			}
+
 		}
 
 		if (txtHoTen.getText().isEmpty()) {
 			DialogHelper.alert(this, "Không để trống họ tên Nhân Viên");
 			return null;
 		} else {
-			tg.setTenNV(txtHoTen.getText());
+			if (txtHoTen.getText().length() > 3) {
+				tg.setTenNV(txtHoTen.getText());
+			} else {
+				DialogHelper.alert(this, "Độ dài tên không hợp lệ ");
+				return null;
+			}
+
 		}
 
 		if (txtSDT.getText().isEmpty()) {
-
 			DialogHelper.alert(this, "Không để trống SDT");
 			return null;
 		} else {
-			try {
-				Integer.parseInt(txtSDT.getText());
-
-				if (txtSDT.getText().length() == 10 && txtSDT.getText().startsWith("0")) {
-					tg.setSdt(txtSDT.getText());
-				} else {
-					DialogHelper.alert(this, "Số điện thoại không hợp lệ");
-					return null;
-				}
-
-			} catch (Exception e) {
-
-				DialogHelper.alert(this, "số điện thoại phải là số ");
+			if (isValidPhoneNumber(txtSDT.getText())) {
+				tg.setSdt(txtSDT.getText());
+			} else {
+				DialogHelper.alert(this, "Định dạng số điện thoại sai ");
 				return null;
 			}
 
 		}
 
 		if (txtUsername.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không được để trống uername");
+			DialogHelper.alert(this, "Không được để trống Email");
+			return null;
 		} else {
-			tg.setUserName(txtUsername.getText());
+			if (txtUsername.getText().length() > 3) {
+				tg.setUserName(txtUsername.getText());
+			} else {
+				DialogHelper.alert(this, "Độ dài Email không hợp lệ ");
+				return null;
+			}
+
 		}
 		if (txtPassword.getText().isEmpty()) {
 			DialogHelper.alert(this, "không được để trống pass");
+			return null;
 
 		} else if (txtPassword.getText().length() < 8) {
 			DialogHelper.alert(this, "pass phải từ 8 ký tự chở lên");
+			return null;
 
 		} else {
 			tg.setPassWord(txtPassword.getText());
-
 		}
 		tg.setVaiTro(rdoAdmin.isSelected());
 		tg.setTrangThai(raCon.isSelected());
 		return tg;
+	}
+
+	private boolean isValidPhoneNumber(String phoneNumber) {
+		// Simple validation using regular expression
+		// Allow only numeric characters, require a specific length (e.g., 10 digits),
+		// and ensure it starts with the digit "0"
+		String phoneRegex = "^0[0-9]{9}$";
+		return phoneNumber.matches(phoneRegex);
 	}
 
 	void edit() {

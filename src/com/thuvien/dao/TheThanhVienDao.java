@@ -22,10 +22,10 @@ public class TheThanhVienDao extends QLTVDao<TheThanhVien, Integer> {
 
 	@Override
 	public void update(TheThanhVien entity) {
-		String sql = " update  TheThanhVien  set IDHangTV=?,NgayCap=?,NgayHieuLuc=?,TgHieuLuc=?,IDThanhVien=?,OldID=?,TrangThai=? where id = ?";
+		String sql = " update  TheThanhVien  set IDHangTV=?,NgayCap=?,NgayHieuLuc=?,TgHieuLuc=?,IDThanhVien=?,OldID=?,TrangThai=? where MaTheTV = ?";
 		JDBCHelper.executeUpdate(sql, entity.getIdHangTV(), entity.getNgayCap(), entity.getNgayHieuLuc(),
 				entity.getTgHieuLuc(), entity.getIdThanhVien().getId(), entity.getOldID(), entity.isTrangThai(),
-				entity.getId());
+				entity.getMaTTV());
 
 	}
 
@@ -62,8 +62,28 @@ public class TheThanhVienDao extends QLTVDao<TheThanhVien, Integer> {
 		return ttv;
 	}
 
+	public TheThanhVien selectByMaThe(String key) {
+		String sql = "select * from TheThanhVien where MaTheTV = ?";
+		TheThanhVien ttv = null;
+		try {
+			ResultSet rs = null;
+			try {
+				rs = JDBCHelper.executeQuery(sql, key);
+				while (rs.next()) {
+					ttv = readFromResultSet(rs);
+
+				}
+			} finally {
+				rs.getStatement().getConnection().close();
+			}
+		} catch (SQLException ex) {
+			throw new RuntimeException(ex);
+		}
+		return ttv;
+	}
+
 	public List<TheThanhVien> loadTrang(int indexTrang, int limit) {
-		String sql = " select * from TheThanhVien order by id offset ? rows fetch next ? rows only ";
+		String sql = " select * from TheThanhVien order by id DESC offset ? rows fetch next ? rows only ";
 		List<TheThanhVien> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 	}
@@ -103,8 +123,9 @@ public class TheThanhVienDao extends QLTVDao<TheThanhVien, Integer> {
 	}
 
 	public List<TheThanhVien> selectByKeyword(String keyword) {
-		String sql = "SELECT * FROM TheThanhVien WHERE MaTheTV LIKE ? or  LIKE ?";
-		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
+		String sql = "select ttv.* from TheThanhVien ttv \r\n"
+				+ "inner join ThanhVien tv on tv.ID = ttv.IDThanhVien where tv.TenTV like ? or tv.SDT = ? or  ttv.MaTheTV like ?";
+		return select(sql, "%" + keyword + "%", "%" + keyword + "%","%"+keyword+"%");
 	}
 
 }

@@ -10,9 +10,11 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
@@ -429,12 +431,13 @@ public class PhieuMuonJPanel extends JPanel {
 
 			@Override
 			protected void done() {
+				NumberFormat format=NumberFormat.getCurrencyInstance(new Locale("vi","VN"));
 				try {
 					List<PhieuMuon> list = get();
 					model.setRowCount(0);
 					for (PhieuMuon pm : list) {
 						Object[] row = { pm.getId(), pm.getMaPhieuMuon(), pm.getIdThanhVien().getTenTV(),
-								pm.getIdNhanVien().getTenNV(), pm.getNgayMuon(), pm.getNgayPhaiTra(), pm.getTienCoc() };
+								pm.getIdNhanVien().getTenNV(), pm.getNgayMuon(), pm.getNgayPhaiTra(), format.format(pm.getTienCoc()) };
 						model.addRow(row);
 					}
 				} catch (InterruptedException e) {

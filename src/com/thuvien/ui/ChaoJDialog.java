@@ -17,7 +17,7 @@ public class ChaoJDialog extends JDialog {
 
 	public ChaoJDialog(Frame parent, boolean modal) {
 		super(parent, modal);
-		init();
+
 		setUndecorated(true);
 		setBounds(100, 100, 720, 392);
 		setLocationRelativeTo(null);
@@ -29,11 +29,12 @@ public class ChaoJDialog extends JDialog {
 		getContentPane().add(lblNewLabel);
 
 		pgbLoading = new JProgressBar();
+		pgbLoading.setValue(1);
 		pgbLoading.setStringPainted(true);
 		pgbLoading.setForeground(Color.GREEN);
 		pgbLoading.setBounds(0, 364, 720, 28);
 		getContentPane().add(pgbLoading);
-
+		init();
 	}
 
 	public void init() {

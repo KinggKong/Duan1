@@ -1,6 +1,7 @@
 package com.thuvien.ui;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -232,7 +233,7 @@ public class TacGiaJPanel extends JPanel {
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(104, 487, 350, 30);
+		pnlButton2.setBounds(780, 499, 356, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -277,7 +278,7 @@ public class TacGiaJPanel extends JPanel {
 		pnlButton2.add(btnLast);
 
 		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(104, 432, 350, 30);
+		pnlButton1.setBounds(104, 437, 350, 30);
 		add(pnlButton1);
 		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -326,7 +327,7 @@ public class TacGiaJPanel extends JPanel {
 				}
 			}
 		});
-		btnPrevList.setBounds(782, 487, 85, 21);
+		btnPrevList.setBounds(780, 472, 85, 21);
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
@@ -344,14 +345,28 @@ public class TacGiaJPanel extends JPanel {
 				}
 			}
 		});
-		btnNextList.setBounds(1049, 484, 85, 21);
+		btnNextList.setBounds(1051, 472, 85, 21);
 		add(btnNextList);
 
 		setStatus(true);
 
 		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(955, 491, 39, 13);
+		lblIndexTrang.setBounds(954, 476, 39, 13);
 		add(lblIndexTrang);
+
+		JButton btnNewButton = new JButton("Tác giả chi tiết");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TacGiaChiTietJPanel tacGiaChiTietJPanel = new TacGiaChiTietJPanel();
+				Container container = TacGiaJPanel.this.getParent();
+				container.remove(TacGiaJPanel.this);
+				container.add(tacGiaChiTietJPanel);
+				container.revalidate();
+				container.repaint();
+			}
+		});
+		btnNewButton.setBounds(561, 472, 117, 21);
+		add(btnNewButton);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -399,8 +414,8 @@ public class TacGiaJPanel extends JPanel {
 	void insert() {
 		try {
 			TacGia tg = getForm();
-			TacGia tacGiaCheck = tgd.selectById(tg.getMaTG());
 			if (tg != null) {
+				TacGia tacGiaCheck = tgd.selectById(tg.getMaTG());
 				if (tacGiaCheck == null) {
 					tgd.insert(tg);
 					load(indexTrang);
@@ -419,10 +434,12 @@ public class TacGiaJPanel extends JPanel {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
 				TacGia tg = getForm();
-				tgd.delete(tg.getMaTG());
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Delete Successful");
+				if (tg != null) {
+					tgd.delete(tg.getMaTG());
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Delete Successful");
+				}
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Delete Failed");
@@ -433,10 +450,12 @@ public class TacGiaJPanel extends JPanel {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
 				TacGia tg = getForm();
-				tgd.update(tg);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Update Successful");
+				if (tg != null) {
+					tgd.update(tg);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Update Successful");
+				}
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Update Failed");
@@ -445,10 +464,14 @@ public class TacGiaJPanel extends JPanel {
 	}
 
 	void clear() {
-		txtHoTen.setText("");
-		txtMaTG.setText("");
-		txtQuocTich.setText("");
+		txtHoTen.setText("VD: Nguyễn Văn A...");
+		txtMaTG.setText("VD:TG001...");
+		txtQuocTich.setText("VD: Việt Nam...");
+		setStatus(true);
+		table.clearSelection();
+		txtTimKiem.setText("Nhập vào mã hoặc tên của tác giả");
 		rdoNam.setSelected(true);
+
 	}
 
 	void setForm(TacGia tg) {
@@ -482,7 +505,13 @@ public class TacGiaJPanel extends JPanel {
 			return null;
 		} else {
 			if (txtHoTen.getText().length() > 8) {
-				tg.setHoTen(txtHoTen.getText());
+				if (txtHoTen.getText().equals("VD: Nguyễn Văn A...")) {
+					DialogHelper.alert(this, "Tên Không Hợp Lệ");
+					return null;
+				} else {
+					tg.setHoTen(txtHoTen.getText());
+				}
+
 			} else {
 				DialogHelper.alert(this, "Nhập đồ dài tên trên 8 ");
 				return null;
@@ -494,7 +523,12 @@ public class TacGiaJPanel extends JPanel {
 			DialogHelper.alert(this, "Không để trống quốc tịch");
 			return null;
 		} else {
-			tg.setQuocTich(txtQuocTich.getText());
+			if (txtQuocTich.getText().equals("VD: Việt Nam...")) {
+				DialogHelper.alert(this, "Quốc Tịch Không Hợp Lệ");
+				return null;
+			} else {
+				tg.setQuocTich(txtQuocTich.getText());
+			}
 		}
 
 		tg.setGioiTinh(rdoNam.isSelected());

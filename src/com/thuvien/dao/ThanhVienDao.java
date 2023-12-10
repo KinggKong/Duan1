@@ -86,7 +86,7 @@ public class ThanhVienDao extends QLTVDao<ThanhVien, String> {
 	}
 
 	public List<ThanhVien> loadTrang(int indexTrang, int limit) {
-		String sql = "select * from ThanhVien order by ID offset ? rows fetch next ? rows only ";
+		String sql = "select * from ThanhVien order by ID DESC offset ? rows fetch next ? rows only ";
 		List<ThanhVien> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 	}

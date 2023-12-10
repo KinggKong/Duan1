@@ -154,12 +154,21 @@ public class ViTriJPanel extends JPanel {
 				load(ngan.getIdNgan());
 			}
 		});
-		btnNewButton.setBounds(296, 449, 98, 30);
+		btnNewButton.setBounds(234, 449, 98, 30);
 		add(btnNewButton);
 
 		btnUpdate = new JButton("Update");
-		btnUpdate.setBounds(134, 449, 110, 30);
+		btnUpdate.setBounds(83, 449, 110, 30);
 		add(btnUpdate);
+
+		JButton btnClear = new JButton("Clear");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clear();
+			}
+		});
+		btnClear.setBounds(377, 449, 98, 30);
+		add(btnClear);
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				QuyenSach qs = (QuyenSach) cbxQuyenSach.getSelectedItem();
@@ -309,9 +318,16 @@ public class ViTriJPanel extends JPanel {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
 
 				String idO = txtO.getText();
-				vtdao.update(idO, maQS);
-				DialogHelper.alert(this, "Update Successful");
-				fillCbxQuyenSach();
+				if (!idO.isEmpty()) {
+					vtdao.update(idO, maQS);
+					DialogHelper.alert(this, "Update Successful");
+					Ngan ngan = (Ngan) cbxNgan.getSelectedItem();
+					load(ngan.getIdNgan());
+					fillCbxQuyenSach();
+				} else {
+					DialogHelper.alert(this, "ID Ô đang để trống");
+				}
+
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Update Failed");
@@ -321,7 +337,7 @@ public class ViTriJPanel extends JPanel {
 	}
 
 	void clear() {
-
+		txtO.setText("");
 	}
 
 	void setForm(OSoChiTiet oSo) {

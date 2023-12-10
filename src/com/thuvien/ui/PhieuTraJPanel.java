@@ -10,7 +10,9 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
@@ -450,12 +452,14 @@ public class PhieuTraJPanel extends JPanel {
 			@Override
 			protected void done() {
 				try {
+					NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 					List<PhieuTra> list = get();
 					model.setRowCount(0);
 					for (PhieuTra pt : list) {
 						Object[] row = { pt.getId(), pt.getMaPT(), pt.getIdThanhVien().getTenTV(),
-								pt.getIdNhanVien().getTenNV(), pt.getNgayTraThucTe(), pt.getTienPhat(), pt.getTienTra(),
-								pt.getLiDoPhat(), pt.isTrangThai() ? "Hoàn Thành" : "Chưa Hoàn Thành" };
+								pt.getIdNhanVien().getTenNV(), pt.getNgayTraThucTe(), format.format(pt.getTienPhat()),
+								format.format(pt.getTienTra()), pt.getLiDoPhat(),
+								pt.isTrangThai() ? "Hoàn Thành" : "Chưa Hoàn Thành" };
 						model.addRow(row);
 					}
 				} catch (InterruptedException e) {

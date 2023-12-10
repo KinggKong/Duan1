@@ -77,13 +77,13 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 	}
 
 	public List<QuyenSach> loadTrang(int indexTrang, int limit) {
-		String sql = "SELECT * FROM QuyenSach order by ID offset ? rows fetch next ? rows only ";
+		String sql = "SELECT * FROM QuyenSach order by ID DESC offset ? rows fetch next ? rows only ";
 		List<QuyenSach> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 	}
 
 	public List<QuyenSach> loadTrangCBX(int indexTrang, int limit) {
-		String sql = "SELECT * FROM QuyenSach order by ID offset ? rows fetch next ? rows only ";
+		String sql = "SELECT * FROM QuyenSach order by ID DESC offset ? rows fetch next ? rows only ";
 		List<QuyenSach> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 	}

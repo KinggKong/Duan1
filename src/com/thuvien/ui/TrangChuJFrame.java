@@ -33,26 +33,27 @@ public class TrangChuJFrame extends JFrame {
 // Lưu ý !!!
 // các panel con có kích thước chiều dài: 1325; chiều rộng: 575;
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					TrangChuJFrame frame = new TrangChuJFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					TrangChuJFrame frame = new TrangChuJFrame();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	public TrangChuJFrame() {
-		init();
+//		init();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1350, 700);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLocationRelativeTo(null);
+		setResizable(false);
 		setTitle("Ứng dụng quản lý thư viện ");
 
 		setContentPane(contentPane);
@@ -64,15 +65,6 @@ public class TrangChuJFrame extends JFrame {
 
 		JMenu mnuHeThong = new JMenu("Hệ Thống");
 		menuBar.add(mnuHeThong);
-
-		JMenuItem mniDangNhap = new JMenuItem("Đăng Nhập");
-		mniDangNhap.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				openLogin();
-			}
-		});
-		mniDangNhap.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/login.24.png")));
-		mnuHeThong.add(mniDangNhap);
 
 		JMenuItem mniDangXuat = new JMenuItem("Đăng Xuất");
 		mniDangXuat.addActionListener(new ActionListener() {
@@ -318,8 +310,8 @@ public class TrangChuJFrame extends JFrame {
 	}
 
 	public void init() {
-		openWelcome();
-		openLogin();
+//		openWelcome();
+//		openLogin();
 	}
 
 	public void thoiGian() {
@@ -336,20 +328,22 @@ public class TrangChuJFrame extends JFrame {
 	}
 
 	void openWelcome() {
-		new ChaoJDialog(this, true).setVisible(true);
+//		new ChaoJDialog(this, true).setVisible(true);
 	}
 
 	void openLogin() {
-		new DangNhapJDialog(this, true).setVisible(true);
+//		new DangNhapJDialog(this, true).setVisible(true);
 	}
 
 	public void logoff() {
 		ShareHelper.logoff();
-		this.openLogin();
+//		this.setVisible(false);
+		this.dispose();
+		new DangNhapJDialog().setVisible(true);
+
 	}
 
 	void setTenNguoiDung() {
 		lblTaiKhoanDangDung.setText(ShareHelper.USER.getTenNV());
 	}
-
 }

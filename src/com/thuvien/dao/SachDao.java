@@ -53,7 +53,7 @@ public class SachDao extends QLTVDao<Sach, String> {
 	}
 
 	public List<Sach> loadTrang(int indexTrang, int limit) {
-		String sql = "select * from Sach order by ID offset ? rows fetch next ? rows only ";
+		String sql = "select * from Sach order by ID DESC offset ? rows fetch next ? rows only ";
 		List<Sach> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 

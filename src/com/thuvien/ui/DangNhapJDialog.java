@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -23,18 +24,18 @@ import com.thuvien.entity.NhanVien;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.ShareHelper;
 
-public class DangNhapJDialog extends JDialog {
+public class DangNhapJDialog extends JFrame {
 	private JTextField txtUsername;
 	private JPasswordField txtPassword;
 	NhanVienDao nvd = new NhanVienDao();
 
-	public DangNhapJDialog(Frame parent, boolean modal) {
-		super(parent, modal);
+	public DangNhapJDialog() {
+		init();
 		setBounds(100, 100, 598, 358);
 		getContentPane().setLayout(null);
 		setLocationRelativeTo(null);
 		setTitle("Ứng dụng Quản Lý Thư Viện");
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		{
 			JPanel panel = new JPanel();
 			panel.setBackground(new Color(255, 255, 255));
@@ -121,6 +122,7 @@ public class DangNhapJDialog extends JDialog {
 					ShareHelper.USER = nv;
 					DialogHelper.alert(this, "Đăng nhập thành công!");
 					this.dispose();
+					new TrangChuJFrame().setVisible(true);
 				} else {
 					DialogHelper.alert(this, "Sai mật khẩu!");
 				}
@@ -139,11 +141,11 @@ public class DangNhapJDialog extends JDialog {
 	}
 
 	private void showQuenMatKhauDialog() {
-		Thread quenMatKhauThread = new Thread(() -> {
-			QuenMatKhauJFrame quenMatKhauJFrame = new QuenMatKhauJFrame();
-			quenMatKhauJFrame.setVisible(true);
-		});
-		quenMatKhauThread.start();
+		new QuenMatKhauJFrame().setVisible(true);
+	}
+
+	public void init() {
+		new ChaoJDialog(this, true).setVisible(true);
 	}
 
 }

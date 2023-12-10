@@ -55,7 +55,26 @@ public class HangTheThanhVienDao extends QLTVDao<HangThanhVien, Integer> {
 			throw new RuntimeException(ex);
 		}
 		return tg;
+	}
 
+	public HangThanhVien selectById2(String key) {
+		String sql = "Select * from HangThanhVIen where MaHTV = ?";
+		HangThanhVien tg = null;
+		try {
+			ResultSet rs = null;
+			try {
+				rs = JDBCHelper.executeQuery(sql, key);
+				while (rs.next()) {
+					tg = readFromResultSet(rs);
+
+				}
+			} finally {
+				rs.getStatement().getConnection().close();
+			}
+		} catch (SQLException ex) {
+			throw new RuntimeException(ex);
+		}
+		return tg;
 	}
 
 	public List<HangThanhVien> loadTrang(int indexTrang, int limit) {
@@ -100,6 +119,5 @@ public class HangTheThanhVienDao extends QLTVDao<HangThanhVien, Integer> {
 		String sql = "SELECT * FROM HangThanhVien WHERE MaTG LIKE ? or TenTG LIKE ?";
 		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
 	}
-	
 
 }

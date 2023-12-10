@@ -9,6 +9,9 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -71,6 +74,8 @@ public class TheThanhVienJPanel extends JPanel {
 	private JComboBox cbxThoiGianHieuLuc;
 	private JComboBox cbxThanhVien;
 	DefaultComboBoxModel<ThanhVien> cbxModelThanhVien = new DefaultComboBoxModel<>();
+	String regexMaThe = "^MTV\\d{3}$";
+	Date ngayHienTai = new Date();
 
 	public TheThanhVienJPanel() {
 		setLayout(null);
@@ -120,6 +125,7 @@ public class TheThanhVienJPanel extends JPanel {
 		txtNgayHieuLuc.setColumns(10);
 		txtNgayHieuLuc.setBounds(252, 89, 193, 19);
 		pnlThongTinTG.add(txtNgayHieuLuc);
+		txtNgayHieuLuc.setText(XDate.toString(ngayHienTai, "yyyy-MM-dd"));
 
 		JLabel lblNgayCap = new JLabel("Ngày Cấp");
 		lblNgayCap.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -127,9 +133,12 @@ public class TheThanhVienJPanel extends JPanel {
 		pnlThongTinTG.add(lblNgayCap);
 
 		txtNgayCap = new JTextField();
+		txtNgayCap.setEnabled(false);
+		txtNgayCap.setEditable(false);
 		txtNgayCap.setColumns(10);
 		txtNgayCap.setBounds(252, 38, 193, 19);
 		pnlThongTinTG.add(txtNgayCap);
+		txtNgayCap.setText(XDate.toString(ngayHienTai, "yyyy-MM-dd"));
 
 		JLabel lblOldID = new JLabel("Old ID");
 		lblOldID.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -347,7 +356,7 @@ public class TheThanhVienJPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang++;
 
-				if (indexTrang > (Math.ceil(ttvd.selectAll().size() * 1.0 / 5))) {
+				if (indexTrang > (Math.ceil(ttvd.selectAll().size() * 1.0 / 15))) {
 					DialogHelper.alert(null, "Đây là trang cuối cùng !");
 					indexTrang--;
 				} else {
@@ -386,7 +395,7 @@ public class TheThanhVienJPanel extends JPanel {
 		SwingWorker<List<TheThanhVien>, Void> worker = new SwingWorker<List<TheThanhVien>, Void>() {
 			@Override
 			protected List<TheThanhVien> doInBackground() throws Exception {
-				return ttvd.loadTrang((soTrang - 1) * 5, 5);
+				return ttvd.loadTrang((soTrang - 1) * 15, 15);
 			}
 
 			@Override
@@ -439,13 +448,19 @@ public class TheThanhVienJPanel extends JPanel {
 		try {
 			TheThanhVien tg = getForm();
 			if (tg != null) {
-				ttvd.insert(tg);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Insert Successful");
+				TheThanhVien theThanhVien = ttvd.selectByMaThe(tg.getMaTTV());
+				if (theThanhVien == null) {
+					ttvd.insert(tg);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Insert Successful");
+				} else {
+					DialogHelper.alert(this, "Mã thẻ thành viên đã tồn tại");
+				}
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Insert Failed");
+			e.printStackTrace();
 		}
 	}
 
@@ -453,10 +468,12 @@ public class TheThanhVienJPanel extends JPanel {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
 				TheThanhVien tg = getForm();
-				ttvd.delete(tg.getId());
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Delete Successful");
+				if (tg != null) {
+					ttvd.delete(tg.getId());
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Delete Successful");
+				}
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Delete Failed");
@@ -467,10 +484,12 @@ public class TheThanhVienJPanel extends JPanel {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
 				TheThanhVien tg = getForm();
-				ttvd.update(tg);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Update Successful");
+				if (tg != null) {
+					ttvd.update(tg);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Update Successful");
+				}
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Update Failed");
@@ -482,13 +501,14 @@ public class TheThanhVienJPanel extends JPanel {
 		txtID.setText("");
 		txtMaTheThanhVien.setText("");
 		txtOldID.setText("");
-		txtNgayCap.setText("");
-		txtNgayHieuLuc.setText("");
+		txtNgayCap.setText(XDate.toString(ngayHienTai, "yyyy-MM-dd"));
+		txtNgayHieuLuc.setText(XDate.toString(ngayHienTai, "yyyy-MM-dd"));
 		cbxHangThanhVien.setSelectedIndex(0);
 		cbxThanhVien.setSelectedIndex(0);
 		cbxThoiGianHieuLuc.setSelectedIndex(0);
 		cbxTrangThai.setSelectedIndex(0);
 		setStatus(true);
+		table.clearSelection();
 
 	}
 
@@ -518,39 +538,61 @@ public class TheThanhVienJPanel extends JPanel {
 
 	TheThanhVien getForm() {
 		TheThanhVien ttv = new TheThanhVien();
-
-		if (txtID.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống id");
-			return null;
-		} else {
-			ttv.setId(Integer.valueOf(txtID.getText()));
-		}
-
 		if (txtMaTheThanhVien.getText().isEmpty()) {
-			DialogHelper.alert(this, "Khong de trong ma the");
+			DialogHelper.alert(this, "Không để trống mã thẻ thành viên");
 			return null;
 		} else {
-			ttv.setMaTTV(txtMaTheThanhVien.getText());
+			if (txtMaTheThanhVien.getText().matches(regexMaThe)) {
+				ttv.setMaTTV(txtMaTheThanhVien.getText());
+			} else {
+				DialogHelper.alert(this, "Vui lòng nhập đúng định dạnh mã thẻ");
+				return null;
+			}
+
 		}
 
 		if (txtNgayCap.getText().isEmpty()) {
-			DialogHelper.alert(this, "Khong de trong ngay cap");
+			DialogHelper.alert(this, "Không để trống ngày cấp");
 			return null;
 		} else {
 			Date nc = XDate.toDate(txtNgayCap.getText(), "yyyy-MM-dd");
-			ttv.setNgayCap(nc);
+			if (nc != null) {
+				ttv.setNgayCap(nc);
+			} else {
+				DialogHelper.alert(this, "Vui lòng nhập đúng định dạng");
+				return null;
+			}
+
 		}
 
 		if (txtNgayHieuLuc.getText().isEmpty()) {
-
+			DialogHelper.alert(this, "Không để trống ngày hiệu lực");
+			return null;
 		} else {
-			ttv.setNgayHieuLuc(XDate.toDate(txtNgayHieuLuc.getText(), "yyyy-MM-dd"));
+			if (!isValidDateFormat(txtNgayHieuLuc.getText())) {
+				DialogHelper.alert(this, "Vui lòng nhập đúng định dạng ngày hiệu lực (yyyy-MM-dd)");
+				return null;
+			}
+			Date nhl = XDate.toDate(txtNgayHieuLuc.getText(), "yyyy-MM-dd");
+			if (nhl != null) {
+				ttv.setNgayHieuLuc(nhl);
+			} else {
+				DialogHelper.alert(this, "Vui lòng nhập đúng định dạng");
+				return null;
+			}
+
 		}
 
 		if (txtOldID.getText().isEmpty()) {
 			ttv.setOldID(0);
 		} else {
-			ttv.setOldID(Integer.valueOf(txtOldID.getText()));
+			try {
+				int id = Integer.parseInt(txtOldID.getText());
+				ttv.setOldID(id);
+			} catch (Exception e) {
+				DialogHelper.alert(this, "Chỉ nhập số");
+			}
+
 		}
 
 		HangThanhVien htv = (HangThanhVien) cbxHangThanhVien.getSelectedItem();
@@ -562,6 +604,32 @@ public class TheThanhVienJPanel extends JPanel {
 		ttv.setIdThanhVien(tv);
 		ttv.setTrangThai(cbxTrangThai.getSelectedItem() == "Hoạt Động" ? true : false);
 		return ttv;
+	}
+
+	private boolean isValidDateFormat(String inputDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		sdf.setLenient(false); // Disable lenient mode
+		try {
+			Date parsedDate = sdf.parse(inputDate);
+			if (parsedDate != null) {
+				// Check the components of the parsed date
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(parsedDate);
+
+				int year = cal.get(Calendar.YEAR);
+				int month = cal.get(Calendar.MONTH) + 1; // Month is 0-based
+				int day = cal.get(Calendar.DAY_OF_MONTH);
+
+				// Additional checks for valid year, month, and day
+				if (year >= 1000 && year <= 9999 && month >= 1 && month <= 12 && day >= 1
+						&& day <= cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+					return true;
+				}
+			}
+			return false;
+		} catch (ParseException e) {
+			return false; // Parsing failed, date is not in the correct format
+		}
 	}
 
 	void edit() {
@@ -592,6 +660,37 @@ public class TheThanhVienJPanel extends JPanel {
 	}
 
 	void search() {
+		String keyword = txtTimKiem.getText().trim();
+		// Thực hiện tìm kiếm trong một SwingWorker
+		SwingWorker<List<TheThanhVien>, Void> worker = new SwingWorker<List<TheThanhVien>, Void>() {
+			@Override
+			protected List<TheThanhVien> doInBackground() throws Exception {
+				return ttvd.selectByKeyword(keyword);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<TheThanhVien> list = get();
+					if (list.size() == 0) {
+						DialogHelper.alert(null, "Không tồn tại ");
+					} else {
+						model.setRowCount(0);
+						for (TheThanhVien ttv : list) {
+							Object[] row = { ttv.getId(), ttv.getMaTTV(), htvd.selectById(ttv.getIdHangTV()),
+									ttv.getNgayCap(), ttv.getNgayHieuLuc(), ttv.getTgHieuLuc(), ttv.getIdThanhVien(),
+									ttv.getOldID(), ttv.isTrangThai() ? "Còn Hiệu Lực" : "Hết Hiệu Lực" };
+							model.addRow(row);
+						}
+					}
+
+				} catch (Exception e) {
+					DialogHelper.alert(TheThanhVienJPanel.this, "Lỗi truy vấn dữ liệu!");
+				}
+			}
+		};
+
+		worker.execute();
 	}
 
 	public void fillCbxHang() {

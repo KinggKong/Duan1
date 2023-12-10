@@ -54,9 +54,12 @@ public class DoiMatKhauJFrame extends JFrame {
 		getContentPane().add(lblMaNV);
 
 		txtMaNV = new JTextField();
+		txtMaNV.setEditable(false);
+		txtMaNV.setEnabled(false);
 		txtMaNV.setBounds(20, 67, 198, 19);
 		getContentPane().add(txtMaNV);
 		txtMaNV.setColumns(10);
+		txtMaNV.setText(ShareHelper.USER.getMaNV());
 
 		JLabel lblMatKhauHienTai = new JLabel("Mật Khẩu Hiện Tại");
 		lblMatKhauHienTai.setBounds(262, 44, 198, 13);
@@ -107,22 +110,22 @@ public class DoiMatKhauJFrame extends JFrame {
 		String mkHienTai = new String(txtMatKhauHienTai.getPassword());
 		String matKhauMoi = new String(txtMatKhauMoi.getPassword());
 		String xacNhanMatKhau = new String(txtNhapLaiMatKhauMoi.getPassword());
-		if (!maNV.equals(ShareHelper.USER.getMaNV())) {
-			DialogHelper.alert(this, "Sai Mã Nhân Viên ! Vui Lòng Thử Lại");
-		} else if (!mkHienTai.equals(ShareHelper.USER.getPassWord())) {
-			DialogHelper.alert(this, "Sai Mật Khẩu ! Vui Lòng Thử Lại");
-		} else if (!matKhauMoi.equals(xacNhanMatKhau)) {
-			DialogHelper.alert(this, "Xác Nhận Mật Khẩu Không Chính Xác !");
+		if (ShareHelper.USER.getPassWord().equals(mkHienTai)) {
+			if (matKhauMoi.equals(xacNhanMatKhau)) {
+				ShareHelper.USER.setPassWord(xacNhanMatKhau);
+				nvd.update(ShareHelper.USER);
+				DialogHelper.alert(this, "Đổi mật khẩu thành công");
+				clear();
+			} else {
+				DialogHelper.alert(this, "Xác nhận mật khẩu chưa chính xác!");
+			}
 		} else {
-			ShareHelper.USER.setPassWord(xacNhanMatKhau);
-			nvd.update(ShareHelper.USER);
-			DialogHelper.alert(this, "Đổi Mật Khẩu Thành Công !");
-			clear();
+			DialogHelper.alert(this, "Mật khẩu hiện tại chưa đúng !\nVui lòng thử lại !");
 		}
 	}
 
 	void clear() {
-		txtMaNV.setText("");
+		txtMaNV.setText(ShareHelper.USER.getMaNV());
 		txtMatKhauHienTai.setText("");
 		txtMatKhauMoi.setText("");
 		txtNhapLaiMatKhauMoi.setText("");

@@ -83,11 +83,16 @@ public class NhanVienDao extends QLTVDao<NhanVien, String> {
 	public NhanVien checkTonTai(String username) {
 		String sql = "select * from nhanvien where UserName = ?";
 		List<NhanVien> listNhanVien = select(sql, username);
-		if (username.equalsIgnoreCase(listNhanVien.get(0).getUserName())) {
-			return listNhanVien.get(0);
+		if (!listNhanVien.isEmpty()) {
+			if (username.equalsIgnoreCase(listNhanVien.get(0).getUserName())) {
+				return listNhanVien.get(0);
+			} else {
+				return null;
+			}
 		} else {
 			return null;
 		}
+
 	}
 
 	private NhanVien readFromResultSet(ResultSet rs) throws SQLException {
