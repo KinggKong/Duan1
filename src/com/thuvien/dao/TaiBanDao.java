@@ -85,8 +85,9 @@ public class TaiBanDao extends QLTVDao<TaiBan, Integer> {
 	}
 
 	public List<TaiBan> selectByKeyword(String keyword) {
-		String sql = "SELECT * FROM TacGia WHERE MaTG LIKE ? or TenTG LIKE ?";
-		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
+		String sql = "select * from TaiBan \r\n"
+				+ "inner join Sach on Sach.ID = TaiBan.IDSach where Sach.TenSach like ?";
+		return select(sql, "%" + keyword + "%");
 	}
 
 }

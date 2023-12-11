@@ -125,7 +125,7 @@ public class TheThanhVienDao extends QLTVDao<TheThanhVien, Integer> {
 	public List<TheThanhVien> selectByKeyword(String keyword) {
 		String sql = "select ttv.* from TheThanhVien ttv \r\n"
 				+ "inner join ThanhVien tv on tv.ID = ttv.IDThanhVien where tv.TenTV like ? or tv.SDT = ? or  ttv.MaTheTV like ?";
-		return select(sql, "%" + keyword + "%", "%" + keyword + "%","%"+keyword+"%");
+		return select(sql, "%" + keyword + "%", keyword, "%" + keyword + "%");
 	}
 
 }

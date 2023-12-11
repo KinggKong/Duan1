@@ -39,6 +39,7 @@ import com.thuvien.entity.ThanhVien;
 import com.thuvien.entity.TheThanhVien;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.XDate;
+import javax.swing.ImageIcon;
 
 public class TheThanhVienJPanel extends JPanel {
 
@@ -151,7 +152,7 @@ public class TheThanhVienJPanel extends JPanel {
 		pnlThongTinTG.add(txtOldID);
 
 		cbxHangThanhVien = new JComboBox();
-		cbxHangThanhVien.setBounds(10, 138, 198, 21);
+		cbxHangThanhVien.setBounds(10, 138, 198, 23);
 
 		pnlThongTinTG.add(cbxHangThanhVien);
 
@@ -167,7 +168,7 @@ public class TheThanhVienJPanel extends JPanel {
 
 		cbxTrangThai = new JComboBox();
 		cbxTrangThai.setModel(new DefaultComboBoxModel(new String[] { "Hoạt Động", "Ngừng Hoạt Động" }));
-		cbxTrangThai.setBounds(252, 190, 198, 21);
+		cbxTrangThai.setBounds(252, 190, 198, 23);
 		pnlThongTinTG.add(cbxTrangThai);
 
 		JLabel lblID = new JLabel("ID");
@@ -183,7 +184,7 @@ public class TheThanhVienJPanel extends JPanel {
 		pnlThongTinTG.add(txtID);
 
 		cbxThanhVien = new JComboBox();
-		cbxThanhVien.setBounds(10, 190, 198, 21);
+		cbxThanhVien.setBounds(10, 190, 198, 23);
 		cbxThanhVien.setModel(cbxModelThanhVien);
 		pnlThongTinTG.add(cbxThanhVien);
 
@@ -200,11 +201,11 @@ public class TheThanhVienJPanel extends JPanel {
 		pnlDanhSach.add(lblTimKiem);
 
 		txtTimKiem = new JTextField();
-		txtTimKiem.setText("Nhập vào mã hoặc tên của thành viên");
+		txtTimKiem.setText("Nhập vào mã hoặc tên,SDT của thành viên");
 		txtTimKiem.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				if (txtTimKiem.getText().equals("Nhập vào mã hoặc tên của thành viên")) {
+				if (txtTimKiem.getText().equals("Nhập vào mã hoặc tên,SDT của thành viên")) {
 					txtTimKiem.setText("");
 				}
 			}
@@ -212,21 +213,27 @@ public class TheThanhVienJPanel extends JPanel {
 			@Override
 			public void focusLost(FocusEvent e) {
 				if (txtTimKiem.getText().isEmpty()) {
-					txtTimKiem.setText("Nhập vào mã hoặc tên của thành viên");
+					txtTimKiem.setText("Nhập vào mã hoặc tên,SDT của thành viên");
 				}
 			}
 		});
-		txtTimKiem.setBounds(85, 17, 567, 19);
+		txtTimKiem.setBounds(85, 17, 567, 26);
 		pnlDanhSach.add(txtTimKiem);
 		txtTimKiem.setColumns(10);
 
 		JButton btnTimKiem = new JButton("Tìm Kiếm");
+		btnTimKiem.setIcon(new ImageIcon(TheThanhVienJPanel.class.getResource("/icon/Search.png")));
 		btnTimKiem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				search();
+				if (txtTimKiem.getText().endsWith(" ")) {
+					load(indexTrang);
+				} else {
+					search();
+				}
+
 			}
 		});
-		btnTimKiem.setBounds(687, 16, 97, 21);
+		btnTimKiem.setBounds(672, 16, 126, 27);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -254,7 +261,7 @@ public class TheThanhVienJPanel extends JPanel {
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(67, 452, 350, 30);
+		pnlButton2.setBounds(731, 518, 375, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -298,44 +305,8 @@ public class TheThanhVienJPanel extends JPanel {
 		});
 		pnlButton2.add(btnLast);
 
-		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(67, 412, 350, 30);
-		add(pnlButton1);
-		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
-
-		btnInsert = new JButton("Insert");
-		btnInsert.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				insert();
-			}
-		});
-		pnlButton1.add(btnInsert);
-
-		btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				delete();
-			}
-		});
-		pnlButton1.add(btnDelete);
-
-		btnUpdate = new JButton("Update");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				update();
-			}
-		});
-		pnlButton1.add(btnUpdate);
-
-		btnClear = new JButton("Clear");
-		btnClear.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				clear();
-			}
-		});
-		pnlButton1.add(btnClear);
-
 		btnPrevList = new JButton("Prev");
+		btnPrevList.setIcon(new ImageIcon(TheThanhVienJPanel.class.getResource("/icon/Left.png")));
 		btnPrevList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang--;
@@ -348,10 +319,11 @@ public class TheThanhVienJPanel extends JPanel {
 				}
 			}
 		});
-		btnPrevList.setBounds(731, 487, 85, 21);
+		btnPrevList.setBounds(731, 478, 102, 30);
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
+		btnNextList.setIcon(new ImageIcon(TheThanhVienJPanel.class.getResource("/icon/Right.png")));
 		btnNextList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang++;
@@ -366,14 +338,54 @@ public class TheThanhVienJPanel extends JPanel {
 				}
 			}
 		});
-		btnNextList.setBounds(1021, 487, 85, 21);
+		btnNextList.setBounds(1004, 478, 102, 30);
 		add(btnNextList);
 
-		setStatus(true);
 		fillCbxHang();
 		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(915, 491, 36, 13);
+		lblIndexTrang.setBounds(914, 487, 36, 13);
 		add(lblIndexTrang);
+
+		btnInsert = new JButton("Insert");
+		btnInsert.setIcon(new ImageIcon(TheThanhVienJPanel.class.getResource("/icon/Create.png")));
+		btnInsert.setBounds(67, 441, 131, 37);
+		add(btnInsert);
+
+		btnClear = new JButton("Clear");
+		btnClear.setIcon(new ImageIcon(TheThanhVienJPanel.class.getResource("/icon/Trash.png")));
+		btnClear.setBounds(291, 441, 131, 37);
+		add(btnClear);
+
+		btnDelete = new JButton("Delete");
+		btnDelete.setIcon(new ImageIcon(TheThanhVienJPanel.class.getResource("/icon/delete2.png")));
+		btnDelete.setBounds(67, 504, 131, 37);
+		add(btnDelete);
+
+		btnUpdate = new JButton("Update");
+		btnUpdate.setIcon(new ImageIcon(TheThanhVienJPanel.class.getResource("/icon/Upload.png")));
+		btnUpdate.setBounds(291, 504, 131, 37);
+		add(btnUpdate);
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				update();
+			}
+		});
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				delete();
+			}
+		});
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clear();
+			}
+		});
+		btnInsert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				insert();
+			}
+		});
+		setStatus(true);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -498,6 +510,7 @@ public class TheThanhVienJPanel extends JPanel {
 	}
 
 	void clear() {
+		txtTimKiem.setText("Nhập vào mã hoặc tên,SDT của thành viên");
 		txtID.setText("");
 		txtMaTheThanhVien.setText("");
 		txtOldID.setText("");
@@ -533,6 +546,7 @@ public class TheThanhVienJPanel extends JPanel {
 		} else {
 			cbxTrangThai.setSelectedIndex(1);
 		}
+		cbxThanhVien.setSelectedItem(ttv.getIdThanhVien());
 
 	}
 

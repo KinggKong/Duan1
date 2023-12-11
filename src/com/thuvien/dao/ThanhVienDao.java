@@ -125,8 +125,8 @@ public class ThanhVienDao extends QLTVDao<ThanhVien, String> {
 	}
 
 	public List<ThanhVien> selectByKeyword(String keyword) {
-		String sql = "SELECT * FROM ThanhVien WHERE MaTV LIKE ? or TenTV LIKE ?";
-		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
+		String sql = "select * from ThanhVien where MaTV = ? or TenTV like ? or SDT = ? or CCCD = ?";
+		return select(sql, keyword, "%" + keyword + "%", keyword, keyword);
 	}
 
 }

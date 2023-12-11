@@ -51,6 +51,7 @@ public class TheLoaiJPanel extends JPanel {
 	private JButton btnNextEdit;
 	private JButton btnLast;
 	private JLabel lblIndexTrang;
+	String regexMaTL = "^TL\\d{3}$";
 
 	public TheLoaiJPanel() {
 		setLayout(null);
@@ -369,14 +370,20 @@ public class TheLoaiJPanel extends JPanel {
 	TheLoai getForm() {
 		TheLoai tl = new TheLoai();
 		if (txtMaTheLoai.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống mã the loai");
-			return tl = null;
+			DialogHelper.alert(this, "Không để trống mã thể loại");
+			return null;
 		} else {
-			tl.setMaTL(txtMaTheLoai.getText());
+			if (txtMaTheLoai.getText().matches(regexMaTL)) {
+				tl.setMaTL(txtMaTheLoai.getText());
+			} else {
+				DialogHelper.alert(this, "Nhập đúng định dạng mã thể loại");
+				return null;
+			}
+
 		}
 
 		if (txtTenTheLoai.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống họ tên the loai");
+			DialogHelper.alert(this, "Không để trống họ tên thể loại");
 			return null;
 		} else {
 			tl.setTenTL(txtTenTheLoai.getText());

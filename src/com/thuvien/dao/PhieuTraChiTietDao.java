@@ -34,6 +34,15 @@ public class PhieuTraChiTietDao extends QLTVDao<PhieuTraCT, Integer> {
 		JDBCHelper.executeUpdate(sql, key);
 	}
 
+	public int soLuongTraMuonTheoPhieuTra(int key) {
+		int soLuong = 0;
+		String sql = "select PTCT.* from PhieuTraCT PTCT\r\n"
+				+ "inner join PhieuTra PT on PT.ID = PTCT.IDPhieuTra where TinhTrang = 0 and PTCT.IDPhieuTra = ? ";
+		List<PhieuTraCT> listSize = select(sql, key);
+		soLuong = listSize.size();
+		return soLuong;
+	}
+
 	@Override
 	public List<PhieuTraCT> selectAll() {
 		return null;
@@ -43,6 +52,12 @@ public class PhieuTraChiTietDao extends QLTVDao<PhieuTraCT, Integer> {
 		String sql = "select PTCT.* from PhieuTraCT PTCT\r\n"
 				+ "inner join PhieuMuonCT PMCT on PMCT.ID = PTCT.IDPhieuMuonCT\r\n"
 				+ "inner join PhieuMuon PM on PM.ID = PMCT.IDPhieuMuon where PTCT.TinhTrang = 1  and  PM.ID = ?";
+		return select(sql, key);
+	}
+
+	public List<PhieuTraCT> selectAllTheoPhieuTra(int key) {
+		String sql = "select PTCT.* from PhieuTraCT PTCT\r\n"
+				+ "inner join PhieuTra PT on PT.ID = PTCT.IDPhieuTra where PTCT.IDPhieuTra = ?";
 		return select(sql, key);
 	}
 

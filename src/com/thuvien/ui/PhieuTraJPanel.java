@@ -11,6 +11,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -43,6 +47,7 @@ import com.thuvien.entity.ThanhVien;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.ShareHelper;
 import com.thuvien.utils.XDate;
+import javax.swing.ImageIcon;
 
 public class PhieuTraJPanel extends JPanel {
 
@@ -69,6 +74,7 @@ public class PhieuTraJPanel extends JPanel {
 	private JTextField txtTienPhat;
 	private JTextField txtMaPhieuTra;
 	private JComboBox cbxThanhVien;
+	String regexMaPhieuTra = "^PT\\d{3}$";
 
 	PhieuTraDao ptd = new PhieuTraDao();
 	PhieuTraChiTietDao ptctd = new PhieuTraChiTietDao();
@@ -77,10 +83,12 @@ public class PhieuTraJPanel extends JPanel {
 
 	ThanhVienDao tvd = new ThanhVienDao();
 	NhanVienDao nvd = new NhanVienDao();
+	PhieuTraChiTietDao phieuTraChiTietDao = new PhieuTraChiTietDao();
 	private JTextField txtTienTra;
 	private JTextArea txtLyDoPhat;
 	private JRadioButton rdoHoanThanh;
 	private JRadioButton rdoChuaHoanThanh;
+	private JButton btnXemChiTiet;
 
 	public PhieuTraJPanel() {
 		setLayout(null);
@@ -160,12 +168,12 @@ public class PhieuTraJPanel extends JPanel {
 		pnlThongTinTG.add(lblTinTr);
 
 		rdoHoanThanh = new JRadioButton("Hoàn Thành");
-		rdoHoanThanh.setSelected(true);
 		buttonGroup.add(rdoHoanThanh);
 		rdoHoanThanh.setBounds(273, 175, 103, 21);
 		pnlThongTinTG.add(rdoHoanThanh);
 
 		rdoChuaHoanThanh = new JRadioButton("Chưa Hoàn Thành");
+		rdoChuaHoanThanh.setSelected(true);
 		buttonGroup.add(rdoChuaHoanThanh);
 		rdoChuaHoanThanh.setBounds(378, 175, 128, 21);
 		pnlThongTinTG.add(rdoChuaHoanThanh);
@@ -198,7 +206,7 @@ public class PhieuTraJPanel extends JPanel {
 		pnlDanhSach.add(lblTimKiem);
 
 		txtTimKiem = new JTextField();
-		txtTimKiem.setText("Nhập vào tên hoặc mã phiếu mượn");
+		txtTimKiem.setText("Nhập vào mã hoặc tên của thành viên");
 		txtTimKiem.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -214,17 +222,22 @@ public class PhieuTraJPanel extends JPanel {
 				}
 			}
 		});
-		txtTimKiem.setBounds(85, 17, 514, 19);
+		txtTimKiem.setBounds(85, 17, 482, 25);
 		pnlDanhSach.add(txtTimKiem);
 		txtTimKiem.setColumns(10);
 
 		JButton btnTimKiem = new JButton("Tìm Kiếm");
+		btnTimKiem.setIcon(new ImageIcon(PhieuTraJPanel.class.getResource("/icon/Search.png")));
 		btnTimKiem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				search();
+				if (txtTimKiem.getText().equals(" ")) {
+					load(indexTrang);
+				} else {
+					search(txtTimKiem.getText().trim());
+				}
 			}
 		});
-		btnTimKiem.setBounds(609, 16, 97, 21);
+		btnTimKiem.setBounds(577, 16, 124, 25);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -252,7 +265,7 @@ public class PhieuTraJPanel extends JPanel {
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(72, 514, 350, 30);
+		pnlButton2.setBounds(783, 523, 369, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -296,44 +309,8 @@ public class PhieuTraJPanel extends JPanel {
 		});
 		pnlButton2.add(btnLast);
 
-		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(72, 474, 350, 30);
-		add(pnlButton1);
-		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
-
-		btnInsert = new JButton("Insert");
-		btnInsert.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				insert();
-			}
-		});
-		pnlButton1.add(btnInsert);
-
-		btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				delete();
-			}
-		});
-		pnlButton1.add(btnDelete);
-
-		btnUpdate = new JButton("Update");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				update();
-			}
-		});
-		pnlButton1.add(btnUpdate);
-
-		btnClear = new JButton("Clear");
-		btnClear.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				clear();
-			}
-		});
-		pnlButton1.add(btnClear);
-
 		btnPrevList = new JButton("Prev");
+		btnPrevList.setIcon(new ImageIcon(PhieuTraJPanel.class.getResource("/icon/Left.png")));
 		btnPrevList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang--;
@@ -346,15 +323,16 @@ public class PhieuTraJPanel extends JPanel {
 				}
 			}
 		});
-		btnPrevList.setBounds(785, 487, 85, 21);
+		btnPrevList.setBounds(783, 478, 105, 30);
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
+		btnNextList.setIcon(new ImageIcon(PhieuTraJPanel.class.getResource("/icon/Right.png")));
 		btnNextList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang++;
 
-				if (indexTrang > (Math.ceil(ptd.selectAll().size() * 1.0 / 5))) {
+				if (indexTrang > (Math.ceil(ptd.selectAll().size() * 1.0 / 15))) {
 					DialogHelper.alert(null, "Đây là trang cuối cùng !");
 					indexTrang--;
 				} else {
@@ -363,17 +341,17 @@ public class PhieuTraJPanel extends JPanel {
 				}
 			}
 		});
-		btnNextList.setBounds(1048, 487, 85, 21);
+		btnNextList.setBounds(1047, 478, 105, 30);
 		add(btnNextList);
 
-		setStatus(true);
-
 		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(958, 491, 39, 13);
+		lblIndexTrang.setBounds(968, 487, 39, 13);
 		add(lblIndexTrang);
 
-		JButton btnNewButton = new JButton("Xem Chi Tiết");
-		btnNewButton.addActionListener(new ActionListener() {
+		btnXemChiTiet = new JButton("Xem Chi Tiết");
+		btnXemChiTiet.setEnabled(false);
+		btnXemChiTiet.setIcon(new ImageIcon(PhieuTraJPanel.class.getResource("/icon/ShowDetail.png")));
+		btnXemChiTiet.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PhieuTra pt = new PhieuTra();
 				// Lấy dữ liệu từ PhieuMuonJPanel và truyền vào PhieuMuonChiTietJPanel
@@ -393,8 +371,49 @@ public class PhieuTraJPanel extends JPanel {
 				}
 			}
 		});
-		btnNewButton.setBounds(590, 496, 145, 21);
-		add(btnNewButton);
+		btnXemChiTiet.setBounds(590, 496, 145, 30);
+		add(btnXemChiTiet);
+
+		btnInsert = new JButton("Insert");
+		btnInsert.setIcon(new ImageIcon(PhieuTraJPanel.class.getResource("/icon/Create.png")));
+		btnInsert.setBounds(84, 482, 134, 30);
+		add(btnInsert);
+
+		btnClear = new JButton("Clear");
+		btnClear.setIcon(new ImageIcon(PhieuTraJPanel.class.getResource("/icon/Trash.png")));
+		btnClear.setBounds(300, 482, 134, 30);
+		add(btnClear);
+
+		btnDelete = new JButton("Delete");
+		btnDelete.setIcon(new ImageIcon(PhieuTraJPanel.class.getResource("/icon/delete2.png")));
+		btnDelete.setBounds(84, 523, 134, 30);
+		add(btnDelete);
+
+		btnUpdate = new JButton("Update");
+		btnUpdate.setIcon(new ImageIcon(PhieuTraJPanel.class.getResource("/icon/Upload.png")));
+		btnUpdate.setBounds(300, 523, 134, 30);
+		add(btnUpdate);
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				update();
+			}
+		});
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				delete();
+			}
+		});
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clear();
+			}
+		});
+		btnInsert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				insert();
+			}
+		});
+		setStatus(true);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -446,7 +465,7 @@ public class PhieuTraJPanel extends JPanel {
 
 			@Override
 			protected List<PhieuTra> doInBackground() throws Exception {
-				return ptd.loadTrang((soTrang - 1) * 5, 5);
+				return ptd.loadTrang((soTrang - 1) * 15, 15);
 			}
 
 			@Override
@@ -508,10 +527,12 @@ public class PhieuTraJPanel extends JPanel {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
 				PhieuTra pm = getForm();
-				ptd.update(pm);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Update Successful");
+				if (pm != null) {
+					ptd.update(pm);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Update Successful");
+				}
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Update Failed");
@@ -519,6 +540,7 @@ public class PhieuTraJPanel extends JPanel {
 	}
 
 	void clear() {
+		txtTimKiem.setText("Nhập vào mã hoặc tên của thành viên");
 		txtLyDoPhat.setText("");
 		txtMaPhieuTra.setText("");
 		txtNgayTraThucTe.setText("");
@@ -527,6 +549,8 @@ public class PhieuTraJPanel extends JPanel {
 		txtTienTra.setText("");
 		cbxThanhVien.setSelectedIndex(0);
 		rdoHoanThanh.setSelected(true);
+		setStatus(true);
+		table.clearSelection();
 	}
 
 	void setForm(PhieuTra pt) {
@@ -550,14 +574,26 @@ public class PhieuTraJPanel extends JPanel {
 			DialogHelper.alert(this, "Không để trống mã phiếu trả");
 			return null;
 		} else {
-			pt.setMaPT(txtMaPhieuTra.getText());
+			if (txtMaPhieuTra.getText().matches(regexMaPhieuTra)) {
+				pt.setMaPT(txtMaPhieuTra.getText());
+			} else {
+				DialogHelper.alert(this, "Nhập đúng định dạng mã phiếu trả");
+				return null;
+			}
+
 		}
 
 		if (txtNgayTraThucTe.getText().isEmpty()) {
 			DialogHelper.alert(this, "Không để trống ngày trả thực tế");
 			return null;
 		} else {
-			pt.setNgayTraThucTe(XDate.toDate(txtNgayTraThucTe.getText(), "yyyy-MM-dd"));
+			if (isValidDateFormat(txtNgayTraThucTe.getText())) {
+				pt.setNgayTraThucTe(XDate.toDate(txtNgayTraThucTe.getText(), "yyyy-MM-dd"));
+			} else {
+				DialogHelper.alert(this, "Vui lòng nhập đúng định dạng (yyyy-MM-dd)");
+				return null;
+			}
+
 		}
 
 		if (txtTienTra.getText().isEmpty()) {
@@ -566,9 +602,15 @@ public class PhieuTraJPanel extends JPanel {
 		} else {
 			try {
 				float tienTra = Float.parseFloat(txtTienTra.getText());
-				pt.setTienTra(tienTra);
+				if (tienTra < 0) {
+					DialogHelper.alert(this, "Tiền trả không được nhỏ hơn 0");
+					return null;
+				} else {
+					pt.setTienTra(tienTra);
+				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				DialogHelper.alert(this, "Tiền trả chỉ nhập số");
+				return null;
 			}
 		}
 
@@ -581,10 +623,52 @@ public class PhieuTraJPanel extends JPanel {
 		} else {
 			pt.setTrangThai(false);
 		}
-		pt.setTienPhat(Float.parseFloat(txtTienPhat.getText()));
+		if (txtTienPhat.getText().isEmpty()) {
+			pt.setTienPhat(0);
+		} else {
+			try {
+				float tienPhat = Float.parseFloat(txtTienPhat.getText());
+				if (tienPhat < 0) {
+					DialogHelper.alert(this, "Tiền phạt không được bé hơn 0");
+					return null;
+				} else {
+					pt.setTienPhat(tienPhat);
+				}
+			} catch (Exception e) {
+				DialogHelper.alert(this, "Tiền phạt không hợp lệ ");
+				return null;
+			}
+		}
+
 		pt.setLiDoPhat(txtLyDoPhat.getText());
 
 		return pt;
+	}
+
+	private boolean isValidDateFormat(String inputDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		sdf.setLenient(false); // Disable lenient mode
+		try {
+			Date parsedDate = sdf.parse(inputDate);
+			if (parsedDate != null) {
+				// Check the components of the parsed date
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(parsedDate);
+
+				int year = cal.get(Calendar.YEAR);
+				int month = cal.get(Calendar.MONTH) + 1; // Month is 0-based
+				int day = cal.get(Calendar.DAY_OF_MONTH);
+
+				// Additional checks for valid year, month, and day
+				if (year >= 1000 && year <= 9999 && month >= 1 && month <= 12 && day >= 1
+						&& day <= cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+					return true;
+				}
+			}
+			return false;
+		} catch (ParseException e) {
+			return false; // Parsing failed, date is not in the correct format
+		}
 	}
 
 	void edit() {
@@ -610,8 +694,45 @@ public class PhieuTraJPanel extends JPanel {
 		btnPrevEdit.setEnabled(!insertable && first);
 		btnNextEdit.setEnabled(!insertable && last);
 		btnLast.setEnabled(!insertable && last);
+		txtTienPhat.setEditable(!insertable);
+		txtMaPhieuTra.setEditable(insertable);
+		btnXemChiTiet.setEnabled(!insertable);
 	}
 
-	void search() {
+	void search(String keyString) {
+		SwingWorker<List<PhieuTra>, Void> worker = new SwingWorker<List<PhieuTra>, Void>() {
+
+			@Override
+			protected List<PhieuTra> doInBackground() throws Exception {
+				return ptd.selectByKeyword(keyString);
+			}
+
+			@Override
+			protected void done() {
+				NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+				try {
+					List<PhieuTra> listPT = get();
+					if (listPT.isEmpty()) {
+						DialogHelper.alert(PhieuTraJPanel.this, "Không tồn tại");
+					} else {
+						model.setRowCount(0);
+						for (PhieuTra pt : listPT) {
+							Object[] row = { pt.getId(), pt.getMaPT(), pt.getIdThanhVien().getTenTV(),
+									pt.getIdNhanVien().getTenNV(), pt.getNgayTraThucTe(),
+									format.format(pt.getTienPhat()), format.format(pt.getTienTra()), pt.getLiDoPhat(),
+									pt.isTrangThai() ? "Hoàn Thành" : "Chưa Hoàn Thành" };
+							model.addRow(row);
+						}
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		worker.execute();
 	}
 }

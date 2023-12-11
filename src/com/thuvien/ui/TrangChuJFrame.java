@@ -201,6 +201,7 @@ public class TrangChuJFrame extends JFrame {
 		menuBar.add(mnuTroGiup);
 
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Giới Thiệu");
+		mntmNewMenuItem_1.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Info.png")));
 		mnuTroGiup.add(mntmNewMenuItem_1);
 
 		JToolBar toolBar = new JToolBar();

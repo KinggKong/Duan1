@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.thuvien.entity.NhanVien;
+import com.thuvien.entity.PhieuMuon;
 import com.thuvien.entity.PhieuTra;
 import com.thuvien.entity.ThanhVien;
 import com.thuvien.utils.JDBCHelper;
@@ -95,4 +96,9 @@ public class PhieuTraDao extends QLTVDao<PhieuTra, Integer> {
 		return list;
 	}
 
+	public List<PhieuTra> selectByKeyword(String keyword) {
+		String sql = "select PT.* from PhieuTra PT\r\n"
+				+ "inner join ThanhVien TV on TV.ID = PT.IDThanhVien where TV.MaTV = ? or TV.TenTV like ?";
+		return select(sql, keyword, "%" + keyword + "%");
+	}
 }

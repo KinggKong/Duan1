@@ -377,7 +377,12 @@ public class NhaXuatBanJPanel extends JPanel {
 			DialogHelper.alert(this, "Không để trống họ tên nhà xuất bản");
 			return null;
 		} else {
-			nxb.setTenNXB(txtTenNXB.getText());
+			if (txtTenNXB.getText().length() < 3) {
+				DialogHelper.alert(this, "Độ dài tên không hợp lệ ");
+				return null;
+			} else {
+				nxb.setTenNXB(txtTenNXB.getText());
+			}
 		}
 
 		return nxb;

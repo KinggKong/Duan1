@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.thuvien.entity.PhieuMuon;
 import com.thuvien.entity.PhieuMuonCT;
+import com.thuvien.entity.PhieuTraCT;
 import com.thuvien.entity.QuyenSach;
 import com.thuvien.utils.JDBCHelper;
 
@@ -30,7 +31,7 @@ public class PhieuMuonChiTietDao extends QLTVDao<PhieuMuonCT, Integer> {
 
 	@Override
 	public void delete(Integer key) {
-		String sql = "delete from PhieuMuon where id =?";
+		String sql = "delete from PhieuMuonCT where id =?";
 		JDBCHelper.executeUpdate(sql, key);
 	}
 

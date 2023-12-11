@@ -95,7 +95,7 @@ public class SachDao extends QLTVDao<Sach, String> {
 	}
 
 	public List<Sach> selectByKeyword(String keyword) {
-		String sql = "SELECT * FROM TacGia WHERE MaTG LIKE ? or TenTG LIKE ?";
-		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
+		String sql = "SELECT * FROM Sach WHERE MaSach = ? or TenSach LIKE ?";
+		return select(sql, keyword, "%" + keyword + "%");
 	}
 }

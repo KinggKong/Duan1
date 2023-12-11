@@ -35,11 +35,13 @@ import javax.swing.table.DefaultTableModel;
 import com.thuvien.dao.PhieuMuonChiTietDao;
 import com.thuvien.dao.PhieuMuonDao;
 import com.thuvien.dao.PhieuTraChiTietDao;
+import com.thuvien.dao.PhieuTraDao;
 import com.thuvien.entity.PhieuMuon;
 import com.thuvien.entity.PhieuMuonCT;
 import com.thuvien.entity.PhieuTra;
 import com.thuvien.entity.PhieuTraCT;
 import com.thuvien.utils.DialogHelper;
+import com.thuvien.utils.XDate;
 
 public class PhieuTraChiTietJPanel extends JPanel {
 
@@ -48,21 +50,14 @@ public class PhieuTraChiTietJPanel extends JPanel {
 	DefaultTableModel model;
 	private JButton btnInsert;
 	private JButton btnDelete;
-	private JButton btnUpdate;
-	private JButton btnClear;
-	private JButton btnPrevList;
-	private JButton btnNextList;
 	int indexTrang = 1;
 	int index = 0;
-	private JButton btnFirst;
-	private JButton btnPrevEdit;
-	private JButton btnNextEdit;
-	private JButton btnLast;
-	private JLabel lblIndexTrang;
 	private JComboBox cbxMaPhieuMuon;
 	private JComboBox cbxPhieuMuonChiTiet;
 	private JRadioButton rdoDaTra;
 	private JTextArea txtGhiChu;
+	private JLabel lblNewLabel_2;
+	private JLabel lblThanhVien;
 	Date ngayHienTai = new Date();
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -72,8 +67,7 @@ public class PhieuTraChiTietJPanel extends JPanel {
 	PhieuTraChiTietDao ptctd = new PhieuTraChiTietDao();
 	PhieuMuonDao pmd = new PhieuMuonDao();
 	PhieuMuonChiTietDao pmctd = new PhieuMuonChiTietDao();
-	private JLabel lblNewLabel_2;
-	private JLabel lblThanhVien;
+	PhieuTraDao phieuTraDao = new PhieuTraDao();
 
 	public PhieuTraChiTietJPanel(PhieuTra phieuTra) {
 		setLayout(null);
@@ -99,10 +93,7 @@ public class PhieuTraChiTietJPanel extends JPanel {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				index = table.rowAtPoint(e.getPoint());
-				if (index >= 0) {
-					edit();
-				}
+				btnDelete.setEnabled(true);
 
 			}
 		});
@@ -113,113 +104,6 @@ public class PhieuTraChiTietJPanel extends JPanel {
 		};
 		model = new DefaultTableModel(rows, columns);
 		table.setModel(model);
-
-		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(98, 515, 350, 30);
-		add(pnlButton2);
-		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
-
-		btnFirst = new JButton("First");
-		btnFirst.setEnabled(false);
-		btnFirst.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				index = 0;
-				table.setRowSelectionInterval(index, index);
-				edit();
-			}
-		});
-		pnlButton2.add(btnFirst);
-
-		btnPrevEdit = new JButton("Prev");
-		btnPrevEdit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				index--;
-				table.setRowSelectionInterval(index, index);
-				edit();
-			}
-		});
-		pnlButton2.add(btnPrevEdit);
-
-		btnNextEdit = new JButton("Next");
-		btnNextEdit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				index++;
-				table.setRowSelectionInterval(index, index);
-				edit();
-			}
-		});
-		pnlButton2.add(btnNextEdit);
-
-		btnLast = new JButton("Last");
-		btnLast.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				index = model.getRowCount() - 1;
-				table.setRowSelectionInterval(index, index);
-				edit();
-			}
-		});
-		pnlButton2.add(btnLast);
-
-		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(98, 475, 350, 30);
-		add(pnlButton1);
-		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
-
-		btnInsert = new JButton("Insert");
-		btnInsert.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				insert(phieuTra);
-			}
-		});
-		pnlButton1.add(btnInsert);
-
-		btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				delete();
-			}
-		});
-		pnlButton1.add(btnDelete);
-
-		btnUpdate = new JButton("Update");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				update();
-			}
-		});
-		pnlButton1.add(btnUpdate);
-
-		btnClear = new JButton("Clear");
-		btnClear.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				clear();
-			}
-		});
-		pnlButton1.add(btnClear);
-
-		btnPrevList = new JButton("Prev");
-		btnPrevList.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-			}
-		});
-		btnPrevList.setBounds(737, 487, 85, 21);
-		add(btnPrevList);
-
-		btnNextList = new JButton("Next");
-		btnNextList.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-			}
-		});
-		btnNextList.setBounds(1007, 487, 85, 21);
-		add(btnNextList);
-
-		setStatus(true);
-
-		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(916, 491, 39, 13);
-		add(lblIndexTrang);
 
 		JLabel lblNewLabel_1 = new JLabel("");
 		lblNewLabel_1.addMouseListener(new MouseAdapter() {
@@ -248,7 +132,7 @@ public class PhieuTraChiTietJPanel extends JPanel {
 				PhieuMuon pm = (PhieuMuon) cbxMaPhieuMuon.getSelectedItem();
 				int idPhieuMuon = pm.getId();
 				fillCbxPhieuMuonCT(idPhieuMuon);
-				loadTable(idPhieuMuon);
+				loadTable(phieuTra.getId());
 			}
 		});
 		cbxMaPhieuMuon.setBounds(10, 41, 203, 29);
@@ -300,9 +184,31 @@ public class PhieuTraChiTietJPanel extends JPanel {
 		lblThanhVien.setBounds(186, 82, 283, 21);
 		add(lblThanhVien);
 		lblThanhVien.setText(phieuTra.getIdThanhVien().getTenTV());
+
+		btnInsert = new JButton("Insert");
+		btnInsert.setIcon(new ImageIcon(PhieuTraChiTietJPanel.class.getResource("/icon/Add.png")));
+		btnInsert.setBounds(127, 496, 110, 30);
+		add(btnInsert);
+
+		btnDelete = new JButton("Delete");
+		btnDelete.setEnabled(false);
+		btnDelete.setIcon(new ImageIcon(PhieuTraChiTietJPanel.class.getResource("/icon/Delete.png")));
+		btnDelete.setBounds(305, 496, 110, 30);
+		add(btnDelete);
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				delete(phieuTra);
+			}
+		});
+		btnInsert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				insert(phieuTra);
+			}
+		});
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
+				loadTable(phieuTra.getId());
 				fillCbxPhieuMuon(phieuTra);
 				return null;
 			}
@@ -315,6 +221,16 @@ public class PhieuTraChiTietJPanel extends JPanel {
 		};
 
 		worker.execute();
+	}
+
+	boolean isTraMuon(PhieuTra phieuTra, PhieuMuon phieuMuon) {
+		Date ngayTraThucTe = XDate.toDate(phieuTra.getNgayTraThucTe().toString(), "yyyy-MM-dd");
+		Date ngayPhaiTra = XDate.toDate(phieuMuon.getNgayPhaiTra().toString(), "yyyy-MM-dd");
+		if (ngayTraThucTe.after(ngayPhaiTra)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	private void quayLaiPhieuTra() {
@@ -393,12 +309,12 @@ public class PhieuTraChiTietJPanel extends JPanel {
 		worker.execute();
 	}
 
-	void loadTable(int idPhieuMuon) {
+	void loadTable(int idPhieuTra) {
 		SwingWorker<List<PhieuTraCT>, Void> worker = new SwingWorker<List<PhieuTraCT>, Void>() {
 
 			@Override
 			protected List<PhieuTraCT> doInBackground() throws Exception {
-				return ptctd.selectAllTheoIDPhieuMuon(idPhieuMuon);
+				return ptctd.selectAllTheoPhieuTra(idPhieuTra);
 			}
 
 			@Override
@@ -407,9 +323,9 @@ public class PhieuTraChiTietJPanel extends JPanel {
 					List<PhieuTraCT> listPMCT = get();
 					model.setRowCount(0);
 					for (PhieuTraCT ptct : listPMCT) {
-						Object[] row = { ptct.getId(), ptct.getIdPhieuTra().getIdThanhVien().getTenTV(),
+						Object[] row = { ptct.getId(), ptct.getIdPhieuTra().getMaPT(),
 								ptct.getIdPhieuMuonCT().getIdQuyenSach().getTenQS(),
-								ptct.isTinhTrangSach() ? "Đã Trả" : "Chưa Trả", ptct.getGhiChu() };
+								ptct.isTinhTrangSach() ? "Đúng Hạn" : "Quá Hạn", ptct.getGhiChu() };
 						model.addRow(row);
 					}
 				} catch (InterruptedException e) {
@@ -424,7 +340,6 @@ public class PhieuTraChiTietJPanel extends JPanel {
 
 		};
 		worker.execute();
-		fillCbxPhieuMuonCT(idPhieuMuon);
 	}
 
 	void insert(PhieuTra phieuTra) {
@@ -432,8 +347,14 @@ public class PhieuTraChiTietJPanel extends JPanel {
 			PhieuTraCT ptct = getForm(phieuTra);
 			if (ptct != null) {
 				ptctd.insert(ptct);
+				int soLuotTraMuon = ptctd.soLuongTraMuonTheoPhieuTra(phieuTra.getId());
+				float tienPhat = (float) (soLuotTraMuon * 50000);
+				phieuTra.setTienPhat(tienPhat);
+				phieuTraDao.update(phieuTra);
+				loadTable(phieuTra.getId());
 				PhieuMuon phieuMuon = (PhieuMuon) cbxMaPhieuMuon.getSelectedItem();
-				loadTable(phieuMuon.getId());
+				fillCbxPhieuMuonCT(phieuMuon.getId());
+				fillCbxPhieuMuon(phieuTra);
 				clear();
 				DialogHelper.alert(this, "Insert Successful");
 			}
@@ -443,13 +364,15 @@ public class PhieuTraChiTietJPanel extends JPanel {
 		}
 	}
 
-	void delete() {
+	void delete(PhieuTra phieuTra) {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
 				int idPhieuMuonCT = (int) table.getValueAt(this.index, 0);
-				pmctd.delete(idPhieuMuonCT);
+				ptctd.delete(idPhieuMuonCT);
+				loadTable(phieuTra.getId());
 				PhieuMuon phieuMuon = (PhieuMuon) cbxMaPhieuMuon.getSelectedItem();
-				loadTable(phieuMuon.getId());
+				fillCbxPhieuMuon(phieuTra);
+				fillCbxPhieuMuonCT(phieuMuon.getId());
 				clear();
 				DialogHelper.alert(this, "Delete Successful");
 			}
@@ -458,16 +381,7 @@ public class PhieuTraChiTietJPanel extends JPanel {
 		}
 	}
 
-	void update() {
-
-	}
-
 	void clear() {
-
-		setStatus(true);
-	}
-
-	void setForm(PhieuTra pt) {
 
 	}
 
@@ -476,24 +390,14 @@ public class PhieuTraChiTietJPanel extends JPanel {
 		ptct.setIdPhieuTra(phieutra);
 		PhieuMuonCT pmct = (PhieuMuonCT) cbxPhieuMuonChiTiet.getSelectedItem();
 		ptct.setIdPhieuMuonCT(pmct);
-		ptct.setTinhTrangSach(rdoDaTra.isSelected() == true ? true : false);
+		PhieuMuon phieuMuon = (PhieuMuon) cbxMaPhieuMuon.getSelectedItem();
+		if (isTraMuon(phieutra, phieuMuon)) {
+			ptct.setTinhTrangSach(false);
+		} else {
+			ptct.setTinhTrangSach(true);
+		}
 		ptct.setGhiChu(txtGhiChu.getText());
 		return ptct;
 	}
 
-	void edit() {
-
-	}
-
-	void setStatus(boolean insertable) {
-		btnInsert.setEnabled(insertable);
-		btnUpdate.setEnabled(!insertable);
-		btnDelete.setEnabled(!insertable);
-		boolean first = this.index > 0;
-		boolean last = this.index < model.getRowCount() - 1;
-		btnFirst.setEnabled(!insertable && first);
-		btnPrevEdit.setEnabled(!insertable && first);
-		btnNextEdit.setEnabled(!insertable && last);
-		btnLast.setEnabled(!insertable && last);
-	}
 }

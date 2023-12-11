@@ -11,7 +11,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -42,6 +44,7 @@ import com.thuvien.entity.ThanhVien;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.ShareHelper;
 import com.thuvien.utils.XDate;
+import javax.swing.ImageIcon;
 
 public class PhieuMuonJPanel extends JPanel {
 
@@ -79,6 +82,8 @@ public class PhieuMuonJPanel extends JPanel {
 	Date ngayHienTai = new Date();
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+	String regexMaPhieuMuon = "^PM\\d{3}$";
+
 	PhieuMuonDao pmd = new PhieuMuonDao();
 
 	public PhieuMuonJPanel() {
@@ -90,6 +95,7 @@ public class PhieuMuonJPanel extends JPanel {
 		add(lblTitle);
 
 		btnXemChiTiet = new JButton("Xem Chi Tiết");
+		btnXemChiTiet.setIcon(new ImageIcon(PhieuMuonJPanel.class.getResource("/icon/ShowDetail.png")));
 
 		JPanel pnlThongTinTG = new JPanel();
 		pnlThongTinTG.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -173,7 +179,7 @@ public class PhieuMuonJPanel extends JPanel {
 		pnlDanhSach.add(lblTimKiem);
 
 		txtTimKiem = new JTextField();
-		txtTimKiem.setText("Nhập vào tên hoặc mã phiếu mượn");
+		txtTimKiem.setText("Nhập vào mã hoặc tên của thành viên");
 		txtTimKiem.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -189,17 +195,22 @@ public class PhieuMuonJPanel extends JPanel {
 				}
 			}
 		});
-		txtTimKiem.setBounds(85, 17, 514, 19);
+		txtTimKiem.setBounds(85, 17, 489, 24);
 		pnlDanhSach.add(txtTimKiem);
 		txtTimKiem.setColumns(10);
 
 		JButton btnTimKiem = new JButton("Tìm Kiếm");
+		btnTimKiem.setIcon(new ImageIcon(PhieuMuonJPanel.class.getResource("/icon/Search.png")));
 		btnTimKiem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				search();
+				if (txtTimKiem.getText().equals(" ")) {
+					load(indexTrang);
+				} else {
+					search(txtTimKiem.getText().trim());
+				}
 			}
 		});
-		btnTimKiem.setBounds(609, 16, 97, 21);
+		btnTimKiem.setBounds(584, 16, 117, 30);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -227,7 +238,7 @@ public class PhieuMuonJPanel extends JPanel {
 		table.setModel(model);
 
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(105, 487, 350, 30);
+		pnlButton2.setBounds(785, 518, 371, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -272,44 +283,8 @@ public class PhieuMuonJPanel extends JPanel {
 		});
 		pnlButton2.add(btnLast);
 
-		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(105, 425, 350, 30);
-		add(pnlButton1);
-		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
-
-		btnInsert = new JButton("Insert");
-		btnInsert.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				insert();
-			}
-		});
-		pnlButton1.add(btnInsert);
-
-		btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				delete();
-			}
-		});
-		pnlButton1.add(btnDelete);
-
-		btnUpdate = new JButton("Update");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				update();
-			}
-		});
-		pnlButton1.add(btnUpdate);
-
-		btnClear = new JButton("Clear");
-		btnClear.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				clear();
-			}
-		});
-		pnlButton1.add(btnClear);
-
 		btnPrevList = new JButton("Prev");
+		btnPrevList.setIcon(new ImageIcon(PhieuMuonJPanel.class.getResource("/icon/Left.png")));
 		btnPrevList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang--;
@@ -322,15 +297,16 @@ public class PhieuMuonJPanel extends JPanel {
 				}
 			}
 		});
-		btnPrevList.setBounds(785, 487, 85, 21);
+		btnPrevList.setBounds(785, 478, 110, 30);
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
+		btnNextList.setIcon(new ImageIcon(PhieuMuonJPanel.class.getResource("/icon/Right.png")));
 		btnNextList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang++;
 
-				if (indexTrang > (Math.ceil(pmd.selectAll().size() * 1.0 / 5))) {
+				if (indexTrang > (Math.ceil(pmd.selectAll().size() * 1.0 / 15))) {
 					DialogHelper.alert(null, "Đây là trang cuối cùng !");
 					indexTrang--;
 				} else {
@@ -340,13 +316,11 @@ public class PhieuMuonJPanel extends JPanel {
 				}
 			}
 		});
-		btnNextList.setBounds(1048, 487, 85, 21);
+		btnNextList.setBounds(1046, 478, 110, 30);
 		add(btnNextList);
 
-		setStatus(true);
-
 		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(958, 491, 39, 13);
+		lblIndexTrang.setBounds(977, 487, 39, 13);
 		add(lblIndexTrang);
 
 		btnXemChiTiet.setEnabled(false);
@@ -372,8 +346,49 @@ public class PhieuMuonJPanel extends JPanel {
 
 			}
 		});
-		btnXemChiTiet.setBounds(597, 487, 145, 21);
+		btnXemChiTiet.setBounds(597, 487, 145, 30);
 		add(btnXemChiTiet);
+
+		btnInsert = new JButton("Insert");
+		btnInsert.setIcon(new ImageIcon(PhieuMuonJPanel.class.getResource("/icon/Create.png")));
+		btnInsert.setBounds(108, 430, 131, 37);
+		add(btnInsert);
+
+		btnClear = new JButton("Clear");
+		btnClear.setIcon(new ImageIcon(PhieuMuonJPanel.class.getResource("/icon/Trash.png")));
+		btnClear.setBounds(310, 430, 131, 37);
+		add(btnClear);
+
+		btnUpdate = new JButton("Update");
+		btnUpdate.setIcon(new ImageIcon(PhieuMuonJPanel.class.getResource("/icon/Upload.png")));
+		btnUpdate.setBounds(310, 497, 131, 37);
+		add(btnUpdate);
+
+		btnDelete = new JButton("Delete");
+		btnDelete.setIcon(new ImageIcon(PhieuMuonJPanel.class.getResource("/icon/delete2.png")));
+		btnDelete.setBounds(108, 497, 131, 37);
+		add(btnDelete);
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				delete();
+			}
+		});
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				update();
+			}
+		});
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clear();
+			}
+		});
+		btnInsert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				insert();
+			}
+		});
+		setStatus(true);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -426,18 +441,19 @@ public class PhieuMuonJPanel extends JPanel {
 
 			@Override
 			protected List<PhieuMuon> doInBackground() throws Exception {
-				return pmd.loadTrang((soTrang - 1) * 5, 5);
+				return pmd.loadTrang((soTrang - 1) * 15, 15);
 			}
 
 			@Override
 			protected void done() {
-				NumberFormat format=NumberFormat.getCurrencyInstance(new Locale("vi","VN"));
+				NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 				try {
 					List<PhieuMuon> list = get();
 					model.setRowCount(0);
 					for (PhieuMuon pm : list) {
 						Object[] row = { pm.getId(), pm.getMaPhieuMuon(), pm.getIdThanhVien().getTenTV(),
-								pm.getIdNhanVien().getTenNV(), pm.getNgayMuon(), pm.getNgayPhaiTra(), format.format(pm.getTienCoc()) };
+								pm.getIdNhanVien().getTenNV(), pm.getNgayMuon(), pm.getNgayPhaiTra(),
+								format.format(pm.getTienCoc()) };
 						model.addRow(row);
 					}
 				} catch (InterruptedException e) {
@@ -456,10 +472,15 @@ public class PhieuMuonJPanel extends JPanel {
 		try {
 			PhieuMuon pm = getForm();
 			if (pm != null) {
-				pmd.insert(pm);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Insert Successful");
+				if (pmd.selectById2(pm.getMaPhieuMuon()) == null) {
+
+					pmd.insert(pm);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Insert Successful");
+				} else {
+					DialogHelper.alert(this, "Mã phiếu mượn đã tồn tại");
+				}
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Insert Failed");
@@ -505,6 +526,8 @@ public class PhieuMuonJPanel extends JPanel {
 		cbxThanhVien.setSelectedIndex(0);
 		txtNgayMuon.setText(dateFormat.format(ngayHienTai));
 		setStatus(true);
+		table.clearSelection();
+		txtTimKiem.setText("Nhập vào mã hoặc tên của thành viên");
 	}
 
 	void setForm(PhieuMuon pm) {
@@ -532,24 +555,82 @@ public class PhieuMuonJPanel extends JPanel {
 			DialogHelper.alert(null, "Không để trống mã phiếu");
 			return null;
 		} else {
-			pm.setMaPhieuMuon(txtMaPhieu.getText());
+			if (txtMaPhieu.getText().matches(regexMaPhieuMuon)) {
+				pm.setMaPhieuMuon(txtMaPhieu.getText());
+			} else {
+				DialogHelper.alert(this, "Nhập đúng định dạng mã phiếu mượn ");
+				return null;
+			}
+
+		}
+		if (txtNgayMuon.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống ngày mượn");
+			return null;
+		} else {
+			if (isValidDateFormat(txtNgayMuon.getText())) {
+				pm.setNgayMuon(XDate.toDate(txtNgayMuon.getText(), "yyyy-MM-dd"));
+			} else {
+				DialogHelper.alert(this, "Nhập đúng định dạng ngày mượn (yyyy-MM-dd)");
+				return null;
+			}
 		}
 
-		pm.setNgayMuon(XDate.toDate(txtNgayMuon.getText(), "yyyy-MM-dd"));
-		pm.setNgayPhaiTra(XDate.toDate(txtNgayTra.getText(), "yyyy-MM-dd"));
+		if (txtNgayTra.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống ngày phải trả");
+			return null;
+		} else {
+			if (isValidDateFormat(txtNgayTra.getText())) {
+				pm.setNgayPhaiTra(XDate.toDate(txtNgayTra.getText(), "yyyy-MM-dd"));
+			} else {
+				DialogHelper.alert(this, "Nhập đúng định dạng ngày trả (yyyy-MM-dd)");
+				return null;
+			}
+		}
+
 		if (txtTienCoc.getText().isEmpty()) {
 			DialogHelper.alert(null, "Không để trống tiền cọc");
 			return null;
 		} else {
 			try {
 				float tienCoc = Float.valueOf(txtTienCoc.getText());
-				pm.setTienCoc(tienCoc);
+				if (tienCoc < 0) {
+					DialogHelper.alert(this, "Tiền cọc không được bé hơn 0 ");
+					return null;
+				} else {
+					pm.setTienCoc(tienCoc);
+				}
 			} catch (Exception e) {
-				DialogHelper.alert(null, "Chỉ nhập số");
-				e.printStackTrace();
+				DialogHelper.alert(null, "Chỉ nhập số cho tiền cọc");
+				return null;
 			}
 		}
 		return pm;
+	}
+
+	private boolean isValidDateFormat(String inputDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		sdf.setLenient(false); // Disable lenient mode
+		try {
+			Date parsedDate = sdf.parse(inputDate);
+			if (parsedDate != null) {
+				// Check the components of the parsed date
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(parsedDate);
+
+				int year = cal.get(Calendar.YEAR);
+				int month = cal.get(Calendar.MONTH) + 1; // Month is 0-based
+				int day = cal.get(Calendar.DAY_OF_MONTH);
+
+				// Additional checks for valid year, month, and day
+				if (year >= 1000 && year <= 9999 && month >= 1 && month <= 12 && day >= 1
+						&& day <= cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+					return true;
+				}
+			}
+			return false;
+		} catch (ParseException e) {
+			return false; // Parsing failed, date is not in the correct format
+		}
 	}
 
 	void edit() {
@@ -576,8 +657,43 @@ public class PhieuMuonJPanel extends JPanel {
 		btnNextEdit.setEnabled(!insertable && last);
 		btnLast.setEnabled(!insertable && last);
 		btnXemChiTiet.setEnabled(!insertable);
+		txtMaPhieu.setEditable(insertable);
 	}
 
-	void search() {
+	void search(String key) {
+		SwingWorker<List<PhieuMuon>, Void> worker = new SwingWorker<List<PhieuMuon>, Void>() {
+
+			@Override
+			protected List<PhieuMuon> doInBackground() throws Exception {
+				return pmd.selectByKeyword(key);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+					List<PhieuMuon> listPM = get();
+					if (listPM.isEmpty()) {
+						DialogHelper.alert(PhieuMuonJPanel.this, "Không tồn tại");
+					} else {
+						model.setRowCount(0);
+						for (PhieuMuon pm : listPM) {
+							Object[] row = { pm.getId(), pm.getMaPhieuMuon(), pm.getIdThanhVien().getTenTV(),
+									pm.getIdNhanVien().getTenNV(), pm.getNgayMuon(), pm.getNgayPhaiTra(),
+									format.format(pm.getTienCoc()) };
+							model.addRow(row);
+						}
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		};
+		worker.execute();
 	}
 }

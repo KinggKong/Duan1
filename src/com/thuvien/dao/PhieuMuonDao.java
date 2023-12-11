@@ -59,7 +59,9 @@ public class PhieuMuonDao extends QLTVDao<PhieuMuon, Integer> {
 	}
 
 	public List<PhieuMuon> selectTheoThanhVien(int key) {
-		String sql = "select * from PhieuMuon where IDThanhVien =?";
+//		String sql = "select * from PhieuMuon where IDThanhVien =?";
+		String sql = "select * from PhieuMuon PM\r\n"
+				+ "inner join PhieuMuonCT PMCT on PMCT.IDPhieuMuon = PM.ID and  PMCT.ID not  in (select IDPhieuMuonCT from PhieuTraCT) and PM.IDThanhVien = ?";
 		return select(sql, key);
 	}
 
@@ -106,9 +108,10 @@ public class PhieuMuonDao extends QLTVDao<PhieuMuon, Integer> {
 		return list;
 	}
 
-//	public List<PhieuMuon> selectByKeyword(String keyword) {
-//		String sql = "SELECT * FROM ViTri WHERE Id LIKE ? or daySo LIKE ?";
-//		return select(sql, "%" + keyword + "%", "%" + keyword + "%");
-//	}
+	public List<PhieuMuon> selectByKeyword(String keyword) {
+		String sql = "select PM.* from PhieuMuon PM\r\n"
+				+ "inner join ThanhVien TV on TV.ID = PM.IDThanhVien where TV.MaTV = ? or TV.TenTV like ?";
+		return select(sql, keyword, "%" + keyword + "%");
+	}
 
 }

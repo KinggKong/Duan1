@@ -43,6 +43,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 //import org.jfree.data.general.PieDataset;
 
 import com.thuvien.dao.ThongKeDao;
+import javax.swing.ImageIcon;
 
 public class ThongKeDoanhThuJPanel extends JPanel {
 	DefaultComboBoxModel<Integer> modelCbxYear = new DefaultComboBoxModel<>();
@@ -65,6 +66,7 @@ public class ThongKeDoanhThuJPanel extends JPanel {
 		yearComboBox.setModel(modelCbxYear);
 
 		JButton updateButton = new JButton("Refresh");
+		updateButton.setIcon(new ImageIcon(ThongKeDoanhThuJPanel.class.getResource("/icon/Refresh.png")));
 		updateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				updateChart();
@@ -81,6 +83,7 @@ public class ThongKeDoanhThuJPanel extends JPanel {
 		add(comboBoxPanel, BorderLayout.NORTH);
 
 		JButton btnXuatPDF = new JButton("Xuất PDF");
+		btnXuatPDF.setIcon(new ImageIcon(ThongKeDoanhThuJPanel.class.getResource("/icon/ExportFile.png")));
 		btnXuatPDF.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportToPDF();

@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -54,6 +55,7 @@ import com.thuvien.dao.ThanhVienDao;
 import com.thuvien.entity.ThanhVien;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.XDate;
+import javax.swing.ImageIcon;
 
 public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 
@@ -123,6 +125,22 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		pnlThongTinTG.add(lblMaThanhVien);
 
 		txtMaTV = new JTextField();
+		txtMaTV.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (txtMaTV.getText().equals("VD: TV001...")) {
+					txtMaTV.setText("");
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (txtMaTV.getText().isEmpty()) {
+					txtMaTV.setText("VD: TV001...");
+				}
+			}
+		});
+		txtMaTV.setText("VD: TV001...");
 		txtMaTV.setColumns(10);
 		txtMaTV.setBounds(10, 38, 198, 19);
 		pnlThongTinTG.add(txtMaTV);
@@ -217,11 +235,11 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		pnlDanhSach.add(lblTimKiem);
 
 		txtTimKiem = new JTextField();
-		txtTimKiem.setText("Nhập vào mã hoặc tên của thành viên");
+		txtTimKiem.setText("Nhập vào mã hoặc tên,SDT,CCCD của thành viên");
 		txtTimKiem.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				if (txtTimKiem.getText().equals("Nhập vào mã hoặc tên của thành viên")) {
+				if (txtTimKiem.getText().equals("Nhập vào mã hoặc tên,SDT,CCCD của thành viên")) {
 					txtTimKiem.setText("");
 				}
 			}
@@ -229,21 +247,27 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 			@Override
 			public void focusLost(FocusEvent e) {
 				if (txtTimKiem.getText().isEmpty()) {
-					txtTimKiem.setText("Nhập vào mã hoặc tên của thành viên");
+					txtTimKiem.setText("Nhập vào mã hoặc tên,SDT,CCCD của thành viên");
 				}
 			}
 		});
-		txtTimKiem.setBounds(85, 17, 514, 19);
+		txtTimKiem.setBounds(85, 17, 514, 27);
 		pnlDanhSach.add(txtTimKiem);
 		txtTimKiem.setColumns(10);
 
 		JButton btnTimKiem = new JButton("Tìm Kiếm");
+		btnTimKiem.setIcon(new ImageIcon(ThanhVienJPanel.class.getResource("/icon/Search.png")));
 		btnTimKiem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				search();
+				if (txtTimKiem.getText().equals(" ")) {
+					load(indexTrang);
+				} else {
+					search(txtTimKiem.getText());
+				}
+
 			}
 		});
-		btnTimKiem.setBounds(609, 16, 97, 21);
+		btnTimKiem.setBounds(609, 16, 128, 28);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -312,44 +336,8 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		});
 		pnlButton2.add(btnLast);
 
-		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(95, 521, 350, 30);
-		add(pnlButton1);
-		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
-
-		btnInsert = new JButton("Insert");
-		btnInsert.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				insert();
-			}
-		});
-		pnlButton1.add(btnInsert);
-
-		btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				delete();
-			}
-		});
-		pnlButton1.add(btnDelete);
-
-		btnUpdate = new JButton("Update");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				update();
-			}
-		});
-		pnlButton1.add(btnUpdate);
-
-		btnClear = new JButton("Clear");
-		btnClear.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				clear();
-			}
-		});
-		pnlButton1.add(btnClear);
-
 		btnPrevList = new JButton("Prev");
+		btnPrevList.setIcon(new ImageIcon(ThanhVienJPanel.class.getResource("/icon/Left.png")));
 		btnPrevList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang--;
@@ -362,15 +350,16 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 				}
 			}
 		});
-		btnPrevList.setBounds(785, 487, 85, 21);
+		btnPrevList.setBounds(783, 478, 103, 30);
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
+		btnNextList.setIcon(new ImageIcon(ThanhVienJPanel.class.getResource("/icon/Right.png")));
 		btnNextList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang++;
 
-				if (indexTrang > (Math.ceil(tvd.selectAll().size() * 1.0 / 5))) {
+				if (indexTrang > (Math.ceil(tvd.selectAll().size() * 1.0 / 15))) {
 					DialogHelper.alert(null, "Đây là trang cuối cùng !");
 					indexTrang--;
 				} else {
@@ -380,13 +369,11 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 				}
 			}
 		});
-		btnNextList.setBounds(1048, 487, 85, 21);
+		btnNextList.setBounds(1030, 478, 103, 30);
 		add(btnNextList);
 
-		setStatus(true);
-
 		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(951, 492, 39, 13);
+		lblIndexTrang.setBounds(951, 487, 39, 13);
 		add(lblIndexTrang);
 
 		panel2 = new JPanel();
@@ -395,15 +382,17 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		panel2.setLayout(null);
 
 		JButton btnQuetQR = new JButton("Quét");
+		btnQuetQR.setIcon(new ImageIcon(ThanhVienJPanel.class.getResource("/icon/ScanQR.png")));
 		btnQuetQR.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				initWebCam();
 			}
 		});
-		btnQuetQR.setBounds(565, 530, 85, 21);
+		btnQuetQR.setBounds(576, 473, 100, 30);
 		add(btnQuetQR);
 
 		btnTat = new JButton("Tắt");
+		btnTat.setIcon(new ImageIcon(ThanhVienJPanel.class.getResource("/icon/Off.png")));
 		btnTat.setEnabled(false);
 		btnTat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -413,8 +402,49 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 
 			}
 		});
-		btnTat.setBounds(660, 530, 85, 21);
+		btnTat.setBounds(576, 521, 100, 30);
 		add(btnTat);
+
+		btnClear = new JButton("Clear");
+		btnClear.setIcon(new ImageIcon(ThanhVienJPanel.class.getResource("/icon/Trash.png")));
+		btnClear.setBounds(388, 525, 103, 30);
+		add(btnClear);
+
+		btnUpdate = new JButton("Update");
+		btnUpdate.setIcon(new ImageIcon(ThanhVienJPanel.class.getResource("/icon/Upload.png")));
+		btnUpdate.setBounds(275, 525, 103, 30);
+		add(btnUpdate);
+
+		btnDelete = new JButton("Delete");
+		btnDelete.setIcon(new ImageIcon(ThanhVienJPanel.class.getResource("/icon/delete2.png")));
+		btnDelete.setBounds(162, 525, 103, 30);
+		add(btnDelete);
+
+		btnInsert = new JButton("Insert");
+		btnInsert.setIcon(new ImageIcon(ThanhVienJPanel.class.getResource("/icon/Create.png")));
+		btnInsert.setBounds(42, 525, 110, 30);
+		add(btnInsert);
+		btnInsert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				insert();
+			}
+		});
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				delete();
+			}
+		});
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				update();
+			}
+		});
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clear();
+			}
+		});
+		setStatus(true);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -437,7 +467,7 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		SwingWorker<List<ThanhVien>, Void> worker = new SwingWorker<List<ThanhVien>, Void>() {
 			@Override
 			protected List<ThanhVien> doInBackground() throws Exception {
-				return tvd.loadTrang((soTrang - 1) * 5, 5);
+				return tvd.loadTrang((soTrang - 1) * 15, 15);
 			}
 
 			@Override
@@ -507,7 +537,7 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 	}
 
 	void clear() {
-		txtMaTV.setText("");
+		txtMaTV.setText("VD: TV001...");
 		txtHoTen.setText("");
 		txtSDT.setText("");
 		txtDiaChi.setText("");
@@ -517,6 +547,7 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		txtNgaySinh.setText("");
 		setStatus(true);
 		table.clearSelection();
+		txtTimKiem.setText("Nhập vào mã hoặc tên,SDT,CCCD của thành viên");
 	}
 
 	void setForm(ThanhVien tv) {
@@ -694,6 +725,7 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 	}
 
 	void setStatus(boolean insertable) {
+		txtMaTV.setEnabled(insertable);
 		btnInsert.setEnabled(insertable);
 		btnUpdate.setEnabled(!insertable);
 		btnDelete.setEnabled(!insertable);
@@ -705,8 +737,38 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		btnLast.setEnabled(!insertable && last);
 	}
 
-	void search() {
+	void search(String keySearch) {
+		SwingWorker<List<ThanhVien>, Void> worker = new SwingWorker<List<ThanhVien>, Void>() {
 
+			@Override
+			protected List<ThanhVien> doInBackground() throws Exception {
+				return tvd.selectByKeyword(keySearch);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<ThanhVien> listThanhVien = get();
+					if (listThanhVien.isEmpty()) {
+						DialogHelper.alert(ThanhVienJPanel.this, "Không tồn tại");
+					} else {
+						model.setRowCount(0);
+						for (ThanhVien tv : listThanhVien) {
+							Object[] row = { tv.getMaTV(), tv.getTenTV(), tv.getSDT(), tv.getDiaChi(), tv.getEmail(),
+									tv.getCCCD(), tv.getNgayDK(), tv.getNgaySinh() };
+							model.addRow(row);
+						}
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		worker.execute();
 	}
 
 	public void initWebCam() {

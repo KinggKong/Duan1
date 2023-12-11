@@ -174,50 +174,8 @@ public class QuyenSachJPanel extends JPanel {
 		panel.add(cbxTaiBan);
 		cbxTaiBan.setModel(modelTaiBan);
 
-		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(97, 436, 350, 30);
-		add(pnlButton1);
-		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
-
-		btnInsert = new JButton("Insert");
-		btnInsert.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				insert();
-			}
-		});
-		btnInsert.setEnabled(true);
-		pnlButton1.add(btnInsert);
-
-		btnDelete = new JButton("Delete");
-		btnDelete.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Delete.png")));
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				delete();
-			}
-		});
-		btnDelete.setEnabled(false);
-		pnlButton1.add(btnDelete);
-		btnDelete.setRolloverIcon(new ImageIcon("src/icon/delete2.png"));
-
-		btnUpdate = new JButton("Update");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				update();
-			}
-		});
-		btnUpdate.setEnabled(false);
-		pnlButton1.add(btnUpdate);
-
-		btnClear = new JButton("Clear");
-		btnClear.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				clear();
-			}
-		});
-		pnlButton1.add(btnClear);
-
 		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(97, 476, 350, 30);
+		pnlButton2.setBounds(775, 520, 363, 30);
 		add(pnlButton2);
 		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
 
@@ -297,10 +255,11 @@ public class QuyenSachJPanel extends JPanel {
 			}
 		});
 		txtTimKiem.setColumns(10);
-		txtTimKiem.setBounds(85, 17, 238, 19);
+		txtTimKiem.setBounds(85, 17, 509, 25);
 		pnlDanhSach.add(txtTimKiem);
 
 		btnTimKiem = new JButton("Tìm Kiếm");
+		btnTimKiem.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Zoom.png")));
 		btnTimKiem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (txtTimKiem.getText().isEmpty()) {
@@ -317,7 +276,7 @@ public class QuyenSachJPanel extends JPanel {
 				}
 			}
 		});
-		btnTimKiem.setBounds(345, 16, 97, 21);
+		btnTimKiem.setBounds(612, 16, 122, 26);
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -343,6 +302,7 @@ public class QuyenSachJPanel extends JPanel {
 		table.setModel(model);
 
 		btnPrevList = new JButton("Prev");
+		btnPrevList.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Left.png")));
 		btnPrevList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang--;
@@ -356,10 +316,15 @@ public class QuyenSachJPanel extends JPanel {
 
 			}
 		});
-		btnPrevList.setBounds(775, 489, 85, 21);
+		btnPrevList.setBounds(775, 480, 98, 30);
 		add(btnPrevList);
 
 		btnNextList = new JButton("Next");
+		btnNextList.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Right.png")));
+		btnNextList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnNextList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -367,30 +332,76 @@ public class QuyenSachJPanel extends JPanel {
 			}
 		});
 
-		btnNextList.setBounds(1032, 489, 85, 21);
+		btnNextList.setBounds(1040, 480, 98, 30);
 		add(btnNextList);
 
 		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(941, 493, 39, 13);
+		lblIndexTrang.setBounds(958, 489, 39, 13);
 		add(lblIndexTrang);
 
 		JButton btnImport = new JButton("Import");
+		btnImport.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Import.png")));
 		btnImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				importExcel();
 			}
 		});
-		btnImport.setBounds(549, 485, 85, 21);
+		btnImport.setBounds(549, 476, 114, 30);
 		add(btnImport);
 
 		JButton btnExport = new JButton("Export");
+		btnExport.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Export.png")));
 		btnExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportExcel();
 			}
 		});
-		btnExport.setBounds(652, 485, 85, 21);
+		btnExport.setBounds(549, 520, 114, 30);
 		add(btnExport);
+
+		btnInsert = new JButton("Insert");
+		btnInsert.setBounds(110, 455, 124, 37);
+		add(btnInsert);
+		btnInsert.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Add.png")));
+		btnInsert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				insert();
+			}
+		});
+		btnInsert.setEnabled(true);
+
+		btnDelete = new JButton("Delete");
+		btnDelete.setBounds(285, 513, 124, 37);
+		add(btnDelete);
+		btnDelete.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Delete.png")));
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				delete();
+			}
+		});
+		btnDelete.setEnabled(false);
+		btnDelete.setRolloverIcon(new ImageIcon("src/icon/delete2.png"));
+
+		btnClear = new JButton("Clear");
+		btnClear.setBounds(285, 455, 124, 37);
+		add(btnClear);
+		btnClear.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Trash.png")));
+
+		btnUpdate = new JButton("Update");
+		btnUpdate.setBounds(110, 513, 124, 37);
+		add(btnUpdate);
+		btnUpdate.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Upload.png")));
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				update();
+			}
+		});
+		btnUpdate.setEnabled(false);
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clear();
+			}
+		});
 		SwingWorker<Void, Void> wk = new SwingWorker<Void, Void>() {
 
 			@Override
@@ -572,6 +583,8 @@ public class QuyenSachJPanel extends JPanel {
 		txtMaQS.setText("");
 		cbxTinhTrang.setSelectedIndex(0);
 		setStatus(true);
+		txtTimKiem.setText("Nhập vào mã quyển sách để tìm vị trí");
+		table.clearSelection();
 	}
 
 	void setForm(QuyenSach qs) {

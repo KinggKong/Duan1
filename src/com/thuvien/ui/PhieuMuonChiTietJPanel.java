@@ -1,4 +1,4 @@
-package com.thuvien.ui;
+       package com.thuvien.ui;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -48,19 +48,9 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTable table;
 	DefaultTableModel model;
-	private JButton btnInsert;
 	private JButton btnDelete;
-	private JButton btnUpdate;
-	private JButton btnClear;
-	private JButton btnPrevList;
-	private JButton btnNextList;
 	int indexTrang = 1;
 	int index = 0;
-	private JButton btnFirst;
-	private JButton btnPrevEdit;
-	private JButton btnNextEdit;
-	private JButton btnLast;
-	private JLabel lblIndexTrang;
 	private JTextField txtTimSach;
 	private JList jListSach;
 	Date ngayHienTai = new Date();
@@ -102,11 +92,7 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				index = table.rowAtPoint(e.getPoint());
-				if (index >= 0) {
-					edit();
-				}
-
+				btnDelete.setEnabled(true);
 			}
 		});
 		scrollPane.setViewportView(table);
@@ -116,114 +102,6 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		};
 		model = new DefaultTableModel(rows, columns);
 		table.setModel(model);
-
-		JPanel pnlButton2 = new JPanel();
-		pnlButton2.setBounds(98, 521, 350, 30);
-		add(pnlButton2);
-		pnlButton2.setLayout(new GridLayout(1, 4, 10, 0));
-
-		btnFirst = new JButton("First");
-		btnFirst.setEnabled(false);
-		btnFirst.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				index = 0;
-				table.setRowSelectionInterval(index, index);
-				edit();
-			}
-		});
-		pnlButton2.add(btnFirst);
-
-		btnPrevEdit = new JButton("Prev");
-		btnPrevEdit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				index--;
-				table.setRowSelectionInterval(index, index);
-				edit();
-			}
-		});
-		pnlButton2.add(btnPrevEdit);
-
-		btnNextEdit = new JButton("Next");
-		btnNextEdit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				index++;
-				table.setRowSelectionInterval(index, index);
-				edit();
-			}
-		});
-		pnlButton2.add(btnNextEdit);
-
-		btnLast = new JButton("Last");
-		btnLast.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				index = model.getRowCount() - 1;
-				table.setRowSelectionInterval(index, index);
-				edit();
-			}
-		});
-		pnlButton2.add(btnLast);
-
-		JPanel pnlButton1 = new JPanel();
-		pnlButton1.setBounds(98, 481, 350, 30);
-		add(pnlButton1);
-		pnlButton1.setLayout(new GridLayout(1, 4, 10, 0));
-
-		btnInsert = new JButton("Insert");
-		btnInsert.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-			}
-		});
-		pnlButton1.add(btnInsert);
-
-		btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				delete();
-			}
-		});
-		pnlButton1.add(btnDelete);
-
-		btnUpdate = new JButton("Update");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				update();
-			}
-		});
-		pnlButton1.add(btnUpdate);
-
-		btnClear = new JButton("Clear");
-		btnClear.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				clear();
-			}
-		});
-		pnlButton1.add(btnClear);
-
-		btnPrevList = new JButton("Prev");
-		btnPrevList.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-			}
-		});
-		btnPrevList.setBounds(737, 487, 85, 21);
-		add(btnPrevList);
-
-		btnNextList = new JButton("Next");
-		btnNextList.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-			}
-		});
-		btnNextList.setBounds(1007, 487, 85, 21);
-		add(btnNextList);
-
-		setStatus(true);
-
-		lblIndexTrang = new JLabel("1");
-		lblIndexTrang.setBounds(916, 491, 39, 13);
-		add(lblIndexTrang);
-
 		JPanel panel = new JPanel();
 		panel.setBounds(32, 113, 477, 352);
 		add(panel);
@@ -320,6 +198,17 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		lblThanhVien.setBounds(206, 82, 269, 21);
 		lblThanhVien.setText(phieuMuon.getIdThanhVien().getTenTV());
 		add(lblThanhVien);
+
+		btnDelete = new JButton("Delete");
+		btnDelete.setEnabled(false);
+		btnDelete.setIcon(new ImageIcon(PhieuMuonChiTietJPanel.class.getResource("/icon/Delete.png")));
+		btnDelete.setBounds(206, 506, 110, 30);
+		add(btnDelete);
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				delete(phieuMuon);
+			}
+		});
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -425,13 +314,18 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 					"Bạn có chắc chắn muốn thêm " + qs.getTenQS() + " vào không ? ", "Thêm Sách Mượn",
 					JOptionPane.YES_NO_OPTION);
 			if (choose == JOptionPane.YES_OPTION) {
-				PhieuMuonCT pmct = new PhieuMuonCT(pm, qs);
-				if (pmct != null) {
-					pmctd.insert(pmct);
-					loadTable(pm);
-					clear();
-					DialogHelper.alert(this, "Insert Successful");
-					kq = 1;
+				int soLuong = model.getRowCount();
+				if (soLuong < 3) {
+					PhieuMuonCT pmct = new PhieuMuonCT(pm, qs);
+					if (pmct != null) {
+						pmctd.insert(pmct);
+						loadTable(pm);
+						DialogHelper.alert(this, "Insert Successful");
+						kq = 1;
+					}
+				} else {
+					DialogHelper.alert(this, "Đã đạt giới hạn mượn");
+					kq = 0;
 				}
 			}
 		} catch (Exception e) {
@@ -440,42 +334,24 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		return kq;
 	}
 
-	void delete() {
-
-	}
-
-	void update() {
-
-	}
-
-	void clear() {
-
-		setStatus(true);
+	void delete(PhieuMuon phieuMuon) {
+		int choose = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa không");
+		if (choose == JOptionPane.YES_OPTION) {
+			int id = (int) table.getValueAt(this.index, 0);
+			pmctd.delete(id);
+			loadTable(phieuMuon);
+			loadJList();
+			DialogHelper.alert(this, "Xóa thành công");
+		}
 	}
 
 	void setForm(PhieuMuon pm) {
 
 	}
 
-	PhieuMuon getForm() {
-
-		return null;
-	}
-
-	void edit() {
-
-	}
-
-	void setStatus(boolean insertable) {
-		btnInsert.setEnabled(insertable);
-		btnUpdate.setEnabled(!insertable);
-		btnDelete.setEnabled(!insertable);
-		boolean first = this.index > 0;
-		boolean last = this.index < model.getRowCount() - 1;
-		btnFirst.setEnabled(!insertable && first);
-		btnPrevEdit.setEnabled(!insertable && first);
-		btnNextEdit.setEnabled(!insertable && last);
-		btnLast.setEnabled(!insertable && last);
-	}
+//	void setStatus(boolean insertable) {
+//		btnInsert.setEnabled(insertable);
+//		btnDelete.setEnabled(!insertable);
+//	}
 
 }

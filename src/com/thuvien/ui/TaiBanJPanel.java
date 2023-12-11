@@ -7,6 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -32,6 +36,8 @@ import com.thuvien.entity.Sach;
 import com.thuvien.entity.TaiBan;
 import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.XDate;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class TaiBanJPanel extends JPanel {
 
@@ -120,6 +126,22 @@ public class TaiBanJPanel extends JPanel {
 		pnlDanhSach.add(lblTimKiem);
 
 		txtTimKiem = new JTextField();
+		txtTimKiem.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (txtTimKiem.getText().equals("Nhập vào tên quyển sách")) {
+					txtTimKiem.setText("");
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (txtTimKiem.getText().isEmpty()) {
+					txtTimKiem.setText("Nhập vào tên quyển sách");
+				}
+			}
+		});
+		txtTimKiem.setText("Nhập vào tên quyển sách");
 		txtTimKiem.setBounds(85, 17, 409, 19);
 		pnlDanhSach.add(txtTimKiem);
 		txtTimKiem.setColumns(10);
@@ -127,7 +149,12 @@ public class TaiBanJPanel extends JPanel {
 		JButton btnTimKiem = new JButton("Tìm Kiếm");
 		btnTimKiem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				search();
+				if (txtTimKiem.getText().equals(" ")) {
+					load(indexTrang);
+				} else {
+					search(txtTimKiem.getText().trim());
+				}
+
 			}
 		});
 		btnTimKiem.setBounds(529, 16, 97, 21);
@@ -258,7 +285,7 @@ public class TaiBanJPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang++;
 
-				if (indexTrang > (Math.ceil(tbd.selectAll().size() * 1.0 / 5))) {
+				if (indexTrang > (Math.ceil(tbd.selectAll().size() * 1.0 / 15))) {
 					DialogHelper.alert(null, "Đây là trang cuối cùng !");
 					indexTrang--;
 				} else {
@@ -293,6 +320,40 @@ public class TaiBanJPanel extends JPanel {
 		worker.execute();
 	}
 
+	protected void search(String key) {
+		SwingWorker<List<TaiBan>, Void> worker = new SwingWorker<List<TaiBan>, Void>() {
+
+			@Override
+			protected List<TaiBan> doInBackground() throws Exception {
+				return tbd.selectByKeyword(key);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<TaiBan> listTB = get();
+					if (listTB.isEmpty()) {
+						DialogHelper.alert(TaiBanJPanel.this, "Không tồn tại");
+					} else {
+						model.setRowCount(0);
+						for (TaiBan tb : listTB) {
+							Object[] row = { tb.getId(), sd.selectByIdSach(tb.getIdSach()).getTenSach(),
+									tb.getLanTaiBan(), tb.getThoiGianTB() };
+							model.addRow(row);
+						}
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		worker.execute();
+	}
+
 	void fillSach() {
 		SwingWorker<List<Sach>, Void> worker = new SwingWorker<List<Sach>, Void>() {
 
@@ -323,7 +384,7 @@ public class TaiBanJPanel extends JPanel {
 		SwingWorker<List<TaiBan>, Void> worker = new SwingWorker<List<TaiBan>, Void>() {
 			@Override
 			protected List<TaiBan> doInBackground() throws Exception {
-				return tbd.loadTrang((soTrang - 1) * 5, 5);
+				return tbd.loadTrang((soTrang - 1) * 15, 15);
 			}
 
 			@Override
@@ -380,10 +441,12 @@ public class TaiBanJPanel extends JPanel {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn Update không ?")) {
 				TaiBan tl = getForm();
-				tbd.update(tl);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Update Successful");
+				if (tl != null) {
+					tbd.update(tl);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Update Successful");
+				}
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Update Failed");
@@ -395,6 +458,8 @@ public class TaiBanJPanel extends JPanel {
 		txLanTB.setText("");
 		txtThoiGianTB.setText("");
 		setStatus(true);
+		txtTimKiem.setText("Nhập vào tên quyển sách");
+		table.clearSelection();
 	}
 
 	void setForm(TaiBan tl) {
@@ -409,8 +474,34 @@ public class TaiBanJPanel extends JPanel {
 		Sach s = (Sach) cbxSach.getSelectedItem();
 		tb.setId(id);
 		tb.setIdSach(s.getId());
-		tb.setLanTaiBan(Integer.parseInt(txLanTB.getText()));
-		tb.setThoiGianTB(XDate.toDate(txtThoiGianTB.getText(), "yyyy-MM-dd"));
+		if (txLanTB.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống lần tái bản");
+			return null;
+		} else {
+			try {
+				int lanTV = Integer.parseInt(txLanTB.getText());
+				if (lanTV <= 0) {
+					DialogHelper.alert(this, "Lần tái bản không được nhỏ hơn 0");
+					return null;
+				} else {
+					tb.setLanTaiBan(lanTV);
+				}
+			} catch (Exception e) {
+				DialogHelper.alert(this, "Chỉ nhập số cho lần tái bản");
+				return null;
+			}
+		}
+		if (txtThoiGianTB.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống thời gian tái bản");
+			return null;
+		} else {
+			if (isValidDateFormat(txtThoiGianTB.getText())) {
+				tb.setThoiGianTB(XDate.toDate(txtThoiGianTB.getText(), "yyyy-MM-dd"));
+			} else {
+				DialogHelper.alert(this, "Nhập đúng định dạng thời gian tái bản (yyyy-MM-dd)");
+				return null;
+			}
+		}
 		return tb;
 	}
 
@@ -418,9 +509,62 @@ public class TaiBanJPanel extends JPanel {
 		TaiBan tb = new TaiBan();
 		Sach s = (Sach) cbxSach.getSelectedItem();
 		tb.setIdSach(s.getId());
-		tb.setLanTaiBan(Integer.parseInt(txLanTB.getText()));
-		tb.setThoiGianTB(XDate.toDate(txtThoiGianTB.getText(), "yyyy-MM-dd"));
+		if (txLanTB.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống lần tái bản");
+			return null;
+		} else {
+			try {
+				int lanTV = Integer.parseInt(txLanTB.getText());
+				if (lanTV <= 0) {
+					DialogHelper.alert(this, "Lần tái bản không được nhỏ hơn 0");
+					return null;
+				} else {
+					tb.setLanTaiBan(lanTV);
+				}
+			} catch (Exception e) {
+				DialogHelper.alert(this, "Chỉ nhập số cho lần tái bản");
+				return null;
+			}
+		}
+		if (txtThoiGianTB.getText().isEmpty()) {
+			DialogHelper.alert(this, "Không để trống thời gian tái bản");
+			return null;
+		} else {
+			if (isValidDateFormat(txtThoiGianTB.getText())) {
+				tb.setThoiGianTB(XDate.toDate(txtThoiGianTB.getText(), "yyyy-MM-dd"));
+			} else {
+				DialogHelper.alert(this, "Nhập đúng định dạng thời gian tái bản (yyyy-MM-dd)");
+				return null;
+			}
+		}
+
 		return tb;
+	}
+
+	private boolean isValidDateFormat(String inputDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		sdf.setLenient(false); // Disable lenient mode
+		try {
+			Date parsedDate = sdf.parse(inputDate);
+			if (parsedDate != null) {
+				// Check the components of the parsed date
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(parsedDate);
+
+				int year = cal.get(Calendar.YEAR);
+				int month = cal.get(Calendar.MONTH) + 1; // Month is 0-based
+				int day = cal.get(Calendar.DAY_OF_MONTH);
+
+				// Additional checks for valid year, month, and day
+				if (year >= 1000 && year <= 9999 && month >= 1 && month <= 12 && day >= 1
+						&& day <= cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+					return true;
+				}
+			}
+			return false;
+		} catch (ParseException e) {
+			return false; // Parsing failed, date is not in the correct format
+		}
 	}
 
 	void edit() {
