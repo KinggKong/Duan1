@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.thuvien.entity.QuyenSach;
+import com.thuvien.entity.Sach;
 import com.thuvien.utils.JDBCHelper;
 
 public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
@@ -68,11 +69,17 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 	}
 
 	public List<QuyenSach> sachMuonDuoc() {
-		String sql = "SELECT *\r\n" + "FROM QuyenSach qs\r\n" + "WHERE qs.TinhTrang IN (1, 2)\r\n"
-				+ "AND qs.ID NOT IN (\r\n" + "    SELECT DISTINCT qs.ID\r\n" + "    FROM QuyenSach qs\r\n"
-				+ "    JOIN PhieuMuonCT pmct ON qs.ID = pmct.IDQuyenSach\r\n"
-				+ "    LEFT JOIN PhieuTraCT ptct ON pmct.ID = ptct.IDPhieuMuonCT\r\n"
-				+ "    WHERE ptct.TinhTrang = 0 OR ptct.TinhTrang IS NULL\r\n" + ");";
+//		String sql = "SELECT *\r\n" + "FROM QuyenSach qs\r\n" + "WHERE qs.TinhTrang IN (1, 2)\r\n"
+//				+ "AND qs.ID NOT IN (\r\n" + "    SELECT DISTINCT qs.ID\r\n" + "    FROM QuyenSach qs\r\n"
+//				+ "    JOIN PhieuMuonCT pmct ON qs.ID = pmct.IDQuyenSach\r\n"
+//				+ "    LEFT JOIN PhieuTraCT ptct ON pmct.ID = ptct.IDPhieuMuonCT\r\n"
+//				+ "    WHERE ptct.TinhTrang = 0 OR ptct.TinhTrang IS NULL\r\n" + ");";
+
+		String sql = "SELECT * FROM QuyenSach qs  WHERE qs.TinhTrang IN (1, 2)\r\n"
+				+ "				AND qs.ID NOT IN (    SELECT DISTINCT qs.ID   FROM QuyenSach qs\r\n"
+				+ "				  JOIN PhieuMuonCT pmct ON qs.ID = pmct.IDQuyenSach\r\n"
+				+ "				LEFT JOIN PhieuTraCT ptct ON pmct.ID = ptct.IDPhieuMuonCT\r\n"
+				+ "				  WHERE ptct.TinhTrang is null);";
 		return select(sql);
 	}
 
@@ -118,5 +125,9 @@ public class QuyenSachDao extends QLTVDao<QuyenSach, String> {
 		qs.setTinhTrang(rs.getInt("TinhTrang"));
 		qs.setGhiChu(rs.getString("GhiChu"));
 		return qs;
+	}
+	public List<QuyenSach> selectByKeyword(String keyword) {
+		String sql = "SELECT * FROM QuyenSach WHERE MaQS = ? or TenQS LIKE ?";
+		return select(sql, keyword, "%" + keyword + "%");
 	}
 }

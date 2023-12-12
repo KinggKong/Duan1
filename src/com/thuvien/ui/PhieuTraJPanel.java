@@ -59,7 +59,6 @@ public class PhieuTraJPanel extends JPanel {
 	private JTable table;
 	DefaultTableModel model;
 	private JButton btnInsert;
-	private JButton btnDelete;
 	private JButton btnUpdate;
 	private JButton btnClear;
 	private JButton btnPrevList;
@@ -376,31 +375,21 @@ public class PhieuTraJPanel extends JPanel {
 
 		btnInsert = new JButton("Insert");
 		btnInsert.setIcon(new ImageIcon(PhieuTraJPanel.class.getResource("/icon/Create.png")));
-		btnInsert.setBounds(84, 482, 134, 30);
+		btnInsert.setBounds(70, 478, 134, 30);
 		add(btnInsert);
 
 		btnClear = new JButton("Clear");
 		btnClear.setIcon(new ImageIcon(PhieuTraJPanel.class.getResource("/icon/Trash.png")));
-		btnClear.setBounds(300, 482, 134, 30);
+		btnClear.setBounds(404, 478, 134, 30);
 		add(btnClear);
-
-		btnDelete = new JButton("Delete");
-		btnDelete.setIcon(new ImageIcon(PhieuTraJPanel.class.getResource("/icon/delete2.png")));
-		btnDelete.setBounds(84, 523, 134, 30);
-		add(btnDelete);
 
 		btnUpdate = new JButton("Update");
 		btnUpdate.setIcon(new ImageIcon(PhieuTraJPanel.class.getResource("/icon/Upload.png")));
-		btnUpdate.setBounds(300, 523, 134, 30);
+		btnUpdate.setBounds(236, 478, 134, 30);
 		add(btnUpdate);
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				update();
-			}
-		});
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				delete();
 			}
 		});
 		btnClear.addActionListener(new ActionListener() {
@@ -498,28 +487,18 @@ public class PhieuTraJPanel extends JPanel {
 		try {
 			PhieuTra pm = getForm();
 			if (pm != null) {
-				ptd.insert(pm);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Insert Successful");
+				if (ptd.selectById2(pm.getMaPT()) == null) {
+					ptd.insert(pm);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Insert Successful");
+				} else {
+					DialogHelper.alert(this, "Mã phiếu trả đã tồn tại");
+				}
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Insert Failed");
 			e.printStackTrace();
-		}
-	}
-
-	void delete() {
-		try {
-			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
-				int id = (int) table.getValueAt(this.index, 0);
-				ptd.delete(id);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Delete Successful");
-			}
-		} catch (Exception e) {
-			DialogHelper.alert(this, "Delete Failed");
 		}
 	}
 
@@ -687,7 +666,6 @@ public class PhieuTraJPanel extends JPanel {
 	void setStatus(boolean insertable) {
 		btnInsert.setEnabled(insertable);
 		btnUpdate.setEnabled(!insertable);
-		btnDelete.setEnabled(!insertable);
 		boolean first = this.index > 0;
 		boolean last = this.index < model.getRowCount() - 1;
 		btnFirst.setEnabled(!insertable && first);

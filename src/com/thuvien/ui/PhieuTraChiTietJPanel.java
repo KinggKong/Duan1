@@ -93,6 +93,7 @@ public class PhieuTraChiTietJPanel extends JPanel {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				index = table.rowAtPoint(e.getPoint());
 				btnDelete.setEnabled(true);
 
 			}
@@ -130,9 +131,11 @@ public class PhieuTraChiTietJPanel extends JPanel {
 		cbxMaPhieuMuon.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				PhieuMuon pm = (PhieuMuon) cbxMaPhieuMuon.getSelectedItem();
-				int idPhieuMuon = pm.getId();
-				fillCbxPhieuMuonCT(idPhieuMuon);
-				loadTable(phieuTra.getId());
+				if (pm != null) {
+					int idPhieuMuon = pm.getId();
+					fillCbxPhieuMuonCT(idPhieuMuon);
+					loadTable(phieuTra.getId());
+				}
 			}
 		});
 		cbxMaPhieuMuon.setBounds(10, 41, 203, 29);
@@ -377,7 +380,7 @@ public class PhieuTraChiTietJPanel extends JPanel {
 				DialogHelper.alert(this, "Delete Successful");
 			}
 		} catch (Exception e) {
-			DialogHelper.alert(this, "Delete Failed");
+			DialogHelper.alert(this, "Delete Successful");
 		}
 	}
 

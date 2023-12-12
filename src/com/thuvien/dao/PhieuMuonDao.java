@@ -60,13 +60,13 @@ public class PhieuMuonDao extends QLTVDao<PhieuMuon, Integer> {
 
 	public List<PhieuMuon> selectTheoThanhVien(int key) {
 //		String sql = "select * from PhieuMuon where IDThanhVien =?";
-		String sql = "select * from PhieuMuon PM\r\n"
-				+ "inner join PhieuMuonCT PMCT on PMCT.IDPhieuMuon = PM.ID and  PMCT.ID not  in (select IDPhieuMuonCT from PhieuTraCT) and PM.IDThanhVien = ?";
+		String sql = "select distinct PM.MaPhieuMuon,  PM.* from PhieuMuon PM\r\n"
+				+ "				inner join PhieuMuonCT PMCT on PMCT.IDPhieuMuon = PM.ID and  PMCT.ID not  in (select IDPhieuMuonCT from PhieuTraCT) and PM.IDThanhVien = ?";
 		return select(sql, key);
 	}
 
 	public List<PhieuMuon> loadTrang(int indexTrang, int limit) {
-		String sql = "select * from PhieuMuon order by ID offset ? rows fetch next ? rows only ";
+		String sql = "select * from PhieuMuon order by ID DESC offset ? rows fetch next ? rows only ";
 		List<PhieuMuon> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 	}

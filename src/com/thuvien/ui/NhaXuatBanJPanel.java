@@ -362,7 +362,7 @@ public class NhaXuatBanJPanel extends JPanel {
 	void clear() {
 		txtIDNhaXuatBan.setText("");
 		txtTenNXB.setText("");
-		btnInsert.setEnabled(true);
+		setStatus(true);
 	}
 
 	void setForm(NXB Nxb) {

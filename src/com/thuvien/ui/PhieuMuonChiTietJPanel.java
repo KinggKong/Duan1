@@ -1,4 +1,4 @@
-       package com.thuvien.ui;
+package com.thuvien.ui;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -92,6 +92,7 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				index = table.rowAtPoint(e.getPoint());
 				btnDelete.setEnabled(true);
 			}
 		});
@@ -338,10 +339,15 @@ public class PhieuMuonChiTietJPanel extends JPanel {
 		int choose = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa không");
 		if (choose == JOptionPane.YES_OPTION) {
 			int id = (int) table.getValueAt(this.index, 0);
-			pmctd.delete(id);
-			loadTable(phieuMuon);
-			loadJList();
-			DialogHelper.alert(this, "Xóa thành công");
+			if (pmctd.checkXoaPMChiTiet(id) == null) {
+				pmctd.delete(id);
+				loadTable(phieuMuon);
+				loadJList();
+				DialogHelper.alert(this, "Xóa thành công");
+			} else {
+				DialogHelper.alert(this, "Phiếu mượn chi tiết đã trả không thể thay đổi");
+			}
+
 		}
 	}
 

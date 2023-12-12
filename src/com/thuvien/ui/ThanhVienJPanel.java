@@ -54,6 +54,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.thuvien.dao.ThanhVienDao;
 import com.thuvien.entity.ThanhVien;
 import com.thuvien.utils.DialogHelper;
+import com.thuvien.utils.ShareHelper;
 import com.thuvien.utils.XDate;
 import javax.swing.ImageIcon;
 
@@ -416,6 +417,7 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		add(btnUpdate);
 
 		btnDelete = new JButton("Delete");
+		btnDelete.setEnabled(false);
 		btnDelete.setIcon(new ImageIcon(ThanhVienJPanel.class.getResource("/icon/delete2.png")));
 		btnDelete.setBounds(162, 525, 103, 30);
 		add(btnDelete);
@@ -493,10 +495,15 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		try {
 			ThanhVien tv = getForm();
 			if (tv != null) {
-				tvd.insert(tv);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Insert Successful");
+				if (tvd.selectById(tv.getMaTV()) == null) {
+					tvd.insert(tv);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Insert Successful");
+				} else {
+					DialogHelper.alert(this, "Mã thành viên đã tồn tại");
+				}
+
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Insert Failed");
@@ -728,7 +735,9 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 		txtMaTV.setEnabled(insertable);
 		btnInsert.setEnabled(insertable);
 		btnUpdate.setEnabled(!insertable);
-		btnDelete.setEnabled(!insertable);
+		if (ShareHelper.USER.isVaiTro()) {
+			btnDelete.setEnabled(!insertable);
+		}
 		boolean first = this.index > 0;
 		boolean last = this.index < model.getRowCount() - 1;
 		btnFirst.setEnabled(!insertable && first);
@@ -785,7 +794,7 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 			executor.execute(this);
 			btnTat.setEnabled(true);
 		} catch (WebcamException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			closeWebcam();
 		}
 	}
@@ -805,23 +814,29 @@ public class ThanhVienJPanel extends JPanel implements Runnable, ThreadFactory {
 					continue;
 				}
 			}
-			LuminanceSource source = new BufferedImageLuminanceSource(image);
-			BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-			try {
-				result = new MultiFormatReader().decode(bitmap);
-			} catch (NotFoundException ex) {
-				Logger.getLogger(ThanhVienJPanel.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			if (result != null) {
-				System.out.println(result);
-				String[] cccd = result.getText().split("\\|");
-				txtHoTen.setText(cccd[2]);
-				txtCCCD.setText(cccd[0]);
-				txtDiaChi.setText(cccd[5]);
-				closeWebcam();
-				break; //
+			if (image != null) {
+				LuminanceSource source = new BufferedImageLuminanceSource(image);
+				BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+				try {
+					result = new MultiFormatReader().decode(bitmap);
+				} catch (NotFoundException ex) {
+					Logger.getLogger(ThanhVienJPanel.class.getName()).log(Level.SEVERE, null, ex);
+				}
+				if (result != null) {
+					try {
+						String[] cccd = result.getText().split("\\|");
+						txtHoTen.setText(cccd[2]);
+						txtCCCD.setText(cccd[0]);
+						txtDiaChi.setText(cccd[5]);
+						closeWebcam();
+						break; //
+					} catch (Exception e) {
+						DialogHelper.alert(this, "QR không phải CCCD");
+					}
 
+				}
 			}
+
 		} while (true);
 	}
 

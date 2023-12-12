@@ -60,6 +60,13 @@ public class PhieuMuonChiTietDao extends QLTVDao<PhieuMuonCT, Integer> {
 		return list.size() > 0 ? list.get(0) : null;
 	}
 
+	public PhieuMuonCT checkXoaPMChiTiet(int key) {
+		PhieuMuonCT nv = new PhieuMuonCT();
+		String sql = "select * from PhieuMuonCT PMCT where PMCT.ID in (select IDPhieuMuonCT from PhieuTraCT ) and PMCT.ID = ?";
+		List<PhieuMuonCT> list = select(sql, key);
+		return list.size() > 0 ? list.get(0) : null;
+	}
+
 	public List<PhieuMuonCT> selectPhieuMuonCTChuaTra(int key) {
 		String sql = "select PMCT.* from PhieuMuonCT PMCT\r\n"
 				+ "inner join PhieuMuon PM on PM.ID = PMCT.IDPhieuMuon\r\n"

@@ -649,7 +649,9 @@ public class PhieuMuonJPanel extends JPanel {
 	void setStatus(boolean insertable) {
 		btnInsert.setEnabled(insertable);
 		btnUpdate.setEnabled(!insertable);
-		btnDelete.setEnabled(!insertable);
+		if(ShareHelper.USER.isVaiTro()) {
+			btnDelete.setEnabled(!insertable);
+		}
 		boolean first = this.index > 0;
 		boolean last = this.index < model.getRowCount() - 1;
 		btnFirst.setEnabled(!insertable && first);

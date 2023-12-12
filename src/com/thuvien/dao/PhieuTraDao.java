@@ -53,8 +53,14 @@ public class PhieuTraDao extends QLTVDao<PhieuTra, Integer> {
 		return list.size() > 0 ? list.get(0) : null;
 	}
 
+	public PhieuTra selectById2(String key) {
+		String sql = "select * from PhieuTra where MaPhieuTra = ?";
+		List<PhieuTra> list = select(sql, key);
+		return list.size() > 0 ? list.get(0) : null;
+	}
+
 	public List<PhieuTra> loadTrang(int indexTrang, int limit) {
-		String sql = "select * from PhieuTra order by ID offset ? rows fetch next ? rows only ";
+		String sql = "select * from PhieuTra order by  ID DESC offset ? rows fetch next ? rows only ";
 		List<PhieuTra> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 	}
@@ -70,7 +76,7 @@ public class PhieuTraDao extends QLTVDao<PhieuTra, Integer> {
 		model.setLiDoPhat(rs.getString("LyDoPhat"));
 		model.setNgayTraThucTe(rs.getDate("NgayTraThucTe"));
 		model.setTienPhat(rs.getFloat("TienPhat"));
-		model.setTienTra(rs.getFloat("TienPhat"));
+		model.setTienTra(rs.getFloat("TienTra"));
 		model.setTrangThai(rs.getBoolean("TrangThaiTra"));
 		return model;
 	}

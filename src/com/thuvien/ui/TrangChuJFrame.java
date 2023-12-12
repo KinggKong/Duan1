@@ -20,6 +20,7 @@ import javax.swing.JToolBar;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
+import com.thuvien.utils.DialogHelper;
 import com.thuvien.utils.ShareHelper;
 
 public class TrangChuJFrame extends JFrame {
@@ -116,8 +117,13 @@ public class TrangChuJFrame extends JFrame {
 		JMenuItem mniHangThanhVien = new JMenuItem("Hạng Thành Viên");
 		mniHangThanhVien.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				jpanel = new HangThanhVienJPanel();
-				changePanel(jpanel);
+				if (ShareHelper.USER.isVaiTro()) {
+					jpanel = new HangThanhVienJPanel();
+					changePanel(jpanel);
+				} else {
+					DialogHelper.alert(TrangChuJFrame.this, "Bạn không có quyền truy cập chức năng này");
+				}
+
 			}
 		});
 		mniHangThanhVien.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Certificate.png")));
@@ -126,8 +132,12 @@ public class TrangChuJFrame extends JFrame {
 		JMenuItem mniNhanVien = new JMenuItem("Nhân Viên");
 		mniNhanVien.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				jpanel = new NhanVienJPanel();
-				changePanel(jpanel);
+				if (ShareHelper.USER.isVaiTro()) {
+					jpanel = new NhanVienJPanel();
+					changePanel(jpanel);
+				} else {
+					DialogHelper.alert(TrangChuJFrame.this, "Bạn không có quyền truy cập chức năng này");
+				}
 			}
 		});
 		mniNhanVien.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/person.24.png")));
@@ -179,8 +189,12 @@ public class TrangChuJFrame extends JFrame {
 		JMenuItem mntmNewMenuItem = new JMenuItem("Doanh Thu Theo Tháng");
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				jpanel = new ThongKeDoanhThuJPanel();
-				changePanel(jpanel);
+				if (ShareHelper.USER.isVaiTro()) {
+					jpanel = new ThongKeDoanhThuJPanel();
+					changePanel(jpanel);
+				} else {
+					DialogHelper.alert(TrangChuJFrame.this, "Bạn không có quyền truy cập chức năng này");
+				}
 
 			}
 		});
@@ -201,6 +215,11 @@ public class TrangChuJFrame extends JFrame {
 		menuBar.add(mnuTroGiup);
 
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Giới Thiệu");
+		mntmNewMenuItem_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new GioiThieuJDialogThuVien(TrangChuJFrame.this, true).setVisible(true);
+			}
+		});
 		mntmNewMenuItem_1.setIcon(new ImageIcon(TrangChuJFrame.class.getResource("/icon/Info.png")));
 		mnuTroGiup.add(mntmNewMenuItem_1);
 

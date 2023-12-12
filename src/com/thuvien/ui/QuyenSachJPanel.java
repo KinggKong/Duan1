@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -58,6 +59,7 @@ import com.thuvien.entity.Sach;
 import com.thuvien.entity.TaiBan;
 import com.thuvien.entity.ViTri;
 import com.thuvien.utils.DialogHelper;
+import javax.swing.JRadioButton;
 
 public class QuyenSachJPanel extends JPanel {
 
@@ -95,6 +97,9 @@ public class QuyenSachJPanel extends JPanel {
 	DefaultComboBoxModel<TaiBan> modelTaiBan = new DefaultComboBoxModel<>();
 	DefaultComboBoxModel<Sach> modelSach = new DefaultComboBoxModel<>();
 	DefaultComboBoxModel<ViTri> modelViTri = new DefaultComboBoxModel<>();
+	private final ButtonGroup buttonGroup_1 = new ButtonGroup();
+	private JRadioButton rdoViTriSearch;
+	private JRadioButton rdoTenSachSearch;
 
 	public QuyenSachJPanel() {
 		setLayout(null);
@@ -262,17 +267,22 @@ public class QuyenSachJPanel extends JPanel {
 		btnTimKiem.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Zoom.png")));
 		btnTimKiem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (txtTimKiem.getText().isEmpty()) {
-					DialogHelper.alert(QuyenSachJPanel.this, "Vui Lòng Nhập Mã Sách Để Tìm Kiếm Vị Trí");
+				if (txtTimKiem.getText().equals(" ")) {
+					load(indexTrang);
 				} else {
 					String keySearch = txtTimKiem.getText();
-					QuyenSachTim qst = qstd.selectById(keySearch);
-					if (qst != null) {
-						new ViTriTimSachJDialog(QuyenSachJPanel.this, true, qst).setVisible(true);
+					if (rdoViTriSearch.isSelected()) {
+						QuyenSachTim qst = qstd.selectById(keySearch);
+						if (qst != null) {
+							new ViTriTimSachJDialog(QuyenSachJPanel.this, true, qst).setVisible(true);
 
+						} else {
+							DialogHelper.alert(QuyenSachJPanel.this, "Quyển Sách Chưa Có Vị Trí Cụ Thể ");
+						}
 					} else {
-						DialogHelper.alert(QuyenSachJPanel.this, "Quyển Sách Không Tồn Tại ");
+						search(keySearch);
 					}
+
 				}
 			}
 		});
@@ -280,7 +290,7 @@ public class QuyenSachJPanel extends JPanel {
 		pnlDanhSach.add(btnTimKiem);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 71, 735, 297);
+		scrollPane.setBounds(10, 80, 735, 288);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -300,6 +310,17 @@ public class QuyenSachJPanel extends JPanel {
 		};
 		model = new DefaultTableModel(rows, columns);
 		table.setModel(model);
+
+		rdoViTriSearch = new JRadioButton("Vị Trí");
+		buttonGroup_1.add(rdoViTriSearch);
+		rdoViTriSearch.setSelected(true);
+		rdoViTriSearch.setBounds(83, 48, 103, 21);
+		pnlDanhSach.add(rdoViTriSearch);
+
+		rdoTenSachSearch = new JRadioButton("Tên Sách");
+		buttonGroup_1.add(rdoTenSachSearch);
+		rdoTenSachSearch.setBounds(232, 48, 103, 21);
+		pnlDanhSach.add(rdoTenSachSearch);
 
 		btnPrevList = new JButton("Prev");
 		btnPrevList.setIcon(new ImageIcon(QuyenSachJPanel.class.getResource("/icon/Left.png")));
@@ -553,7 +574,12 @@ public class QuyenSachJPanel extends JPanel {
 					Sach sach = (Sach) cbxSach.getSelectedItem();
 					qs.setTenQS(sach.getTenSach());
 					TaiBan taiBan = (TaiBan) cbxTaiBan.getSelectedItem();
-					qs.setIdTaiBan(taiBan.getId());
+					if (taiBan != null) {
+						qs.setIdTaiBan(taiBan.getId());
+					} else {
+						DialogHelper.alert(this, "sách chưa có tái bản");
+					}
+//					qs.setIdTaiBan(taiBan.getId());
 					qs.setGhiChu(txtGhiChu.getText());
 					if (cbxTinhTrang.getSelectedIndex() == 0) {
 						qs.setTinhTrang(0);
@@ -616,7 +642,8 @@ public class QuyenSachJPanel extends JPanel {
 		if (tb != null) {
 			qs.setIdTaiBan(tb.getId());
 		} else {
-			DialogHelper.alert(this, "Dang loi tai ban");
+			DialogHelper.alert(this, "Sách chưa có tái bản");
+			return null;
 		}
 		qs.setGhiChu(txtGhiChu.getText());
 		if (cbxTinhTrang.getSelectedIndex() == 0) {
@@ -647,7 +674,7 @@ public class QuyenSachJPanel extends JPanel {
 	void setStatus(boolean insertable) {
 		btnInsert.setEnabled(insertable);
 		btnUpdate.setEnabled(!insertable);
-		btnDelete.setEnabled(!insertable);
+//		btnDelete.setEnabled(!insertable);
 		boolean first = this.index > 0;
 		boolean last = this.index < model.getRowCount() - 1;
 		btnFirst.setEnabled(!insertable && first);
@@ -825,4 +852,40 @@ public class QuyenSachJPanel extends JPanel {
 		}
 	}
 
+	void search(String key) {
+		SwingWorker<List<QuyenSach>, Void> worker = new SwingWorker<List<QuyenSach>, Void>() {
+
+			@Override
+			protected List<QuyenSach> doInBackground() throws Exception {
+				return quyenSachDao.selectByKeyword(key);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					List<QuyenSach> list = get();
+					if (list.isEmpty()) {
+						DialogHelper.alert(QuyenSachJPanel.this, "Không tồn tại");
+					} else {
+						model.setRowCount(0);
+						for (QuyenSach qs : list) {
+							String trangThai = getTrangThai(qs.getTinhTrang());
+							Object[] row = { qs.getMaQS(), qs.getTenQS(),
+									tbd.selectById(qs.getIdTaiBan()).getLanTaiBan(), qs.getGhiChu(), trangThai };
+							model.addRow(row);
+						}
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		};
+		worker.execute();
+
+	}
 }

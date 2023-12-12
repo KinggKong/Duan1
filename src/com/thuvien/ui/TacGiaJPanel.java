@@ -335,7 +335,7 @@ public class TacGiaJPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang++;
 
-				if (indexTrang > (Math.ceil(tgd.selectAll().size() * 1.0 / 5))) {
+				if (indexTrang > (Math.ceil(tgd.selectAll().size() * 1.0 / 15))) {
 					DialogHelper.alert(null, "Đây là trang cuối cùng !");
 					indexTrang--;
 				} else {
@@ -389,7 +389,7 @@ public class TacGiaJPanel extends JPanel {
 		SwingWorker<List<TacGia>, Void> worker = new SwingWorker<List<TacGia>, Void>() {
 			@Override
 			protected List<TacGia> doInBackground() throws Exception {
-				return tgd.loadTrang((soTrang - 1) * 5, 5);
+				return tgd.loadTrang((soTrang - 1) * 15, 15);
 			}
 
 			@Override

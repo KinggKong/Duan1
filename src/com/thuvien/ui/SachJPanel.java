@@ -37,6 +37,7 @@ import com.thuvien.dao.SachDao;
 import com.thuvien.entity.NXB;
 import com.thuvien.entity.Sach;
 import com.thuvien.utils.DialogHelper;
+import com.thuvien.utils.ShareHelper;
 import com.thuvien.utils.XDate;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -642,8 +643,8 @@ public class SachJPanel extends JPanel {
 		} else {
 			try {
 				int namXB = Integer.parseInt(txtNamXuatBan.getText());
-				if (namXB <= 0) {
-					DialogHelper.alert(this, "Năm xuất bản không được bé hơn 0");
+				if (namXB <= 0 || namXB > 2023) {
+					DialogHelper.alert(this, "Năm xuất bản không hợp lệ");
 					return null;
 				} else {
 					model.setNamXB(Integer.valueOf(txtNamXuatBan.getText()));
@@ -740,7 +741,9 @@ public class SachJPanel extends JPanel {
 		txtMaSach.setEditable(insertable);
 		btnInsert.setEnabled(insertable);
 		btnUpdate.setEnabled(!insertable);
-		btnDelete.setEnabled(!insertable);
+		if (ShareHelper.USER.isVaiTro()) {
+			btnDelete.setEnabled(!insertable);
+		}
 		boolean first = this.index > 0;
 		boolean last = this.index < model.getRowCount() - 1;
 		btnFirst.setEnabled(!insertable && first);
