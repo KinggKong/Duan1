@@ -122,7 +122,7 @@ public class NhanVienJPanel extends JPanel {
 		txtSDT.setBounds(10, 138, 296, 19);
 		pnlThongTinTG.add(txtSDT);
 
-		JLabel lblGioiTinh = new JLabel("Giới Tính");
+		JLabel lblGioiTinh = new JLabel("Chức Vụ");
 		lblGioiTinh.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblGioiTinh.setBounds(10, 286, 104, 19);
 		pnlThongTinTG.add(lblGioiTinh);
@@ -191,7 +191,7 @@ public class NhanVienJPanel extends JPanel {
 		txtTimKiem.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				if (txtTimKiem.getText().equals("Nhập vào mã hoặc tên của tác giả")) {
+				if (txtTimKiem.getText().equals("Nhập vào mã hoặc tên của nhân viên")) {
 					txtTimKiem.setText("");
 				}
 			}
@@ -199,7 +199,7 @@ public class NhanVienJPanel extends JPanel {
 			@Override
 			public void focusLost(FocusEvent e) {
 				if (txtTimKiem.getText().isEmpty()) {
-					txtTimKiem.setText("Nhập vào mã hoặc tên của tác giả");
+					txtTimKiem.setText("Nhập vào mã hoặc tên của nhân viên");
 				}
 			}
 		});
@@ -458,6 +458,7 @@ public class NhanVienJPanel extends JPanel {
 		btnInsert.setEnabled(true);
 		txtMaNV.setEditable(true);
 		table.clearSelection();
+		txtTimKiem.setText("Nhập vào mã hoặc tên của nhân viên");
 
 	}
 
@@ -484,7 +485,7 @@ public class NhanVienJPanel extends JPanel {
 	NhanVien getForm() {
 		NhanVien tg = new NhanVien();
 		if (txtMaNV.getText().isEmpty()) {
-			DialogHelper.alert(this, "Không để trống mã NhanVien");
+			DialogHelper.alert(this, "Không để trống mã nhân viên");
 			return tg = null;
 		} else {
 			if (txtMaNV.getText().matches(regexMaNV)) {

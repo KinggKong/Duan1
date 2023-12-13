@@ -60,7 +60,6 @@ public class HangThanhVienJPanel extends JPanel {
 	private JTextField txtTuoiMin;
 	private JTextField txtTuoiMax;
 	HangTheThanhVienDao htvd = new HangTheThanhVienDao();
-	private JTextField textField;
 	private JComboBox cbxThoiGianHieuLuc;
 	String regexMaHTV = "^H\\d{3}$";
 
@@ -202,7 +201,7 @@ public class HangThanhVienJPanel extends JPanel {
 		add(pnlDanhSach);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 61, 623, 307);
+		scrollPane.setBounds(10, 24, 623, 344);
 		pnlDanhSach.add(scrollPane);
 
 		table = new JTable();
@@ -223,20 +222,6 @@ public class HangThanhVienJPanel extends JPanel {
 		};
 		model = new DefaultTableModel(rows, columns);
 		table.setModel(model);
-
-		textField = new JTextField();
-		textField.setBounds(129, 24, 379, 19);
-		pnlDanhSach.add(textField);
-		textField.setColumns(10);
-
-		JButton btnNewButton = new JButton("Search");
-		btnNewButton.setBounds(530, 23, 85, 21);
-		pnlDanhSach.add(btnNewButton);
-
-		JLabel lblTmKim = new JLabel("Tìm Kiếm");
-		lblTmKim.setBounds(15, 22, 104, 19);
-		pnlDanhSach.add(lblTmKim);
-		lblTmKim.setFont(new Font("Tahoma", Font.BOLD, 15));
 
 		JPanel pnlButton2 = new JPanel();
 		pnlButton2.setBounds(141, 482, 350, 30);
@@ -340,7 +325,7 @@ public class HangThanhVienJPanel extends JPanel {
 		btnNextList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				indexTrang++;
-				if (indexTrang > (Math.ceil(htvd.selectAll().size() * 1.0 / 5))) {
+				if (indexTrang > (Math.ceil(htvd.selectAll().size() * 1.0 / 15))) {
 					DialogHelper.alert(null, "Đây là trang cuối cùng !");
 					indexTrang--;
 				} else {
@@ -380,7 +365,7 @@ public class HangThanhVienJPanel extends JPanel {
 
 			@Override
 			protected List<HangThanhVien> doInBackground() throws Exception {
-				return htvd.loadTrang((soTrang - 1) * 5, 5);
+				return htvd.loadTrang((soTrang - 1) * 15, 15);
 			}
 
 			@Override

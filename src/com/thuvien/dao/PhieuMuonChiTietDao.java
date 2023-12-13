@@ -53,6 +53,13 @@ public class PhieuMuonChiTietDao extends QLTVDao<PhieuMuonCT, Integer> {
 		return list.size() > 0 ? list.get(0) : null;
 	}
 
+	public PhieuMuonCT checkXoaPhieuMuon(Integer key) {
+		String sql = "select * from PhieuMuonCT \r\n"
+				+ " where ID in (select IDPhieuMuonCT from PhieuTraCT) and IDPhieuMuon = ?";
+		List<PhieuMuonCT> list = select(sql, key);
+		return list.size() > 0 ? list.get(0) : null;
+	}
+
 	public PhieuMuonCT selectById2(String key) {
 		PhieuMuonCT nv = new PhieuMuonCT();
 		String sql = "select * from PhieuMuon where MaPhieuMuon =?";

@@ -111,6 +111,7 @@ public class ViTriJPanel extends JPanel {
 		cbxQuyenSach.setModel(modelCbxQuyenSach);
 
 		txtO = new JTextField();
+		txtO.setEnabled(false);
 		txtO.setBounds(10, 191, 279, 19);
 		pnlThongTinTG.add(txtO);
 		txtO.setColumns(10);
@@ -139,6 +140,7 @@ public class ViTriJPanel extends JPanel {
 				index = table.rowAtPoint(e.getPoint());
 				String idO = (String) table.getValueAt(index, 0);
 				txtO.setText(idO);
+				setStatus(false);
 			}
 		});
 		scrollPane.setViewportView(table);
@@ -175,6 +177,7 @@ public class ViTriJPanel extends JPanel {
 				update(qs.getMaQS());
 			}
 		});
+		setStatus(true);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -338,6 +341,7 @@ public class ViTriJPanel extends JPanel {
 
 	void clear() {
 		txtO.setText("");
+		setStatus(true);
 	}
 
 	void setForm(OSoChiTiet oSo) {
@@ -360,6 +364,11 @@ public class ViTriJPanel extends JPanel {
 //            return null;
 	void edit() {
 
+	}
+	
+	void setStatus(boolean trangThai) {
+		btnUpdate.setEnabled(!trangThai);
+		txtO.setEnabled(trangThai);
 	}
 
 	private ViTri getInsert() {

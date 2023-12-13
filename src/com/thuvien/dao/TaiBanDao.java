@@ -51,7 +51,7 @@ public class TaiBanDao extends QLTVDao<TaiBan, Integer> {
 	}
 
 	public List<TaiBan> loadTrang(int indexTrang, int limit) {
-		String sql = "select * from TaiBan order by ID offset ? rows fetch next ? rows only ";
+		String sql = "select * from TaiBan order by ID DESC offset ? rows fetch next ? rows only ";
 		List<TaiBan> list = new ArrayList<>();
 		return list = select(sql, indexTrang, limit);
 	}

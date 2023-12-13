@@ -36,6 +36,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.thuvien.dao.NhanVienDao;
+import com.thuvien.dao.PhieuMuonChiTietDao;
 import com.thuvien.dao.PhieuMuonDao;
 import com.thuvien.dao.ThanhVienDao;
 import com.thuvien.entity.NhanVien;
@@ -85,6 +86,7 @@ public class PhieuMuonJPanel extends JPanel {
 	String regexMaPhieuMuon = "^PM\\d{3}$";
 
 	PhieuMuonDao pmd = new PhieuMuonDao();
+	PhieuMuonChiTietDao phieuMuonChiTietDao = new PhieuMuonChiTietDao();
 
 	public PhieuMuonJPanel() {
 		setLayout(null);
@@ -492,10 +494,15 @@ public class PhieuMuonJPanel extends JPanel {
 		try {
 			if (DialogHelper.confirm(this, "Bạn có chắc chắn muốn xóa không ?")) {
 				int id = (int) table.getValueAt(this.index, 0);
-				pmd.delete(id);
-				load(indexTrang);
-				clear();
-				DialogHelper.alert(this, "Delete Successful");
+				if (phieuMuonChiTietDao.checkXoaPhieuMuon(id) == null) {
+					pmd.delete(id);
+					load(indexTrang);
+					clear();
+					DialogHelper.alert(this, "Delete Successful");
+				} else {
+					DialogHelper.alert(this, "Phiếu mượn đã có phiếu trả không thể xóa");
+				}
+
 			}
 		} catch (Exception e) {
 			DialogHelper.alert(this, "Delete Failed");
@@ -649,7 +656,7 @@ public class PhieuMuonJPanel extends JPanel {
 	void setStatus(boolean insertable) {
 		btnInsert.setEnabled(insertable);
 		btnUpdate.setEnabled(!insertable);
-		if(ShareHelper.USER.isVaiTro()) {
+		if (ShareHelper.USER.isVaiTro()) {
 			btnDelete.setEnabled(!insertable);
 		}
 		boolean first = this.index > 0;
